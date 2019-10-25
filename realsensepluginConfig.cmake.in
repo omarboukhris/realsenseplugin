@@ -1,0 +1,16 @@
+# CMake package configuration file for the plugin
+
+@PACKAGE_INIT@
+
+set(PROJECT realsenseplugin)
+
+find_package(SofaGeneral REQUIRED)
+
+if(NOT TARGET ${PROJECT})
+        include("${CMAKE_CURRENT_LIST_DIR}/${PROJECT}Targets.cmake")
+endif()
+
+check_required_components(${PROJECT})
+
+set(${PROJECT} "${PROJECT}")
+set_and_check(${PROJECT}_INCLUDE_DIRS "@${PROJECT}_INCLUDE_DIRS@")
