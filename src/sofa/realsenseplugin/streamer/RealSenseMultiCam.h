@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-#include "RealSenseStreamer.h"
+#include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
 
 namespace sofa
 {

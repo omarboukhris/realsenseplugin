@@ -51,7 +51,7 @@
 #include <string>
 #include <map>
 
-#include "cv-helpers.hpp"
+#include <sofa/realsenseplugin/cv-helpers.hpp>
 
 #include <exception>
 

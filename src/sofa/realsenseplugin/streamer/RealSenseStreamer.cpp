@@ -22,38 +22,10 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#pragma once
 
-#include <opencv2/ccalib/randpattern.hpp>
 
-#include <sofa/defaulttype/Vec.h>
-#include <sofa/core/objectmodel/BaseObject.h>
-#include <sofa/core/objectmodel/DataFileName.h>
-#include <sofa/core/visual/VisualParams.h>
-#include <sofa/defaulttype/BoundingBox.h>
-#include <sofa/core/objectmodel/Event.h>
-#include <sofa/core/objectmodel/KeypressedEvent.h>
-#include <sofa/simulation/AnimateBeginEvent.h>
-#include <sofa/simulation/AnimateEndEvent.h>
-#include <sofa/defaulttype/Mat.h>
-#include <sofa/defaulttype/Quat.h>
-#include <sofa/helper/rmath.h>
-#include <sofa/helper/OptionsGroup.h>
-
-#include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
-
-#include <librealsense2/rs.hpp>
-
-#include <fstream>
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <map>
-
-#include "cv-helpers.hpp"
-
-#include <exception>
+#include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
+#include <sofa/core/ObjectFactory.h>
 
 namespace sofa
 {
@@ -61,11 +33,19 @@ namespace sofa
 namespace rgbdtracking
 {
 
-class RealSenseCalibrator : public core::objectmodel::BaseObject
-{
-};
+using namespace defaulttype;
+using namespace std;
+using namespace cv;
+using namespace boost;
 
-}
+//SOFA_DECL_CLASS (RealSenseStreamer)
+//// Register in the Factory
 
-}
+//int RealSenseStreamerClass = core::RegisterObject ( "A RealSenseStreamer cam depth-color streaming component for sofa" )
+//        .add<RealSenseStreamer>(true)
+//        ;
+	
 
+} // namespace rgbdtracking
+
+} // namespace sofa

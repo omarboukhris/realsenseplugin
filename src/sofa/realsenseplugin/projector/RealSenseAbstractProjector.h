@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-//#include <CImgPlugin/CImgData.h>
+// sofa imports
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/core/objectmodel/BaseObject.h>
 #include <sofa/core/objectmodel/DataFileName.h>
@@ -38,70 +38,109 @@
 #include <sofa/helper/rmath.h>
 #include <sofa/helper/OptionsGroup.h>
 
+// lib realsense
 #include <librealsense2/rs.hpp>
 #include <librealsense2/rsutil.h>
 
+// opencv
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 
+// pcl
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/features/normal_3d.h>
+
+// c++ stl
 #include <fstream>
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <map>
 
+// external plugins
 #include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/opencvplugin/utils/OpenCVMouseEvents.h>
 
-#include "RealSenseCam.h"
-#include "RealSenseDistFrame.h"
+#include <sofa/realsenseplugin/streamer/RealSenseCam.h>
+#include <sofa/realsenseplugin/projector/RealSenseDistFrame.h>
 
 namespace sofa {
 
 namespace rgbdtracking {
 
-class RealSensePointDeprojector : public core::objectmodel::BaseObject
-{
-public:
-    SOFA_CLASS( RealSensePointDeprojector , core::objectmodel::BaseObject);
+class RealSenseAbstractDeprojector : public core::objectmodel::BaseObject {
+public :
+    SOFA_CLASS( RealSenseAbstractDeprojector , core::objectmodel::BaseObject);
     typedef core::objectmodel::BaseObject Inherited;
 
     Data<opencvplugin::ImageData> d_depth ;
-    Data<helper::vector<defaulttype::Vector2> > d_input ;
     Data<helper::vector<defaulttype::Vector3> > d_output ;
-    Data<int> d_downsampler ;
 
     // distance frame for offline reco
     Data<RealSenseDistFrame> d_distframe ;
+    // path to intrinsics file
+    Data<std::string> d_intrinsics ;
+    DataCallback c_intrinsics ;
 
+    // downsampling and visualization
+    Data<int> d_downsampler ;
     Data<bool> d_drawpcl ;
 
     core::objectmodel::SingleLink<
-        RealSensePointDeprojector,
+        RealSenseAbstractDeprojector,
         RealSenseCam,
         BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
     > l_rs_cam ; //for intrinsics
 
-    DataCallback c_image ;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr m_pointcloud ;
+    rs2_intrinsics cam_intrinsics ;
 
-    rs2_intrinsics cam_intrinsics;
-
-    RealSensePointDeprojector()
+    RealSenseAbstractDeprojector()
         : Inherited()
-        , d_input(initData(&d_input, "input", "input 2D position to de-project"))
+        , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
         , d_output(initData(&d_output, "output", "output 3D position"))
-        , d_downsampler(initData(&d_downsampler, 5, "downsample", "point cloud downsampling"))
+        // offline reco
         , d_distframe(initData(&d_distframe, "distframe", "frame encoding pixel's distance from camera. used for offline deprojection"))
+        , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to realsense intrinsics file to read from"))
+        // visualization
+        , d_downsampler(initData(&d_downsampler, 5, "downsample", "point cloud downsampling"))
         , d_drawpcl(initData(&d_drawpcl, false, "drawpcl", "true if you want to draw the point cloud"))
+        // link to realsense for online reco
         , l_rs_cam(initLink("rscam", "link to realsense camera component - used for getting camera intrinsics"))
+        , m_pointcloud(new pcl::PointCloud<pcl::PointXYZ>)
     {
-        c_image.addInputs({&d_input});
-        c_image.addCallback(std::bind(&RealSensePointDeprojector::deproject_image, this));
+        c_intrinsics.addInput({&d_intrinsics});
+        c_intrinsics.addCallback(std::bind(&RealSenseAbstractDeprojector::readIntrinsics, this));
+        readIntrinsics();
+        this->f_listening.setValue(true) ;
     }
 
-    virtual ~RealSensePointDeprojector () {
+    /*!
+     * \brief readIntrinsics reads from a specified file (data "intrinsics")
+     * to rs2_intrinsics cam_intrinsics
+     */
+    void readIntrinsics () {
+        std::FILE* filestream = std::fopen(d_intrinsics.getValue().c_str(), "rb") ;
+        if (filestream == NULL) {
+            std::cout << "Check rights on " << d_intrinsics.getValue()
+                      << " file" << std::endl ;
+            return ;
+        }
+        std::fread(&cam_intrinsics.width, sizeof(int), 1, filestream) ;
+        std::fread(&cam_intrinsics.height, sizeof(int), 1, filestream) ;
+        std::fread(&cam_intrinsics.ppx, sizeof(float), 1, filestream) ;
+        std::fread(&cam_intrinsics.ppy, sizeof(float), 1, filestream) ;
+        std::fread(&cam_intrinsics.fx, sizeof(float), 1, filestream) ;
+        std::fread(&cam_intrinsics.fy, sizeof(float), 1, filestream) ;
+        std::fread(&cam_intrinsics.model, sizeof(rs2_distortion), 1, filestream) ;
+        std::fread(cam_intrinsics.coeffs, sizeof(float), 5, filestream) ;
+        std::fclose(filestream) ;
     }
 
+    /*!
+     * \brief deproject_image
+     * dispatches data processing depending on data (link to realsense cam or not)
+     */
     void deproject_image () {
         if (!l_rs_cam) {
         // we need a valid link to realsense cam sofa component
@@ -109,24 +148,12 @@ public:
         } else {
             deproject_image_online();
         }
-        // once pcl extracted compute normals
-        //compute_pcl_normals() ;
-    }
-    void push_to_pointcloud (int i, int j, float dist, RealSenseDistFrame::RealSenseDistStruct & diststruct, helper::vector<defaulttype::Vector3> & output) {
-        float
-            point3d[3] = {0.f, 0.f, 0.f},
-            point2d[2] = {i, j};
-        rs2_deproject_pixel_to_point(
-            point3d,
-            &cam_intrinsics,
-            point2d,
-            dist
-        );
-        diststruct.frame[i*diststruct._width+j] = dist ;
-        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(point3d[1], point3d[0], point3d[2]) ;
-        output.push_back(deprojected_point) ;
     }
 
+    /*!
+     * \brief deproject_image_offline
+     * Load depth/distframe from saved files
+     */
     void deproject_image_offline () {
         cv::Mat depth_im = d_depth.getValue().getImage() ;
         RealSenseDistFrame distframe = d_distframe.getValue() ;
@@ -138,22 +165,13 @@ public:
             //std::cerr << "(deprojector) check sizes" << std::endl ;
             return ;
         }
-
-        // setup output
-        const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
-        for (defaulttype::Vec2i vec : input){
-            float dist = diststruct.frame[vec[0]*diststruct._width+vec[1]] ;
-            push_to_pointcloud(vec[0], vec[1], dist, diststruct, output) ;
-        }
-        // the end
-        d_output.endEdit();
+        m_pointcloud->clear();
+        writeOfflineToOutput(diststruct, depth_im, downSample);
     }
 
     /*!
-     * \brief deproject_image : deprojects depth image in a 3D point cloud
-     *
+     * \brief deproject_image_online
+     * get depth/distframe/intrinsics.. from realsense cam
      */
     void deproject_image_online () {
         // get intrinsics from link to rs-cam component
@@ -170,32 +188,21 @@ public:
             depth_im.cols/downSample *
             depth_im.rows/downSample
         ] ;
-
-        // setup output
-        const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
-        for (defaulttype::Vector2 vec : input) {
-            float dist = depth.get_distance(vec[1], vec[0]) ;
-            push_to_pointcloud (vec[0], vec[1], dist, diststruct, output) ;
-        }
-        // the end
-        d_output.endEdit();
+        m_pointcloud->clear();
+        writeOnlineToOutput(depth, diststruct, depth_im, downSample);
     }
-
-    void draw(const core::visual::VisualParams* vparams) {
-        if (!d_drawpcl.getValue()) {
-        // don't draw point cloud
-            return ;
-        }
-
-        helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
-        for (unsigned int i=0; i< output.size(); i++) {
-            vparams->drawTool()->drawSphere(output[i], 0.0008);
-        }
-    }
-
-};
+private :
+    /// \brief write to output sofa data
+    virtual void writeOfflineToOutput (
+        RealSenseDistFrame::RealSenseDistStruct & diststruct,
+        const cv::Mat & depth_im,
+        int downSample) = 0 ;
+    virtual void writeOnlineToOutput (
+        rs2::depth_frame & depth,
+        RealSenseDistFrame::RealSenseDistStruct & diststruct,
+        const cv::Mat & depth_im,
+        int downSample) = 0 ;
+} ;
 
 }
 

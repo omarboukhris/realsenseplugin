@@ -53,8 +53,8 @@
 #include <sofa/opencvplugin/BaseOpenCVStreamer.h>
 #include <sofa/opencvplugin/utils/OpenCVMouseEvents.h>
 
-#include "RealSenseCam.h"
-#include "cv-helpers.hpp"
+#include <sofa/realsenseplugin/streamer/RealSenseCam.h>
+#include <sofa/realsenseplugin/cv-helpers.hpp>
 
 namespace sofa
 {

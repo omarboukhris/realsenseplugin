@@ -20,38 +20,69 @@ find_package(OpenCVPlugin REQUIRED)
 
 #set(ALL_LIBRARIES ${OpenCV_LIBS})
 
-set(HEADER_FILES
-	src/RealSenseCam.h
-#	src/RealSenseFakeCam.h
-	src/RealSenseDeprojector.h
-	src/RealSensePointDeprojector.h
-	src/RealSenseGrabCut.h
-	src/RealSenseDistFrame.h
-	src/RealSenseCalibrator.h
-	src/RealSenseStreamer.h
-	src/RealSenseMultiCam.h
-
-	src/cv-helpers.hpp
+file(GLOB_RECURSE HEADER_FILES
+	"src/*.h"
+	"src/*.inl"
 )
 
-set(SOURCE_FILES
-	src/RealSenseCam.cpp
-#	src/RealSenseFakeCam.cpp
-	src/RealSenseDeprojector.cpp
-	src/RealSensePointDeprojector.cpp
-	src/RealSenseGrabCut.cpp
-	src/RealSenseDistFrame.cpp
-	src/RealSenseCalibrator.cpp
-	src/RealSenseStreamer.cpp
-	src/RealSenseMultiCam.cpp
-
-	src/initPlugin.cpp
+file(GLOB_RECURSE SOURCE_FILES
+	"src/*.cpp"
 )
+
+file(GLOB_RECURSE SCENES_FILES
+	"scenes/*.scn"
+	"scenes/*.xml"
+)
+
+file(GLOB_RECURSE IGNORED_FILES
+	"ignored/*.h"
+	"ignored/*.inl"
+	"ignored/*.cpp"
+)
+
+file(GLOB_RECURSE DEPRECATED_FILES
+	"src/sofa/realsenseplugin/streamer/RealSenseFakeCam.*"
+	"deprecated/*.h"
+	"deprecated/*.inl"
+	"deprecated/*.cpp"
+)
+
+#set(HEADER_FILES
+#	src/sofa/realsenseplugin/streamer/RealSenseCam.h
+#	src/sofa/realsenseplugin/streamer/RealSenseStreamer.h
+#	src/sofa/realsenseplugin/streamer/RealSenseMultiCam.h
+##	src/sofa/realsenseplugin/streamer/RealSenseFakeCam.h
+
+#	src/sofa/realsenseplugin/RealSenseDeprojector.h
+#	src/sofa/realsenseplugin/RealSensePointDeprojector.h
+#	src/sofa/realsenseplugin/RealSenseGrabCut.h
+#	src/sofa/realsenseplugin/RealSenseDistFrame.h
+#	src/sofa/realsenseplugin/RealSenseCalibrator.h
+
+#	src/sofa/realsenseplugin/cv-helpers.hpp
+#)
+
+#set(SOURCE_FILES
+#	src/sofa/realsenseplugin/streamer/RealSenseCam.cpp
+#	src/sofa/realsenseplugin/streamer/RealSenseStreamer.cpp
+#	src/sofa/realsenseplugin/streamer/RealSenseMultiCam.cpp
+##	src/sofa/realsenseplugin/streamer/RealSenseFakeCam.cpp
+
+#	src/sofa/realsenseplugin/RealSenseDeprojector.cpp
+#	src/sofa/realsenseplugin/RealSensePointDeprojector.cpp
+#	src/sofa/realsenseplugin/RealSenseGrabCut.cpp
+#	src/sofa/realsenseplugin/RealSenseDistFrame.cpp
+#	src/sofa/realsenseplugin/RealSenseCalibrator.cpp
+
+#	src/sofa/realsenseplugin/initPlugin.cpp
+#)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
 #set_directory_properties( PROPERTIES COMPILE_DEFINITIONS "" )
+set_source_files_properties(${IGNORED_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
+set_source_files_properties(${DEPRECATED_FILES} PROPERTIES HEADER_FILE_ONLY TRUE)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -65,11 +96,13 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(REALSENSEPLUGIN_COMPILER_FLAGS "-DSOFA_BUILD_REALSENSEPLUGIN")
 
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
+#add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${SCENES_FILES} ${IGNORED_FILES} ${DEPRECATED_FILES} ${README_FILES} )
+
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${REALSENSEPLUGIN_VERSION})
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-DSOFA_BUILD_REALSENSEPLUGIN")
-set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADER_FILES}")
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${REALSENSEPLUGIN_COMPILER_FLAGS}")
+#set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-DSOFA_BUILD_REALSENSEPLUGIN")
+#set_target_properties(${PROJECT_NAME} PROPERTIES PUBLIC_HEADER "${HEADER_FILES}")
+#set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${REALSENSEPLUGIN_COMPILER_FLAGS}")
 target_link_libraries(
 	${PROJECT_NAME}
 	${PCL_LIBRARIES}
@@ -85,6 +118,10 @@ target_link_libraries(
 )
 
 ## Install rules for the library; CMake package configurations files
+## Install rules for the library and headers; CMake package configurations files
+set(${PROJECT_NAME}_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${${PROJECT_NAME}_INCLUDE_DIRS}>")
+target_include_directories(${PROJECT_NAME} PUBLIC "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 #sofa_create_package(realsenseplugin ${REALSENSEPLUGIN_VERSION} realsenseplugin realsenseplugin)
 sofa_generate_package(
 	NAME ${PROJECT_NAME}
