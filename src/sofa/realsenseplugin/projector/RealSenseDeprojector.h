@@ -109,23 +109,19 @@ public:
             return ;
         }
 
-        if (m_colors.size() == m_pointcloud->size()) {
-            size_t i = 0 ;
-            for (const auto & pt : *m_pointcloud) {
-                auto color = m_colors[i++] ;
-                vparams->drawTool()->drawPoint(
-                    defaulttype::Vector3(pt.x, pt.y, pt.z),
-                    sofa::defaulttype::Vector4 (color[0],color[1],color[2],0)
-                );
-            }
-        } else {
-            for (const auto & pt : *m_pointcloud) {
-                vparams->drawTool()->drawPoint(
-                    defaulttype::Vector3(pt.x, pt.y, pt.z),
-                    sofa::defaulttype::Vector4 (0, 0, 255, 0)
-                );
-            }
+        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
+        outpoints.clear() ;
+        for (const auto & pt : *m_pointcloud) {
+            defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
+            vparams->drawTool()->drawPoint(
+                point, sofa::defaulttype::Vector4 (0, 0, 255, 0)
+            );
+            outpoints.push_back(point) ;
+            // vparams->drawTool()->drawSphere(
+            //    defaulttype::Vector3(pt.x, pt.y, pt.z),
+            //    0.004);
         }
+        d_output.endEdit();
     }
 
     void handleEvent(sofa::core::objectmodel::Event *event) {

@@ -111,8 +111,11 @@ public :
     {
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseAbstractDeprojector::readIntrinsics, this));
-        readIntrinsics();
         this->f_listening.setValue(true) ;
+    }
+
+    void init () {
+        readIntrinsics();
     }
 
     /*!
@@ -135,6 +138,18 @@ public :
         std::fread(&cam_intrinsics.model, sizeof(rs2_distortion), 1, filestream) ;
         std::fread(cam_intrinsics.coeffs, sizeof(float), 5, filestream) ;
         std::fclose(filestream) ;
+        std::cout << "(RealSenseProjectors) successfully read intrinsics from file " <<
+                     d_intrinsics.getValue() << std::endl ;
+
+        std::cout <<
+            cam_intrinsics.width << std::endl <<
+            cam_intrinsics.height<< std::endl <<
+            cam_intrinsics.ppx<< std::endl <<
+            cam_intrinsics.ppy<< std::endl <<
+            cam_intrinsics.fx<< std::endl <<
+            cam_intrinsics.fy<< std::endl <<
+            cam_intrinsics.coeffs[0]<< "," << cam_intrinsics.coeffs[1]<< "," << cam_intrinsics.coeffs[2]<< "," << cam_intrinsics.coeffs[3]<< "," << cam_intrinsics.coeffs[4]
+        << std::endl ;
     }
 
     /*!

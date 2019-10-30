@@ -89,32 +89,43 @@ public:
 
         helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
         for (unsigned int i=0; i< output.size(); i++) {
-            vparams->drawTool()->drawSphere(output[i], 0.008);
+            vparams->drawTool()->drawSphere(output[i], 0.0032);
+//            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
         }
     }
 
 private :
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) {
+    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
         const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
         output.clear () ;
         for (defaulttype::Vec2i vec : input){
-            float dist = diststruct.frame[vec[0]*diststruct._width+vec[1]] ;
-            push_to_pointcloud(vec[0], vec[1], dist, diststruct, output) ;
+            size_t i = vec[0], j = vec[1] ;
+            if (depth_im.at<const uchar>(i, j) > 0) {
+            // deprojection
+                int index = static_cast<int>(i/downSample) * diststruct._width +
+                    static_cast<int>(j/downSample) ;
+                float dist = diststruct.frame[index] ;
+                push_to_pointcloud (i, j, dist, diststruct, output) ;
+            }
         }
         // the end
         d_output.endEdit();
     }
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
         const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
         output.clear () ;
         for (defaulttype::Vector2 vec : input) {
-            float dist = depth.get_distance(vec[1], vec[0]) ;
-            push_to_pointcloud (vec[0], vec[1], dist, diststruct, output) ;
+            size_t i = vec[0], j = vec[1] ;
+            if (depth_im.at<const uchar>(i, j) > 0) {
+                // deprojection
+                float dist = depth.get_distance(j, i) ;
+                push_to_pointcloud (i, j, dist, diststruct, output) ;
+            }
         }
         // the end
         d_output.endEdit();
@@ -130,8 +141,11 @@ private :
             point2d,
             dist
         );
-        diststruct.frame[i*diststruct._width+j] = dist ;
-        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(point3d[1], -point3d[2], -point3d[0]) ;
+        int downSample = d_downsampler.getValue(),
+            index = static_cast<int>(i/downSample) * diststruct._width +
+                static_cast<int>(j/downSample) ;
+        diststruct.frame[index] = dist ;
+        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(point3d[1], -point3d[0], -point3d[2]) ;
         output.push_back(deprojected_point) ;
     }
 
