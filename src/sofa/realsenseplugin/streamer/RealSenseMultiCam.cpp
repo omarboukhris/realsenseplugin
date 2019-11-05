@@ -33,13 +33,6 @@ namespace sofa
 namespace rgbdtracking
 {
 
-SOFA_DECL_CLASS (RealSenseMultiCam)
-// Register in the Factory
-
-int RealSenseMultiCamClass = core::RegisterObject ( "RealSenseMultiCam calibrates one or multiple realsense cameras" )
-    .add<RealSenseMultiCam>(true)
-;
-
 SOFA_DECL_CLASS (RealSenseVirtualCam)
 // Register in the Factory
 
@@ -47,6 +40,12 @@ int RealSenseVirtualCamClass = core::RegisterObject ( "RealSenseVirtualCam selec
     .add<RealSenseVirtualCam>(true)
 ;
 
+SOFA_DECL_CLASS (RealSenseMultiCam)
+// Register in the Factory
+
+int RealSenseMultiCamClass = core::RegisterObject ( "RealSenseMultiCam calibrates one or multiple realsense cameras" )
+    .add<RealSenseMultiCam>(true)
+;
 
 } // namespace rgbdtracking
 

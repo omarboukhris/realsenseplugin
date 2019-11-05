@@ -71,20 +71,37 @@ public :
     Data<opencvplugin::ImageData> d_color ;
     Data<opencvplugin::ImageData> d_depth ;
 
+    // path to intrinsics file
+    Data<std::string> d_intrinsics ;
+    DataCallback c_intrinsics ;
+
     Data<int> depthScale;
 
     rs2::video_frame *color ;
     rs2::depth_frame *depth ;
 
+    rs2_intrinsics cam_intrinsics ;
+
     RealSenseStreamer ()
         : Inherited()
         , d_color(initData(&d_color, "color", "RGB data image"))
         , d_depth(initData(&d_depth, "depth", "depth data image"))
+        , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
         , color(nullptr), depth(nullptr)
-    {}
+    {
+        c_intrinsics.addInput({&d_intrinsics});
+        c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
+    }
 
 protected :
+
+    void writeIntrinsicsToFile() {
+        if (depth == nullptr) return ;
+        cam_intrinsics = depth->get_profile().as<rs2::video_stream_profile>().get_intrinsics() ;
+        this->writeIntrinsics(d_intrinsics.getValue(), cam_intrinsics);
+    }
+
     void writeIntrinsics (std::string filename, const rs2_intrinsics &cam_intrinsics) {
         std::FILE* filestream = std::fopen(filename.c_str(), "wb") ;
         if (filestream == NULL) {

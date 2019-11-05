@@ -123,6 +123,13 @@ public :
      * to rs2_intrinsics cam_intrinsics
      */
     void readIntrinsics () {
+        if (l_rs_cam) {
+            std::cout << "(RealSenseProjectors) link to realsense cam is valid, " <<
+                         "intrinsics won't be read"
+                      << std::endl ;
+            return ;
+        }
+
         std::FILE* filestream = std::fopen(d_intrinsics.getValue().c_str(), "rb") ;
         if (filestream == NULL) {
             std::cout << "Check rights on " << d_intrinsics.getValue()
@@ -141,15 +148,16 @@ public :
         std::cout << "(RealSenseProjectors) successfully read intrinsics from file " <<
                      d_intrinsics.getValue() << std::endl ;
 
-        std::cout <<
-            cam_intrinsics.width << std::endl <<
-            cam_intrinsics.height<< std::endl <<
-            cam_intrinsics.ppx<< std::endl <<
-            cam_intrinsics.ppy<< std::endl <<
-            cam_intrinsics.fx<< std::endl <<
-            cam_intrinsics.fy<< std::endl <<
-            cam_intrinsics.coeffs[0]<< "," << cam_intrinsics.coeffs[1]<< "," << cam_intrinsics.coeffs[2]<< "," << cam_intrinsics.coeffs[3]<< "," << cam_intrinsics.coeffs[4]
-        << std::endl ;
+//      // for printing intrinsics
+//        std::cout <<
+//            cam_intrinsics.width << std::endl <<
+//            cam_intrinsics.height<< std::endl <<
+//            cam_intrinsics.ppx<< std::endl <<
+//            cam_intrinsics.ppy<< std::endl <<
+//            cam_intrinsics.fx<< std::endl <<
+//            cam_intrinsics.fy<< std::endl <<
+//            cam_intrinsics.coeffs[0]<< "," << cam_intrinsics.coeffs[1]<< "," << cam_intrinsics.coeffs[2]<< "," << cam_intrinsics.coeffs[3]<< "," << cam_intrinsics.coeffs[4]
+//        << std::endl ;
     }
 
     /*!

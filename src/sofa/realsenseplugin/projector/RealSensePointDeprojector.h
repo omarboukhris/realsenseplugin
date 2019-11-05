@@ -24,37 +24,6 @@
 ******************************************************************************/
 #pragma once
 
-//#include <CImgPlugin/CImgData.h>
-#include <sofa/defaulttype/Vec.h>
-#include <sofa/core/objectmodel/BaseObject.h>
-#include <sofa/core/objectmodel/DataFileName.h>
-#include <sofa/core/visual/VisualParams.h>
-#include <sofa/defaulttype/BoundingBox.h>
-#include <sofa/core/objectmodel/Event.h>
-#include <sofa/simulation/AnimateBeginEvent.h>
-#include <sofa/simulation/AnimateEndEvent.h>
-#include <sofa/defaulttype/Mat.h>
-#include <sofa/defaulttype/Quat.h>
-#include <sofa/helper/rmath.h>
-#include <sofa/helper/OptionsGroup.h>
-
-#include <librealsense2/rs.hpp>
-#include <librealsense2/rsutil.h>
-
-#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc.hpp>
-
-#include <fstream>
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <map>
-
-#include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/opencvplugin/utils/OpenCVMouseEvents.h>
-
-#include <sofa/realsenseplugin/streamer/RealSenseCam.h>
-#include <sofa/realsenseplugin/projector/RealSenseDistFrame.h>
 #include <sofa/realsenseplugin/projector/RealSenseAbstractProjector.h>
 
 namespace sofa {

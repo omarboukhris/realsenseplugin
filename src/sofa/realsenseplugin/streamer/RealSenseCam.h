@@ -50,10 +50,6 @@ public:
 
     Data<int> depthMode;
 
-    // RGBD image data
-//    Data<opencvplugin::ImageData> d_color ;
-//    Data<opencvplugin::ImageData> d_depth ;
-
     // path to intrinsics file
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
@@ -67,26 +63,14 @@ public:
     rs2::pointcloud pc ;
     rs2::points points ;
 
-//    rs2::video_frame *color ;
-//    rs2::depth_frame *depth ;
-
     // Declare RealSense pipeline, encapsulating the actual device and sensors
     rs2::pipeline pipe;
-    // Start streaming with default recommended configuration
 
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-//        , d_color(initData(&d_color, "color", "RGB data image"))
-//        , d_depth(initData(&d_depth, "depth", "depth data image"))
-        , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
     {
-        c_intrinsics.addInput({&d_intrinsics});
-        c_intrinsics.addCallback(std::bind(&RealSenseCam::writeIntrinsicsToFile, this));
-
         this->f_listening.setValue(true) ;
-        //color = nullptr ;
-        //depth = nullptr ;
     }
 
     ~RealSenseCam () {
@@ -96,36 +80,16 @@ public:
         initAlign();
     }
 
-    void writeIntrinsicsToFile() {
-        this->writeIntrinsics(d_intrinsics.getValue(), cam_intrinsics);
-    }
-
     void decodeImage(cv::Mat & /*img*/) {
         acquireAligned();
+        writeIntrinsicsToFile();
     }
 
 protected:
 
     void initAlign() {
-        //rs2::pipeline_profile selection =
         pipe.start();
-
-        rs2::frameset frameset = wait_for_frame(pipe);
-
-        // Trying to get both color and aligned depth frames
-        color = new rs2::video_frame(frameset.get_color_frame()) ;
-        depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
-
-        // fetch and save intrinsics to specified file
-        cam_intrinsics = depth->get_profile().as<rs2::video_stream_profile>().get_intrinsics() ;
-        writeIntrinsics(d_intrinsics.getValue().c_str(), cam_intrinsics);
-
-        // extract pointcloud
-        //getpointcloud(*color, *depth) ;
-
-        // Create depth and color image
-        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
-        d_color.endEdit(); d_depth.endEdit();
+        acquireAligned();
     }
 
     void acquireAligned() {
