@@ -82,6 +82,7 @@ public :
 
     Data<uchar> d_near_thr ;
     Data<uchar> d_far_thr ;
+    Data<defaulttype::Vec4i> d_rectangle ;
 
     DataCallback c_image_in ;
 
@@ -96,8 +97,11 @@ public :
         , d_depth_out(initData(&d_depth_out, "dout", "output data image"))
         , d_near_thr(initData(&d_near_thr, (uchar)200, "nearthr", "threshold value for near mask"))
         , d_far_thr(initData(&d_far_thr, (uchar)80, "farthr", "threshold value for far mask"))
+
+        , d_rectangle (initData(&d_rectangle, "rectangle", "ROI containing a segmented object. (x, y, width, height)"))
+
     {
-        c_image_in.addInputs({&d_image_in, &d_far_thr, &d_near_thr});
+        c_image_in.addInputs({&d_image_in, &d_far_thr, &d_near_thr, &d_rectangle});
         c_image_in.addCallback(std::bind(&RealSenseGrabCut::realsense_grabcut, this));
     }
 
@@ -141,7 +145,26 @@ public :
         mask.setTo(cv::GC_PR_FGD, near==255) ; // Set pixels within the "near" region to "foreground"
 
         // Run Grab-Cut algorithm:
-        cv::Mat bgModel, fgModel, color_mat = d_image_in.getValue(), depth_mat = d_depth_in.getValue() ;
+        cv::Mat bgModel, fgModel,
+            color_mat = d_image_in.getValue(),
+            depth_mat = d_depth_in.getValue() ;
+
+        // get ROI
+//        defaulttype::Vec4i & roi = *d_rectangle.beginEdit() ;
+//        cv::Rect2d rect ;
+//        if (roi[0] == 0 && roi[1] == 0 && roi[2] == 0 && roi[3] == 0) {
+//            // rect = cv::selectROI(color_mat);
+//            cv::namedWindow("rect") ;
+//            rect = opencvplugin::utils::mouseevents::rectangleDrawer(
+//                "rect", d_image_in.getValue()) ;
+//            roi[0] = rect.x ; roi[1] = rect.y ;
+//            roi[2] = rect.width ; roi[3] = rect.height ;
+//            std::cout << roi << std::endl ;
+//        } else {
+//            rect = cv::Rect2d(roi[0],roi[1],roi[2],roi[3]) ;
+//        }
+//        d_rectangle.endEdit();
+
         cv::grabCut(
             color_mat,
             mask,

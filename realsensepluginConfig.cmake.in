@@ -13,4 +13,4 @@ endif()
 check_required_components(${PROJECT})
 
 set(${PROJECT} "${PROJECT}")
-set_and_check(${PROJECT}_INCLUDE_DIRS "@${PROJECT}_INCLUDE_DIRS@")
+#set_and_check(${PROJECT}_INCLUDE_DIRS "@${PROJECT}_INCLUDE_DIRS@")

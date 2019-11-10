@@ -17,6 +17,7 @@ add_definitions(${PCL_DEFINITIONS})
 find_package(Boost 1.58 COMPONENTS system filesystem REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(OpenCVPlugin REQUIRED)
+find_package(PCLPlugin REQUIRED)
 
 #set(ALL_LIBRARIES ${OpenCV_LIBS})
 
@@ -46,36 +47,6 @@ file(GLOB_RECURSE DEPRECATED_FILES
 	"deprecated/*.inl"
 	"deprecated/*.cpp"
 )
-
-#set(HEADER_FILES
-#	src/sofa/realsenseplugin/streamer/RealSenseCam.h
-#	src/sofa/realsenseplugin/streamer/RealSenseStreamer.h
-#	src/sofa/realsenseplugin/streamer/RealSenseMultiCam.h
-##	src/sofa/realsenseplugin/streamer/RealSenseFakeCam.h
-
-#	src/sofa/realsenseplugin/RealSenseDeprojector.h
-#	src/sofa/realsenseplugin/RealSensePointDeprojector.h
-#	src/sofa/realsenseplugin/RealSenseGrabCut.h
-#	src/sofa/realsenseplugin/RealSenseDistFrame.h
-#	src/sofa/realsenseplugin/RealSenseCalibrator.h
-
-#	src/sofa/realsenseplugin/cv-helpers.hpp
-#)
-
-#set(SOURCE_FILES
-#	src/sofa/realsenseplugin/streamer/RealSenseCam.cpp
-#	src/sofa/realsenseplugin/streamer/RealSenseStreamer.cpp
-#	src/sofa/realsenseplugin/streamer/RealSenseMultiCam.cpp
-##	src/sofa/realsenseplugin/streamer/RealSenseFakeCam.cpp
-
-#	src/sofa/realsenseplugin/RealSenseDeprojector.cpp
-#	src/sofa/realsenseplugin/RealSensePointDeprojector.cpp
-#	src/sofa/realsenseplugin/RealSenseGrabCut.cpp
-#	src/sofa/realsenseplugin/RealSenseDistFrame.cpp
-#	src/sofa/realsenseplugin/RealSenseCalibrator.cpp
-
-#	src/sofa/realsenseplugin/initPlugin.cpp
-#)
 
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2")
@@ -108,7 +79,7 @@ target_link_libraries(
 	${PCL_LIBRARIES}
 	${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY}
 	${realsense2_LIBRARY}
-	CImgPlugin OpenCVPlugin
+	CImgPlugin OpenCVPlugin PCLPlugin
 	SofaGuiQt
 	SofaMeshCollision SofaMiscCollision SofaBaseCollision
 	SofaGuiCommon SofaBaseVisual

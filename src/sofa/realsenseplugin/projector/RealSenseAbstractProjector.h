@@ -60,6 +60,7 @@
 
 // external plugins
 #include <sofa/opencvplugin/OpenCVWidget.h>
+#include <sofa/PCLPlugin/PointCloudData.h>
 
 #include <sofa/realsenseplugin/streamer/RealSenseCam.h>
 #include <sofa/realsenseplugin/projector/RealSenseDistFrame.h>
@@ -75,6 +76,7 @@ public :
 
     Data<opencvplugin::ImageData> d_depth ;
     Data<helper::vector<defaulttype::Vector3> > d_output ;
+    Data <pointcloud::PointCloudData> d_outpcl ;
 
     // distance frame for offline reco
     Data<RealSenseDistFrame> d_distframe ;
@@ -99,6 +101,7 @@ public :
         : Inherited()
         , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
         , d_output(initData(&d_output, "output", "output 3D position"))
+        , d_outpcl(initData(&d_outpcl, "outpcl", "output pcl PointCloud"))
         // offline reco
         , d_distframe(initData(&d_distframe, "distframe", "frame encoding pixel's distance from camera. used for offline deprojection"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to realsense intrinsics file to read from"))
@@ -171,6 +174,7 @@ public :
         } else {
             deproject_image_online();
         }
+        d_outpcl.setValue(m_pointcloud);
     }
 
     /*!
@@ -213,6 +217,7 @@ public :
         ] ;
         m_pointcloud->clear();
         writeOnlineToOutput(depth, diststruct, depth_im, downSample);
+        d_distframe.endEdit() ;
     }
 private :
     /// \brief write to output sofa data

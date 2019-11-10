@@ -70,19 +70,12 @@ public:
             return ;
         }
 
-        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
-        outpoints.clear() ;
-        for (const auto & pt : *m_pointcloud) {
+        for (const auto & pt : *(d_outpcl.getValue().getPointCloud())) {
             defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
             vparams->drawTool()->drawPoint(
                 point, sofa::defaulttype::Vector4 (0, 0, 255, 0)
             );
-            outpoints.push_back(point) ;
-            // vparams->drawTool()->drawSphere(
-            //    defaulttype::Vector3(pt.x, pt.y, pt.z),
-            //    0.004);
         }
-        d_output.endEdit();
     }
 
     void handleEvent(sofa::core::objectmodel::Event *event) {
@@ -152,32 +145,37 @@ private :
     }
 
     virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
+        outpoints.clear() ;
         m_pointcloud->clear();
         for (size_t i = 0 ; i < diststruct._height ; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > 0) {
                     // deprojection
                     float dist = diststruct.frame[i*diststruct._width+j] ;
-                    push_to_pointcloud(j, diststruct, downSample, i, dist);
+                    push_to_pointcloud(outpoints, j, diststruct, downSample, i, dist);
                 }
             }
         }
+        d_output.endEdit();
     }
 
     virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
+        outpoints.clear() ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > 0) {
                     // deprojection
                     float dist = depth.get_distance(downSample*j, downSample*i) ;
-                    push_to_pointcloud(j, diststruct, downSample, i, dist);
+                    push_to_pointcloud(outpoints, j, diststruct, downSample, i, dist);
                 }
             }
         }
-        d_distframe.endEdit();
+        d_output.endEdit();
     }
 
-    void push_to_pointcloud(size_t j, RealSenseDistFrame::RealSenseDistStruct& diststruct, int downSample, size_t i, float dist)
+    void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t j, RealSenseDistFrame::RealSenseDistStruct& diststruct, int downSample, size_t i, float dist)
     {
         float
             point3d[3] = {0.f, 0.f, 0.f},
@@ -188,13 +186,15 @@ private :
             point2d,
             dist
         );
-        // set
+        // set dist frame for exportation if needed
         diststruct.frame[i*diststruct._width+j] = dist ;
+
         // set units // switch comments for alignment
-        //pcl::PointXYZ pclpoint = pcl::PointXYZ(-point3d[1], -point3d[0], -point3d[2]) ;
-        pcl::PointXYZ pclpoint = pcl::PointXYZ(point3d[1], -point3d[0], -point3d[2]) ;
-        // add units to result
-        m_pointcloud->push_back(pclpoint);
+        pcl::PointXYZ pt = pcl::PointXYZ(point3d[1], -point3d[0], -point3d[2]) ;
+        m_pointcloud->push_back(pt);
+
+        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
+        outpoints.push_back(point) ;
     }
 
     void compute_pcl_normals () {
