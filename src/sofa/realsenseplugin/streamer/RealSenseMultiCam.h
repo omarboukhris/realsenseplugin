@@ -39,64 +39,12 @@ namespace sofa
 namespace rgbdtracking
 {
 
-using namespace cimg_library;
-using defaulttype::Vec;
-using defaulttype::Vector3;
-
-using namespace std;
-using namespace cv;
-using namespace boost;
-
-class RealSenseVirtualCam : public RealSenseStreamer {
-public:
-    typedef RealSenseStreamer Inherited;
-    SOFA_CLASS( RealSenseVirtualCam , Inherited);
-
-    rs2::pipeline * pipe ;
-
-    // path to intrinsics file
-    Data<std::string> d_intrinsics ;
-    DataCallback c_intrinsics ;
-
-    RealSenseVirtualCam()
-        : Inherited(), pipe(nullptr)
-    {}
-
-    RealSenseVirtualCam(rs2::pipeline * pipe_param, std::string name)
-        : Inherited(), pipe (pipe_param)
-    {
-        this->setName(name);
-        this->f_listening.setValue(true);
-        init() ;
-    }
-
-    void init() {
-        cv::Mat placeholder ;
-        decodeImage(placeholder);
-        writeIntrinsicsToFile();
-    }
-
-    void decodeImage(cv::Mat & /*img*/) {
-        rs2::frameset frameset = wait_for_frame(*pipe) ;
-        if (color) delete color ;
-        if (depth) delete depth ;
-        color = new rs2::video_frame (frameset.get_color_frame()) ;
-        depth = new rs2::depth_frame (frameset.get_depth_frame()) ;
-        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
-        d_color.endEdit(); d_depth.endEdit();
-    }
-
-} ;
-
-
 class RealSenseMultiCam : public core::objectmodel::BaseObject {
 public:
     typedef core::objectmodel::BaseObject Inherited;
     SOFA_CLASS( RealSenseMultiCam , Inherited);
 
-    std::vector<rs2::pipeline> pipelines ;
-
-    std::vector<RealSenseVirtualCam::SPtr> realsense_cams ;
+    std::vector<rs2::pipeline*> pipelines ;
 
     RealSenseMultiCam()
         : Inherited()
@@ -105,14 +53,7 @@ public:
         preparePipes();
     }
 
-protected:
     void preparePipes () {
-        // this method should be called onl once at most
-//        static bool once = false ;
-//        if (once) {
-//            return ;
-//        }
-//        once = true ;
         pipelines.clear();
         rs2::context ctx ;
         for (auto && device : ctx.query_devices()) {
@@ -120,24 +61,69 @@ protected:
             rs2::config cfg ;
             cfg.enable_device(device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
             pipe.start(cfg) ;
-            pipelines.push_back(pipe) ;
-            addRealsenseObject(pipe, device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+            pipelines.push_back(&pipe) ;
         }
     }
 
-    void addRealsenseObject(rs2::pipeline & pipe, const char * serialnum) {
-        std::string name = std::string("realsense-") + std::string(serialnum) ;
-        std::cout << name << std::endl ;
-        RealSenseVirtualCam* realsense_cam = new RealSenseVirtualCam(&pipe, name) ;
-        opencvplugin::scheduler::OpenCVScheduler* sched = new opencvplugin::scheduler::OpenCVScheduler() ;
-        sched->l_streamer.add(realsense_cam) ;
-        // get ptr on parent node and create opencvScheduler
-        // then link streamer on created realsense virtual cam
-//        simulation::Node* parentNode = static_cast<simulation::Node*>(this->getContext()) ;
-//        parentNode->addObject(realsense_cam) ;
-//        parentNode->addObject(sched) ;
-        // push to list (if ever needed)
-        realsense_cams.push_back(realsense_cam);
+} ;
+
+
+class RealSenseVirtualCam : public RealSenseStreamer {
+public:
+    typedef RealSenseStreamer Inherited;
+    SOFA_CLASS( RealSenseVirtualCam , Inherited);
+
+    rs2::pipeline * pipe ;
+
+    Data<int> d_camindex ;
+
+    core::objectmodel::SingleLink<
+        RealSenseVirtualCam,
+        RealSenseMultiCam,
+        BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
+    > l_rs_cam ; //for intrinsics
+
+    RealSenseVirtualCam()
+        : Inherited(), pipe(nullptr)
+        , d_camindex(initData(&d_camindex, 0, "camid", "camera id"))
+        , l_rs_cam(initLink("rsmulticam", "link to RealSenseMulticam"))
+    {
+        setupPipe();
+    }
+
+    void setupPipe() {
+        if (!l_rs_cam) {
+            std::cerr << "(RealSenseVirtualCam) link to multicam invalid" << std::endl ;
+            return ;
+        }
+        std::cout << "(RealSenseVirtualCam) link to multicam is valid" << std::endl ;
+        l_rs_cam->preparePipes() ;
+        std::vector<rs2::pipeline*> & pipelines = l_rs_cam->pipelines ;
+        int camid = d_camindex.getValue() ;
+        if (camid >= pipelines.size()) {
+            std::cerr << "(RealSenseVirtualCam) invalid cam id : "
+                      << camid << " not in [0.."
+                      << pipelines.size() << "]"
+                      << std::endl ;
+            return ;
+        }
+        std::cout << "(RealSenseVirtualCam) cam id is valid" << std::endl ;
+        pipe = pipelines.at(camid) ;
+        std::cout << "(RealSenseVirtualCam) pipe is set" << std::endl ;
+    }
+
+    void decodeImage(cv::Mat & /*img*/) {
+        if (pipe == nullptr) {
+            setupPipe();
+            return ;
+        }
+        rs2::frameset frameset = wait_for_frame(*pipe) ;
+        if (color) delete color ;
+        if (depth) delete depth ;
+        color = new rs2::video_frame (frameset.get_color_frame()) ;
+        depth = new rs2::depth_frame (frameset.get_depth_frame()) ;
+        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
+        d_color.endEdit(); d_depth.endEdit();
     }
 
 } ;

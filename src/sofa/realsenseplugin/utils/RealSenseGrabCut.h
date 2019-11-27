@@ -80,8 +80,8 @@ public :
     Data<opencvplugin::ImageData> d_depth_in ;
     Data<opencvplugin::ImageData> d_depth_out ;
 
-    Data<uchar> d_near_thr ;
-    Data<uchar> d_far_thr ;
+    Data<int> d_near_thr ;
+    Data<int> d_far_thr ;
     Data<defaulttype::Vec4i> d_rectangle ;
 
     DataCallback c_image_in ;
@@ -95,8 +95,8 @@ public :
         , d_image_out(initData(&d_image_out, "out", "output data image"))
         , d_depth_in(initData(&d_depth_in, "din", "input data image"))
         , d_depth_out(initData(&d_depth_out, "dout", "output data image"))
-        , d_near_thr(initData(&d_near_thr, (uchar)200, "nearthr", "threshold value for near mask"))
-        , d_far_thr(initData(&d_far_thr, (uchar)80, "farthr", "threshold value for far mask"))
+        , d_near_thr(initData(&d_near_thr, 200, "nearthr", "threshold value for near mask"))
+        , d_far_thr(initData(&d_far_thr, 80, "farthr", "threshold value for far mask"))
 
         , d_rectangle (initData(&d_rectangle, "rectangle", "ROI containing a segmented object. (x, y, width, height)"))
 

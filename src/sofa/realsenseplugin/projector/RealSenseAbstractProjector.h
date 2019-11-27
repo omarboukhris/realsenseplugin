@@ -85,6 +85,7 @@ public :
     DataCallback c_intrinsics ;
 
     // downsampling and visualization
+    Data<opencvplugin::TrackBar2> d_minmax ;
     Data<int> d_downsampler ;
     Data<bool> d_drawpcl ;
 
@@ -106,6 +107,7 @@ public :
         , d_distframe(initData(&d_distframe, "distframe", "frame encoding pixel's distance from camera. used for offline deprojection"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to realsense intrinsics file to read from"))
         // visualization
+        , d_minmax (initData(&d_minmax, opencvplugin::TrackBar2(helper::fixed_array<double,2>(0, 255)),"minmax", "depth value filter"))
         , d_downsampler(initData(&d_downsampler, 5, "downsample", "point cloud downsampling"))
         , d_drawpcl(initData(&d_drawpcl, false, "drawpcl", "true if you want to draw the point cloud"))
         // link to realsense for online reco
@@ -174,6 +176,7 @@ public :
         } else {
             deproject_image_online();
         }
+        // set pointcloud to output
         d_outpcl.setValue(m_pointcloud);
     }
 

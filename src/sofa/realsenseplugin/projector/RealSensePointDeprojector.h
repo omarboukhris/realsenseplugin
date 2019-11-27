@@ -71,12 +71,13 @@ private :
         output.clear () ;
         for (defaulttype::Vec2i vec : input){
             size_t i = vec[0], j = vec[1] ;
-            if (depth_im.at<const uchar>(i, j) > 0) {
+            if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
+                depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
             // deprojection
                 int index = static_cast<int>(i/downSample) * diststruct._width +
                     static_cast<int>(j/downSample) ;
                 float dist = diststruct.frame[index] ;
-                push_to_pointcloud (i, j, dist, diststruct, output) ;
+                push_to_pointcloud (i, j, index, dist, diststruct, output) ;
             }
         }
         // the end
@@ -89,18 +90,39 @@ private :
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
         output.clear () ;
         for (defaulttype::Vector2 vec : input) {
-            size_t i = vec[0], j = vec[1] ;
-            if (depth_im.at<const uchar>(i, j) > 0) {
+            size_t i = vec[1], j = vec[0] ;
+            if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
+                depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
                 // deprojection
                 float dist = depth.get_distance(j, i) ;
-                push_to_pointcloud (i, j, dist, diststruct, output) ;
+                int index = static_cast<int>(i/downSample) * diststruct._width +
+                    static_cast<int>(j/downSample) ;
+                push_to_pointcloud (i, j, index, dist, diststruct, output) ;
             }
         }
         // the end
         d_output.endEdit();
+
+        //export pos to txt
+        static int i = 0 ; // frame num
+        std::string ss = std::to_string(i) + "\t" ;
+        for (const auto & point : output) {
+            ss += std::to_string(point[0]) + " " + std::to_string(point[1]) + " " + std::to_string(point[2]) + "\t" ;
+        }
+        i ++ ;
+        ss += "\n" ;
+        if (i == 1) {
+            std::ofstream ff ("/home/omar/Data/SergeiExp/node_x.txt", std::ofstream::out) ;
+            ff << ss ;
+            ff.close();
+        } else {
+            std::ofstream ff ("/home/omar/Data/SergeiExp/node_x.txt", std::ofstream::app) ;
+            ff << ss ;
+            ff.close();
+        }
     }
 
-    void push_to_pointcloud (int i, int j, float dist, RealSenseDistFrame::RealSenseDistStruct & diststruct, helper::vector<defaulttype::Vector3> & output) {
+    void push_to_pointcloud (int i, int j, int index, float dist, RealSenseDistFrame::RealSenseDistStruct & diststruct, helper::vector<defaulttype::Vector3> & output) {
         float
             point3d[3] = {0.f, 0.f, 0.f},
             point2d[2] = {i, j};
@@ -110,11 +132,12 @@ private :
             point2d,
             dist
         );
-        int downSample = d_downsampler.getValue(),
-            index = static_cast<int>(i/downSample) * diststruct._width +
-                static_cast<int>(j/downSample) ;
         diststruct.frame[index] = dist ;
-        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(point3d[1], -point3d[0], -point3d[2]) ;
+
+        pcl::PointXYZ pt = pcl::PointXYZ(point3d[1], -point3d[0], -point3d[2]) ;
+        m_pointcloud->push_back(pt);
+
+        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
         output.push_back(deprojected_point) ;
     }
 

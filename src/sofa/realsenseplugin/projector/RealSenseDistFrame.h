@@ -230,9 +230,14 @@ public:
     }
 
     void readFrame () {
-        updateFileStream();
+//        updateFileStream();
         if (filestream == nullptr) {
-            std::cerr << "stream is unopened. check stream state before passing to function" << std::endl ;
+            std::cerr << "(RealSenseDistFrameStreamer) stream is unopened. check stream state before passing to function" << std::endl ;
+            return ;
+        }
+
+        if (std::feof(filestream)) {
+            std::cout << "(RealSenseDistFrameStreamer) End of dist file reached" << std::endl ;
             return ;
         }
 

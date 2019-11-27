@@ -150,13 +150,16 @@ private :
         m_pointcloud->clear();
         for (size_t i = 0 ; i < diststruct._height ; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
-                if (depth_im.at<const uchar>(downSample*i,downSample*j) > 0) {
+                if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
+                    depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1]
+                ) {
                     // deprojection
                     float dist = diststruct.frame[i*diststruct._width+j] ;
                     push_to_pointcloud(outpoints, j, diststruct, downSample, i, dist);
                 }
             }
         }
+        std::cout << outpoints.size() << std::endl ;
         d_output.endEdit();
     }
 
@@ -165,7 +168,9 @@ private :
         outpoints.clear() ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
-                if (depth_im.at<const uchar>(downSample*i,downSample*j) > 0) {
+                if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
+                    depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1]
+                ) {
                     // deprojection
                     float dist = depth.get_distance(downSample*j, downSample*i) ;
                     push_to_pointcloud(outpoints, j, diststruct, downSample, i, dist);
