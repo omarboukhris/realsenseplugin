@@ -39,91 +39,92 @@ namespace sofa
 namespace rgbdtracking
 {
 
-class RealSenseMultiCam : public core::objectmodel::BaseObject {
-public:
-    typedef core::objectmodel::BaseObject Inherited;
-    SOFA_CLASS( RealSenseMultiCam , Inherited);
-
-    std::vector<rs2::pipeline*> pipelines ;
-
-    RealSenseMultiCam()
-        : Inherited()
-        , pipelines()
-    {
-        preparePipes();
-    }
-
-    void preparePipes () {
-        pipelines.clear();
-        rs2::context ctx ;
-        for (auto && device : ctx.query_devices()) {
-            rs2::pipeline pipe (ctx) ;
-            rs2::config cfg ;
-            cfg.enable_device(device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
-            pipe.start(cfg) ;
-            pipelines.push_back(&pipe) ;
-        }
-    }
-
-} ;
-
 
 class RealSenseVirtualCam : public RealSenseStreamer {
 public:
     typedef RealSenseStreamer Inherited;
     SOFA_CLASS( RealSenseVirtualCam , Inherited);
 
-    rs2::pipeline * pipe ;
+    rs2::pipeline pipe ;
 
-    Data<int> d_camindex ;
-
-    core::objectmodel::SingleLink<
-        RealSenseVirtualCam,
-        RealSenseMultiCam,
-        BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
-    > l_rs_cam ; //for intrinsics
+    std::string serial ;
 
     RealSenseVirtualCam()
-        : Inherited(), pipe(nullptr)
-        , d_camindex(initData(&d_camindex, 0, "camid", "camera id"))
-        , l_rs_cam(initLink("rsmulticam", "link to RealSenseMulticam"))
+        : Inherited()
+    {}
+
+    RealSenseVirtualCam(std::string serialnum)
+        : Inherited()
+        , serial(serialnum)
     {
-        setupPipe();
     }
 
-    void setupPipe() {
-        if (!l_rs_cam) {
-            std::cerr << "(RealSenseVirtualCam) link to multicam invalid" << std::endl ;
+    void init() {
+        if (serial.empty()) {
+            std::cout << "(RealSenseVirtualCam) cam id is invalid" << std::endl ;
             return ;
         }
-        std::cout << "(RealSenseVirtualCam) link to multicam is valid" << std::endl ;
-        l_rs_cam->preparePipes() ;
-        std::vector<rs2::pipeline*> & pipelines = l_rs_cam->pipelines ;
-        int camid = d_camindex.getValue() ;
-        if (camid >= pipelines.size()) {
-            std::cerr << "(RealSenseVirtualCam) invalid cam id : "
-                      << camid << " not in [0.."
-                      << pipelines.size() << "]"
-                      << std::endl ;
-            return ;
-        }
-        std::cout << "(RealSenseVirtualCam) cam id is valid" << std::endl ;
-        pipe = pipelines.at(camid) ;
-        std::cout << "(RealSenseVirtualCam) pipe is set" << std::endl ;
+        rs2::config cfg ;
+        cfg.enable_device(serial);
+        pipe.start(cfg) ;
     }
 
     void decodeImage(cv::Mat & /*img*/) {
-        if (pipe == nullptr) {
-            setupPipe();
-            return ;
-        }
-        rs2::frameset frameset = wait_for_frame(*pipe) ;
+        rs2::frameset frameset = wait_for_frame(pipe) ;
+
         if (color) delete color ;
         if (depth) delete depth ;
         color = new rs2::video_frame (frameset.get_color_frame()) ;
         depth = new rs2::depth_frame (frameset.get_depth_frame()) ;
+
         frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
         d_color.endEdit(); d_depth.endEdit();
+    }
+
+} ;
+
+class RealSenseMultiCam : public core::objectmodel::BaseObject {
+public:
+    typedef core::objectmodel::BaseObject Inherited;
+    SOFA_CLASS( RealSenseMultiCam , Inherited);
+
+    RealSenseMultiCam()
+        : Inherited()
+    {
+    }
+
+    std::vector<std::string> listSerialNum()
+    {
+        std::vector<std::string> serial_list ;
+        serial_list.clear();
+        rs2::context ctx ;
+        for (auto && device : ctx.query_devices()) {
+            serial_list.push_back(device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+        }
+        return serial_list ;
+    }
+
+    void init () {
+        auto serial_list = listSerialNum();
+
+        core::objectmodel::BaseContext::SPtr context = this->getContext() ;
+
+        size_t i = 0 ;
+        for (std::string serial : serial_list) {
+            add_realsenseCam(context, serial, ++i);
+        }
+    }
+
+    void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, std::string serial, size_t i) {
+        RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;
+        rs_vcam->setName(std::string("RSCam_") + std::to_string(i));
+        node->addObject(rs_vcam) ;
+
+        using namespace opencvplugin::scheduler ;
+        OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
+        scheduler->addStreamer (rs_vcam) ;
+        node->addObject(scheduler) ;
+
     }
 
 } ;

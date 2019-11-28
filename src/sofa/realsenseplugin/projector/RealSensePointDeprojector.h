@@ -77,7 +77,7 @@ private :
                 int index = static_cast<int>(i/downSample) * diststruct._width +
                     static_cast<int>(j/downSample) ;
                 float dist = diststruct.frame[index] ;
-                push_to_pointcloud (i, j, index, dist, diststruct, output) ;
+                push_to_pointcloud (output, i, j, index, diststruct, dist) ;
             }
         }
         // the end
@@ -97,32 +97,14 @@ private :
                 float dist = depth.get_distance(j, i) ;
                 int index = static_cast<int>(i/downSample) * diststruct._width +
                     static_cast<int>(j/downSample) ;
-                push_to_pointcloud (i, j, index, dist, diststruct, output) ;
+                push_to_pointcloud (output, i, j, index, diststruct, dist) ;
             }
         }
         // the end
         d_output.endEdit();
-
-        //export pos to txt
-        static int i = 0 ; // frame num
-        std::string ss = std::to_string(i) + "\t" ;
-        for (const auto & point : output) {
-            ss += std::to_string(point[0]) + " " + std::to_string(point[1]) + " " + std::to_string(point[2]) + "\t" ;
-        }
-        i ++ ;
-        ss += "\n" ;
-        if (i == 1) {
-            std::ofstream ff ("/home/omar/Data/SergeiExp/node_x.txt", std::ofstream::out) ;
-            ff << ss ;
-            ff.close();
-        } else {
-            std::ofstream ff ("/home/omar/Data/SergeiExp/node_x.txt", std::ofstream::app) ;
-            ff << ss ;
-            ff.close();
-        }
     }
 
-    void push_to_pointcloud (int i, int j, int index, float dist, RealSenseDistFrame::RealSenseDistStruct & diststruct, helper::vector<defaulttype::Vector3> & output) {
+    void push_to_pointcloud (helper::vector<defaulttype::Vector3> & output, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct & diststruct, float dist) {
         float
             point3d[3] = {0.f, 0.f, 0.f},
             point2d[2] = {i, j};

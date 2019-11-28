@@ -80,7 +80,7 @@ private :
                 ) {
                 // deprojection
                     float dist = diststruct.frame[i*diststruct._width+j] ;
-                    push_to_pointcloud (i, j, dist, diststruct, output) ;
+                    push_to_pointcloud (output, i, j, diststruct, dist) ;
                 }
             }
         }
@@ -103,7 +103,7 @@ private :
                 ) {
                     // deprojection
                     float dist = depth.get_distance(downSample*j, downSample*i) ;
-                    push_to_pointcloud (i, j, dist, diststruct, output) ;
+                    push_to_pointcloud (output, i, j, diststruct, dist) ;
                 }
             }
         }
@@ -111,7 +111,7 @@ private :
         d_output.endEdit();
     }
 
-    void push_to_pointcloud (int i, int j, float dist, RealSenseDistFrame::RealSenseDistStruct & diststruct, helper::vector<defaulttype::Vector3> & output) {
+    void push_to_pointcloud (helper::vector<defaulttype::Vector3> & output, size_t i, size_t j, RealSenseDistFrame::RealSenseDistStruct & diststruct, float dist) {
         int downSample = d_downsampler.getValue() ;
         float
             point3d[3] = {0.f, 0.f, 0.f},
