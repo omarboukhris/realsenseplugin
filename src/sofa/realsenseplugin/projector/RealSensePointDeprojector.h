@@ -50,19 +50,6 @@ public:
     virtual ~RealSensePointDeprojector () {
     }
 
-    void draw(const core::visual::VisualParams* vparams) {
-        if (!d_drawpcl.getValue()) {
-        // don't draw point cloud
-            return ;
-        }
-
-        helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
-        for (unsigned int i=0; i< output.size(); i++) {
-            vparams->drawTool()->drawSphere(output[i], 0.0032);
-//            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
-        }
-    }
-
 private :
     virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
@@ -90,7 +77,7 @@ private :
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
         output.clear () ;
         for (defaulttype::Vector2 vec : input) {
-            size_t i = vec[1], j = vec[0] ;
+            size_t i = vec[0], j = vec[1] ;
             if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
                 depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
                 // deprojection
@@ -102,25 +89,6 @@ private :
         }
         // the end
         d_output.endEdit();
-    }
-
-    void push_to_pointcloud (helper::vector<defaulttype::Vector3> & output, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct & diststruct, float dist) {
-        float
-            point3d[3] = {0.f, 0.f, 0.f},
-            point2d[2] = {i, j};
-        rs2_deproject_pixel_to_point(
-            point3d,
-            &cam_intrinsics,
-            point2d,
-            dist
-        );
-        diststruct.frame[index] = dist ;
-
-        pcl::PointXYZ pt = pcl::PointXYZ(point3d[1], -point3d[0], -point3d[2]) ;
-        m_pointcloud->push_back(pt);
-
-        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
-        output.push_back(deprojected_point) ;
     }
 
 };

@@ -14,7 +14,7 @@ include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-find_package(Boost 1.58 COMPONENTS system filesystem REQUIRED)
+#find_package(Boost 1.59 COMPONENTS system filesystem REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(OpenCVPlugin REQUIRED)
 find_package(PCLPlugin REQUIRED)
@@ -77,7 +77,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${REALSENSEPLUGIN_VERSI
 target_link_libraries(
 	${PROJECT_NAME}
 	${PCL_LIBRARIES}
-	${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY}
+#	${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY}
 	${realsense2_LIBRARY}
 	CImgPlugin OpenCVPlugin PCLPlugin
 	SofaGuiQt

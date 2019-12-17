@@ -28,6 +28,7 @@
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/core/objectmodel/BaseObject.h>
 #include <sofa/core/objectmodel/DataFileName.h>
+#include <sofa/core/objectmodel/MouseEvent.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/BoundingBox.h>
 #include <sofa/core/objectmodel/Event.h>
@@ -75,8 +76,12 @@ public :
     typedef core::objectmodel::BaseObject Inherited;
 
     Data<opencvplugin::ImageData> d_depth ;
+    Data<defaulttype::Vector3> d_tr_offset ;
     Data<helper::vector<defaulttype::Vector3> > d_output ;
     Data <pointcloud::PointCloudData> d_outpcl ;
+
+    Data<opencvplugin::TrackBar1> d_scale ;
+    DataCallback c_scale ;
 
     // distance frame for offline reco
     Data<RealSenseDistFrame> d_distframe ;
@@ -101,8 +106,10 @@ public :
     RealSenseAbstractDeprojector()
         : Inherited()
         , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
+        , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0.1, -0.1, 0.5), "offset", "translation offset"))
         , d_output(initData(&d_output, "output", "output 3D position"))
         , d_outpcl(initData(&d_outpcl, "outpcl", "output pcl PointCloud"))
+        , d_scale(initData(&d_scale, opencvplugin::TrackBar1(200, 2550, 1), "scale", "point cloud scaling factor"))
         // offline reco
         , d_distframe(initData(&d_distframe, "distframe", "frame encoding pixel's distance from camera. used for offline deprojection"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to realsense intrinsics file to read from"))
@@ -116,6 +123,8 @@ public :
     {
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseAbstractDeprojector::readIntrinsics, this));
+        c_scale.addInputs({&d_scale, &d_tr_offset}) ;
+        c_scale.addCallback(std::bind(&RealSenseAbstractDeprojector::deproject_image, this));
         this->f_listening.setValue(true) ;
     }
 
@@ -222,6 +231,65 @@ public :
         writeOnlineToOutput(depth, diststruct, depth_im, downSample);
         d_distframe.endEdit() ;
     }
+
+    void draw(const core::visual::VisualParams* vparams) {
+        if (!d_drawpcl.getValue()) {
+        // don't draw point cloud
+            return ;
+        }
+
+        helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
+        for (unsigned int i=0; i< output.size(); i++) {
+            vparams->drawTool()->drawSphere(output[i], 0.0032);
+//            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
+        }
+    }
+    void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
+    {
+        float
+            point3d[3] = {0.f, 0.f, 0.f},
+            point2d[2] = {i, j};
+        rs2_deproject_pixel_to_point(
+            point3d,
+            &cam_intrinsics,
+            point2d,
+            dist
+        );
+        // set dist frame for exportation if needed
+        diststruct.frame[index] = dist ;
+
+        // set units // switch comments for alignment
+        pcl::PointXYZ pt = scalePoint(point3d) ;
+        m_pointcloud->push_back(pt);
+
+        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
+        outpoints.push_back(point) ;
+    }
+
+    inline pcl::PointXYZ scalePoint (float * point3d) {
+        float scale = (float)d_scale.getValue()/100.f ;
+        defaulttype::Vector3 tr = d_tr_offset.getValue() ;
+        return pcl::PointXYZ(
+            scale*point3d[0]+tr[0],
+            scale*point3d[1]+tr[1],
+            -scale*point3d[2]+tr[2]
+        ) ;
+    }
+    void handleEvent(sofa::core::objectmodel::Event *event) {
+        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
+            if (ev->getKey() == 'b' || ev->getKey() == 'B') {
+                f_listening.setValue(false);
+            }
+        }
+        if (sofa::core::objectmodel::MouseEvent * ev = dynamic_cast<sofa::core::objectmodel::MouseEvent*>(event)){
+            if (ev->getState() == sofa::core::objectmodel::MouseEvent::LeftPressed) {
+                std::cout << ev->getPosX() << " " << ev->getPosY() << std::endl ;
+            } else if (ev->getState() == sofa::core::objectmodel::MouseEvent::Wheel) {
+                std::cout << ev->getWheelDelta() << std::endl ;
+            }
+        }
+    }
+
 private :
     /// \brief write to output sofa data
     virtual void writeOfflineToOutput (
@@ -233,6 +301,8 @@ private :
         RealSenseDistFrame::RealSenseDistStruct & diststruct,
         const cv::Mat & depth_im,
         int downSample) = 0 ;
+
+
 } ;
 
 }

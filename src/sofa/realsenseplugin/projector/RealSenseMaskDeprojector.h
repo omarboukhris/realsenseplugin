@@ -50,19 +50,6 @@ public:
     virtual ~RealSenseMaskDeprojector () {
     }
 
-    void draw(const core::visual::VisualParams* vparams) {
-        if (!d_drawpcl.getValue()) {
-        // don't draw point cloud
-            return ;
-        }
-
-        helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
-        for (unsigned int i=0; i< output.size(); i++) {
-            vparams->drawTool()->drawSphere(output[i], 0.0032);
-//            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
-        }
-    }
-
 private :
     virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
@@ -70,8 +57,8 @@ private :
         cv::Mat input ;
         d_input.getValue().getImage().copyTo(input);
         cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
+        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
+        outpoints.clear () ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
@@ -80,7 +67,8 @@ private :
                 ) {
                 // deprojection
                     float dist = diststruct.frame[i*diststruct._width+j] ;
-                    push_to_pointcloud (output, i, j, diststruct, dist) ;
+                    int index = i*diststruct._width+j ;
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
                 }
             }
         }
@@ -93,8 +81,8 @@ private :
         // const cv::Mat & input =  d_input.getValue().getImage() ;
         const cv::Mat & input = d_input.getValue().getImage() ; //.copyTo(input);
         //cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
+        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
+        outpoints.clear () ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
@@ -103,34 +91,14 @@ private :
                 ) {
                     // deprojection
                     float dist = depth.get_distance(downSample*j, downSample*i) ;
-                    push_to_pointcloud (output, i, j, diststruct, dist) ;
+                    int index = i*diststruct._width+j ;
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
                 }
             }
         }
         // the end
         d_output.endEdit();
     }
-
-    void push_to_pointcloud (helper::vector<defaulttype::Vector3> & output, size_t i, size_t j, RealSenseDistFrame::RealSenseDistStruct & diststruct, float dist) {
-        int downSample = d_downsampler.getValue() ;
-        float
-            point3d[3] = {0.f, 0.f, 0.f},
-            point2d[2] = {downSample*i, downSample*j};
-        rs2_deproject_pixel_to_point(
-            point3d,
-            &cam_intrinsics,
-            point2d,
-            dist
-        );
-        diststruct.frame[i*diststruct._width+j] = dist ;
-
-        pcl::PointXYZ pt = pcl::PointXYZ(point3d[1], -point3d[0], -point3d[2]) ;
-        m_pointcloud->push_back(pt);
-
-        defaulttype::Vector3 deprojected_point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
-        output.push_back(deprojected_point) ;
-    }
-
 };
 
 }

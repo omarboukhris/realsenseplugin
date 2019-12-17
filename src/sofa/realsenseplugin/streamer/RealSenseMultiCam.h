@@ -121,7 +121,8 @@ public:
         node->addObject(rs_vcam) ;
 
         using namespace opencvplugin::scheduler ;
-        OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
+        static OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
+        scheduler->setName(std::string("scheduler_rs") + std::to_string(i));
         scheduler->addStreamer (rs_vcam) ;
         node->addObject(scheduler) ;
 

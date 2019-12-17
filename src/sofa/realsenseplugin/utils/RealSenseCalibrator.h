@@ -63,6 +63,7 @@ namespace rgbdtracking
 
 class RealSenseCalibrator : public core::objectmodel::BaseObject
 {
+
 };
 
 }

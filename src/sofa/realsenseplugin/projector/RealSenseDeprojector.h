@@ -64,20 +64,6 @@ public:
     virtual ~RealSenseDeprojector () {
     }
 
-    void draw(const core::visual::VisualParams* vparams) {
-        if (!d_drawpcl.getValue()) {
-        // don't draw point cloud
-            return ;
-        }
-
-        for (const auto & pt : *(d_outpcl.getValue().getPointCloud())) {
-            defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
-            vparams->drawTool()->drawPoint(
-                point, sofa::defaulttype::Vector4 (0, 0, 255, 0)
-            );
-        }
-    }
-
     void handleEvent(sofa::core::objectmodel::Event *event) {
         if (sofa::core::objectmodel::KeypressedEvent* ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)) {
             //std::cout << ev->getKey() << std::endl ;
@@ -119,7 +105,7 @@ private :
         std::cout << "(RealSenseCam) exported " << snapshot_dist_filename << std::endl ;
     }
 
-    void _write_distFrame (std::string snapshot_dist_filename) {
+    inline void _write_distFrame (std::string snapshot_dist_filename) {
         RealSenseDistFrame distframe = d_distframe.getValue() ;
         RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame();
 
@@ -155,7 +141,8 @@ private :
                 ) {
                     // deprojection
                     float dist = diststruct.frame[i*diststruct._width+j] ;
-                    push_to_pointcloud(outpoints, i, j, diststruct, dist);
+                    int index = i*diststruct._width+j ;
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
                 }
             }
         }
@@ -173,34 +160,12 @@ private :
                 ) {
                     // deprojection
                     float dist = depth.get_distance(downSample*j, downSample*i) ;
-                    push_to_pointcloud(outpoints, i, j, diststruct, dist);
+                    int index = i*diststruct._width+j ;
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
                 }
             }
         }
         d_output.endEdit();
-    }
-
-    void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
-    {
-        int downSample = d_downsampler.getValue() ;
-        float
-            point3d[3] = {0.f, 0.f, 0.f},
-            point2d[2] = {downSample*i, downSample*j};
-        rs2_deproject_pixel_to_point(
-            point3d,
-            &cam_intrinsics,
-            point2d,
-            dist
-        );
-        // set dist frame for exportation if needed
-        diststruct.frame[i*diststruct._width+j] = dist ;
-
-        // set units // switch comments for alignment
-        pcl::PointXYZ pt = pcl::PointXYZ(point3d[1], -point3d[0], -point3d[2]) ;
-        m_pointcloud->push_back(pt);
-
-        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
-        outpoints.push_back(point) ;
     }
 
     void compute_pcl_normals () {
