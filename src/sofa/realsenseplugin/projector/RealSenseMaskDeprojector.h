@@ -56,7 +56,7 @@ private :
         // const cv::Mat & input =  d_input.getValue().getImage() ;
         cv::Mat input ;
         d_input.getValue().getImage().copyTo(input);
-        cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
+        cv::cvtColor(d_input.getValue().getImage(), input, cv::COLOR_BGR2GRAY); ;
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear () ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {
