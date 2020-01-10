@@ -193,7 +193,7 @@ public :
      * \brief deproject_image_offline
      * Load depth/distframe from saved files
      */
-    void deproject_image_offline () {
+    inline void deproject_image_offline () {
         cv::Mat depth_im = d_depth.getValue().getImage() ;
         RealSenseDistFrame distframe = d_distframe.getValue() ;
         RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame() ;
@@ -212,7 +212,7 @@ public :
      * \brief deproject_image_online
      * get depth/distframe/intrinsics.. from realsense cam
      */
-    void deproject_image_online () {
+    inline void deproject_image_online () {
         // get intrinsics from link to rs-cam component
         rs2::depth_frame depth = *l_rs_cam->depth ;
         cam_intrinsics = depth.get_profile().as<rs2::video_stream_profile>().get_intrinsics() ;
@@ -244,7 +244,7 @@ public :
 //            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
         }
     }
-    void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
+    inline void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
     {
         float
             point3d[3] = {0.f, 0.f, 0.f},
