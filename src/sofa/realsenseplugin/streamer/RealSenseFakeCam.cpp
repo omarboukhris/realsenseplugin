@@ -159,7 +159,7 @@ void RealSenseFakeCam<DataTypes>::writeImages() {
 
         cv::Mat imgseg = *listimgseg[frame_count],
                 imgseg1 ;
-        cvtColor(imgseg,imgseg1 ,CV_RGBA2RGB);
+        cvtColor(imgseg,imgseg1 ,cv::COLOR_RGBA2RGB);
         mydumper.write_segimage(imgseg);
 
         cv::Mat deptht = *listdepth[frame_count],

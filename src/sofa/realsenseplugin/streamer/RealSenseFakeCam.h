@@ -43,7 +43,7 @@
 
 #include <sofa/opencvplugin/OpenCVWidget.h>
 
-#include <opencv/cv.h>
+
 #include <opencv2/core.hpp>
 #include <opencv2/features2d.hpp>
 #include <opencv2/imgproc.hpp>

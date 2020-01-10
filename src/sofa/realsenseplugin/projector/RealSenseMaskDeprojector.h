@@ -56,9 +56,9 @@ private :
         // const cv::Mat & input =  d_input.getValue().getImage() ;
         cv::Mat input ;
         d_input.getValue().getImage().copyTo(input);
-        cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
-        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
-        outpoints.clear () ;
+        cv::cvtColor(d_input.getValue().getImage(), input, cv::COLOR_BGR2GRAY); ;
+        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
+        output.clear () ;
         for (size_t i = 0 ; i < diststruct._height; ++i) {
             for (size_t j = 0 ; j < diststruct._width ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
@@ -68,7 +68,7 @@ private :
                 // deprojection
                     float dist = diststruct.frame[i*diststruct._width+j] ;
                     int index = i*diststruct._width+j ;
-                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
+                    push_to_pointcloud(output, downSample*i, downSample*j, index, diststruct, dist);
                 }
             }
         }

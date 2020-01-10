@@ -248,7 +248,7 @@ public :
     {
         float
             point3d[3] = {0.f, 0.f, 0.f},
-            point2d[2] = {i, j};
+            point2d[2] = {static_cast<float>(i), static_cast<float>(j)};
         rs2_deproject_pixel_to_point(
             point3d,
             &cam_intrinsics,

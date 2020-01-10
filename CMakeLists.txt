@@ -9,7 +9,7 @@ find_package(realsense2 REQUIRED)
 find_package(CImgPlugin QUIET)
 #find_package(image QUIET)
 
-find_package(PCL 1.9 REQUIRED)
+find_package(PCL 1.8 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})

@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-#include <opencv2/ccalib/randpattern.hpp>
+//#include <opencv2/ccalib/randpattern.hpp>
 
 #include <sofa/defaulttype/Vec.h>
 #include <sofa/core/objectmodel/BaseObject.h>
