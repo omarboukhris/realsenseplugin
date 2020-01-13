@@ -74,15 +74,13 @@ public :
 
     MouseRotationHandler()
         : Inherited()
-        , d_rotation(initData(&d_rotation, "rotation", "rotation angles"))
+        , d_rotation(initData(&d_rotation, defaulttype::Vector3(0,0,0), "rotation", "rotation angles"))
         , phi(defaulttype::Vector3(0,0,0))
     {
         this->f_listening.setValue(true) ;
     }
 
     void handleEvent(sofa::core::objectmodel::Event* event) override {
-        if (dynamic_cast<sofa::simulation::AnimateBeginEvent*>(event)) {
-        }
         if (sofa::core::objectmodel::MouseEvent * ev = dynamic_cast<sofa::core::objectmodel::MouseEvent*>(event)){
             static int selected_dim = -1 ; // 0 x, 1 y, 2 z
             if (ev->getState() == core::objectmodel::MouseEvent::LeftPressed) {
