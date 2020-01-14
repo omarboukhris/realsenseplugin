@@ -50,9 +50,7 @@ public:
 
     Data<int> depthMode;
 
-    // path to intrinsics file
-    Data<std::string> d_intrinsics ;
-    DataCallback c_intrinsics ;
+    Data<defaulttype::Vector2> d_resolution ;
 
     rs2_intrinsics cam_intrinsics ;
 
@@ -69,6 +67,7 @@ public:
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
+        , d_resolution(initData(&d_resolution, defaulttype::Vector2(1280, 720), "resolution", "realsense camera resolution"))
     {
         this->f_listening.setValue(true) ;
     }
@@ -87,8 +86,30 @@ public:
 
 protected:
 
+    inline void configPipe()
+    {
+        auto resolution = d_resolution.getValue() ;
+        rs2::config cfg ;
+        cfg.enable_stream(
+            RS2_STREAM_COLOR,
+            resolution.at(0), resolution.at(1),
+            RS2_FORMAT_BGR8, 30);
+        cfg.enable_stream(
+            RS2_STREAM_DEPTH,
+            resolution.at(0), resolution.at(1),
+            RS2_FORMAT_Z16, 30);
+        pipe.start(cfg);
+    }
+
+    inline void stabilizeAutoExp() {
+        //drop first frames to let auto exposure settle in
+        for (int i = 30 ; i-- ;) wait_for_frame(pipe) ;
+    }
+
     void initAlign() {
-        pipe.start();
+        // set config for resolution/fps ...
+        configPipe();
+        stabilizeAutoExp();
         acquireAligned();
     }
 

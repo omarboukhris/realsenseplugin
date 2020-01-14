@@ -75,9 +75,6 @@ public :
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
-    Data<opencvplugin::TrackBar1> d_exposure ;
-    DataCallback c_exposure ;
-
     Data<int> depthScale;
 
     rs2::video_frame *color ;
@@ -90,24 +87,14 @@ public :
         , d_color(initData(&d_color, "color", "RGB data image"))
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
-        , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(0, 100), "exposure", "set realsense exposure"))
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
         , color(nullptr), depth(nullptr)
     {
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
-
-        c_exposure.addInputs({&d_exposure});
-        c_exposure.addCallback(std::bind(&RealSenseStreamer::setExposureParams, this));
     }
 
 protected :
-
-    void setExposureParams () {
-    }
-
-    void initExposureParams() {
-    }
 
     void writeIntrinsicsToFile() {
         if (depth == nullptr) return ;
