@@ -57,7 +57,7 @@ private :
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
         output.clear () ;
         for (defaulttype::Vec2i vec : input){
-            size_t i = vec[0], j = vec[1] ;
+            size_t i = vec[1], j = vec[0] ;
             if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
                 depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
             // deprojection
@@ -77,7 +77,7 @@ private :
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
         output.clear () ;
         for (defaulttype::Vector2 vec : input) {
-            size_t i = vec[0], j = vec[1] ;
+            size_t i = vec[1], j = vec[0] ;
             if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
                 depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
                 // deprojection

@@ -67,7 +67,7 @@ public:
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-        , d_resolution(initData(&d_resolution, defaulttype::Vector2(1280, 720), "resolution", "realsense camera resolution"))
+        , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
     {
         this->f_listening.setValue(true) ;
     }
