@@ -96,7 +96,6 @@ public:
     std::vector<std::string> listSerialNum()
     {
         std::vector<std::string> serial_list ;
-        serial_list.clear();
         rs2::context ctx ;
         for (auto && device : ctx.query_devices()) {
             serial_list.push_back(device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
