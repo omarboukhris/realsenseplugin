@@ -51,8 +51,11 @@ public:
     Data<int> depthMode;
 
     Data<defaulttype::Vector2> d_resolution ;
+    Data<int> d_exposure ;
+    DataCallback c_exposure ;
 
     rs2_intrinsics cam_intrinsics ;
+    rs2::pipeline_profile selection ;
 
     // Declare depth colorizer for pretty visualization of depth data
     rs2::colorizer color_map;
@@ -68,7 +71,10 @@ public:
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
         , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
+        , d_exposure(initData(&d_exposure, 0, "exposure", "exposure"))
     {
+        c_exposure.addInputs({&d_exposure});
+        c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
         this->f_listening.setValue(true) ;
     }
 
@@ -86,6 +92,17 @@ public:
 
 protected:
 
+    void setExposure()
+    {
+        rs2::device selected_device = selection.get_device();
+        std::vector<rs2::sensor> sensors = selected_device.query_sensors();
+        for (auto && sensor : sensors) {
+            if (sensor.get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR) {
+                sensor.set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());
+            }
+        }
+    }
+
     inline void configPipe()
     {
         auto resolution = d_resolution.getValue() ;
@@ -98,7 +115,11 @@ protected:
             RS2_STREAM_DEPTH,
             resolution.at(0), resolution.at(1),
             RS2_FORMAT_Z16, 30);
-        pipe.start(cfg);
+//        pipe.start(cfg);
+        selection = pipe.start(cfg);
+        if (d_exposure.getValue() > 0) {
+            setExposure();
+        }
     }
 
     inline void stabilizeAutoExp() {
