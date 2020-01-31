@@ -25,6 +25,7 @@
 #pragma once
 
 #include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
+#include <sofa/opencvplugin/OpenCVWidget.h>
 
 namespace sofa
 {
@@ -51,7 +52,7 @@ public:
     Data<int> depthMode;
 
     Data<defaulttype::Vector2> d_resolution ;
-    Data<int> d_exposure ;
+    Data<opencvplugin::TrackBar1> d_exposure;
     DataCallback c_exposure ;
 
     rs2_intrinsics cam_intrinsics ;
@@ -71,7 +72,7 @@ public:
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
         , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
-        , d_exposure(initData(&d_exposure, 0, "exposure", "exposure"))
+        , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(0,300), "exposure", "exposure"))
     {
         c_exposure.addInputs({&d_exposure});
         c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
