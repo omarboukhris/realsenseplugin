@@ -75,6 +75,8 @@ public :
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
+    Data<helper::fixed_array<double, 5> > d_intrinsicParameters ;
+
     Data<int> depthScale;
 
     rs2::video_frame *color ;
@@ -87,6 +89,7 @@ public :
         , d_color(initData(&d_color, "color", "RGB data image"))
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
+        , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
         , color(nullptr), depth(nullptr)
     {
@@ -117,6 +120,24 @@ protected :
         std::fwrite(&cam_intrinsics.model, sizeof(rs2_distortion), 1, filestream) ;
         std::fwrite(cam_intrinsics.coeffs, sizeof(float), 5, filestream) ;
         std::fclose(filestream) ;
+
+        // for printing intrinsics
+        helper::fixed_array<double, 5> intrinsics (
+            cam_intrinsics.ppx,
+            cam_intrinsics.ppy,
+            cam_intrinsics.fx,
+            cam_intrinsics.fy,
+            0.0
+        ) ;
+        d_intrinsicParameters.setValue(intrinsics);
+//        std::cout <<
+//            cam_intrinsics.width << std::endl <<
+//            cam_intrinsics.height<< std::endl <<
+//            cam_intrinsics.ppx<< std::endl <<
+//            cam_intrinsics.ppy<< std::endl <<
+//            cam_intrinsics.fx<< std::endl <<
+//            cam_intrinsics.fy<< std::endl
+//        << std::endl ;
     }
 
     rs2::frameset wait_for_frame(rs2::pipeline & pipe) {
