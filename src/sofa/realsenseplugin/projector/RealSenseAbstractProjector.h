@@ -106,10 +106,10 @@ public :
     RealSenseAbstractDeprojector()
         : Inherited()
         , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
-        , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0.1, -0.1, 0.5), "offset", "translation offset"))
+        , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0,0,0), "offset", "translation offset"))
         , d_output(initData(&d_output, "output", "output 3D position"))
         , d_outpcl(initData(&d_outpcl, "outpcl", "output pcl PointCloud"))
-        , d_scale(initData(&d_scale, opencvplugin::TrackBar1(200, 2550, 1), "scale", "point cloud scaling factor"))
+        , d_scale(initData(&d_scale, opencvplugin::TrackBar1(100, 2550, 1), "scale", "point cloud scaling factor"))
         // offline reco
         , d_distframe(initData(&d_distframe, "distframe", "frame encoding pixel's distance from camera. used for offline deprojection"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to realsense intrinsics file to read from"))
