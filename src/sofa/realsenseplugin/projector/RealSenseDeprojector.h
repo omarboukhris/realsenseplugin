@@ -146,7 +146,7 @@ private :
                 }
             }
         }
-        std::cout << outpoints.size() << std::endl ;
+//        std::cout << outpoints.size() << std::endl ;
         d_output.endEdit();
     }
 

@@ -123,21 +123,14 @@ protected :
 
         // for printing intrinsics
         helper::fixed_array<double, 5> intrinsics (
-            cam_intrinsics.ppx,
-            cam_intrinsics.ppy,
             cam_intrinsics.fx,
             cam_intrinsics.fy,
-            0.0
+            0.0, // s ?
+            cam_intrinsics.ppx, // x0
+            cam_intrinsics.ppy // y0
         ) ;
         d_intrinsicParameters.setValue(intrinsics);
-//        std::cout <<
-//            cam_intrinsics.width << std::endl <<
-//            cam_intrinsics.height<< std::endl <<
-//            cam_intrinsics.ppx<< std::endl <<
-//            cam_intrinsics.ppy<< std::endl <<
-//            cam_intrinsics.fx<< std::endl <<
-//            cam_intrinsics.fy<< std::endl
-//        << std::endl ;
+        //std::cout << "intrinsics : " << intrinsics << std::endl ;
     }
 
     rs2::frameset wait_for_frame(rs2::pipeline & pipe) {
@@ -162,8 +155,10 @@ protected :
         int widthc = color.get_width();
         int heightc = color.get_height();
 
-        cv::Mat rgb0(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
-        cv::cvtColor (rgb0, bgr_image, cv::COLOR_RGB2BGR); // bgr_image is output
+//        cv::Mat rgb0(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
+//        cv::cvtColor (rgb0, bgr_image, cv::COLOR_RGB2BGR); // bgr_image is output
+
+        bgr_image = cv::Mat(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
 
         int widthd = depth.get_width();
         int heightd = depth.get_height();

@@ -204,6 +204,10 @@ public :
             //std::cerr << "(deprojector) check sizes" << std::endl ;
             return ;
         }
+        if (depth_im.cols * depth_im.rows == 0) {
+            std::cout << "out offline" << std::endl ;
+            return ;
+        }
         m_pointcloud->clear();
         writeOfflineToOutput(diststruct, depth_im, downSample);
     }
@@ -240,7 +244,7 @@ public :
 
         helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
         for (unsigned int i=0; i< output.size(); i++) {
-            vparams->drawTool()->drawSphere(output[i], 0.0032);
+            vparams->drawTool()->drawSphere(output[i], 0.001);
 //            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
         }
     }
@@ -257,6 +261,17 @@ public :
         );
         // set dist frame for exportation if needed
         diststruct.frame[index] = dist ;
+
+        // check for outliers
+        if (std::abs(point3d[0]) < 5e-4 ||
+            std::abs(point3d[1]) < 5e-4 ||
+            std::abs(point3d[2]) < 5e-4 ||
+            std::abs(point3d[0]) > 5 ||
+            std::abs(point3d[1]) > 5 ||
+            std::abs(point3d[2]) > 5) {
+        //invalid point
+            return ;
+        }
 
         // set units // switch comments for alignment
         pcl::PointXYZ pt = scalePoint(point3d) ;

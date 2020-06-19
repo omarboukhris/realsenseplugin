@@ -72,7 +72,7 @@ public:
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
         , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
-        , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(0,300), "exposure", "exposure"))
+        , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(100,2000), "exposure", "exposure"))
     {
         c_exposure.addInputs({&d_exposure});
         c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
@@ -125,7 +125,7 @@ protected:
 
     inline void stabilizeAutoExp() {
         //drop first frames to let auto exposure settle in
-        for (int i = 30 ; i-- ;) wait_for_frame(pipe) ;
+        for (int i = 60 ; i-- ;) wait_for_frame(pipe) ;
     }
 
     void initAlign() {
