@@ -263,9 +263,9 @@ public :
         diststruct.frame[index] = dist ;
 
         // check for outliers
-        if (std::abs(point3d[0]) < 5e-4 ||
-            std::abs(point3d[1]) < 5e-4 ||
-            std::abs(point3d[2]) < 5e-4 ||
+        if (std::abs(point3d[0]) < 1e-4 ||
+            std::abs(point3d[1]) < 1e-4 ||
+            std::abs(point3d[2]) < 1e-4 ||
             std::abs(point3d[0]) > 5 ||
             std::abs(point3d[1]) > 5 ||
             std::abs(point3d[2]) > 5) {

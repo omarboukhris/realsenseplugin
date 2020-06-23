@@ -33,6 +33,9 @@
 #include <SofaSimulationTree/init.h>
 #include <SofaSimulationTree/TreeSimulation.h>
 
+#include <sofa/core/objectmodel/KeypressedEvent.h>
+#include <sofa/core/objectmodel/KeyreleasedEvent.h>
+
 namespace sofa
 {
 
@@ -79,6 +82,19 @@ public:
 
         frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
         d_color.endEdit(); d_depth.endEdit();
+
+    }
+
+    std::vector<cv::Mat> calib_imagelist ;
+    void handleEvent(sofa::core::objectmodel::Event* event) override {
+        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
+            if (ev->getKey() == 'I' || ev->getKey() == 'i') {
+                calib_imagelist.push_back(d_color.getValue().getImage());
+            }
+            if (ev->getKey() == 'z' || ev->getKey() == 'Z') {
+                calib_imagelist.pop_back();
+            }
+        }
     }
 
 } ;
@@ -91,6 +107,7 @@ public:
     RealSenseMultiCam()
         : Inherited()
     {
+        this->f_listening.setValue(true);
     }
 
     std::vector<std::string> listSerialNum()
@@ -124,7 +141,6 @@ public:
         scheduler->setName(std::string("scheduler_rs") + std::to_string(i));
         scheduler->addStreamer (rs_vcam) ;
         node->addObject(scheduler) ;
-
     }
 
 } ;

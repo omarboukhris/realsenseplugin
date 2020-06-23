@@ -61,8 +61,66 @@ namespace sofa
 namespace rgbdtracking
 {
 
+static void calcChessboardCorners(cv::Size boardSize, float squareSize, std::vector<cv::Point3f>& corners)
+{
+    corners.resize(0);
+
+    for( int i = 0; i < boardSize.height; i++ )
+        for( int j = 0; j < boardSize.width; j++ )
+            corners.push_back(cv::Point3f(float(j*squareSize),
+                                      float(i*squareSize), 0));
+}
+
 class RealSenseCalibrator : public core::objectmodel::BaseObject
 {
+public :
+
+    typedef core::objectmodel::BaseObject Inherited;
+    SOFA_CLASS( RealSenseCalibrator, Inherited);
+
+    RealSenseCalibrator()
+        : Inherited()
+    {
+//        cv::Mat view, viewGray;
+        cv::Mat cameraMatrix[2], distCoeffs[2], R[2], P[2], R12, T12;
+        for(int  k = 0; k < 2; k++ ) {
+            cameraMatrix[k] = cv::Mat_<double>::eye(3,3);
+            cameraMatrix[k].at<double>(0,0) = 3./4.;
+            cameraMatrix[k].at<double>(1,1) = 1.;
+            distCoeffs[k] = cv::Mat_<double>::zeros(5,1);
+        }
+    }
+
+//    init 3 cam matrices
+
+// get shessboard corners
+//{
+//    int k1 = k == 0 ? 2 : k == 1 ? 0 : 1;
+//    printf("%s\n", imageList[i*3+k].c_str());
+//    cv::Mat view = imread(imageList[i*3+k], 1);
+
+//    cv::Size boardSize ;
+//    if(!view.empty())
+//    {
+//        vector<Point2f> ptvec;
+//        cv::Size imageSize = view.size();
+//        cvtColor(view, viewGray, COLOR_BGR2GRAY);
+//        bool found = cv::findChessboardCorners( view, boardSize, ptvec, CALIB_CB_ADAPTIVE_THRESH );
+
+//        cv::drawChessboardCorners( view, boardSize, Mat(ptvec), found );
+//        if( found )
+//        {
+//            imgpt[k1][i].resize(ptvec.size());
+//            std::copy(ptvec.begin(), ptvec.end(), imgpt[k1][i].begin());
+//        }
+//        //imshow("view", view);
+//        //int c = waitKey(0) & 255;
+//        //if( c == 27 || c == 'q' || c == 'Q' )
+//        //    return -1;
+//    }
+//}
+
+
 
 };
 
