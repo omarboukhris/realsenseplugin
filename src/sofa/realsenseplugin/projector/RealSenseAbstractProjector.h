@@ -205,7 +205,6 @@ public :
             return ;
         }
         if (depth_im.cols * depth_im.rows == 0) {
-            std::cout << "out offline" << std::endl ;
             return ;
         }
         m_pointcloud->clear();
