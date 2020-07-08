@@ -55,6 +55,9 @@ public:
     Data<opencvplugin::TrackBar1> d_exposure;
     DataCallback c_exposure ;
 
+    Data<std::string> d_calibpath ;
+    std::vector<cv::Mat> calib_imagelist ;
+
     rs2_intrinsics cam_intrinsics ;
     rs2::pipeline_profile selection ;
 
@@ -73,6 +76,7 @@ public:
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
         , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
         , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(100,2000), "exposure", "exposure"))
+        , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
     {
         c_exposure.addInputs({&d_exposure});
         c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
@@ -89,6 +93,26 @@ public:
     void decodeImage(cv::Mat & /*img*/) {
         acquireAligned();
         writeIntrinsicsToFile();
+    }
+
+    void handleEvent(sofa::core::objectmodel::Event* event) override {
+        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
+            if (ev->getKey() == 'I' || ev->getKey() == 'i') {
+                calib_imagelist.push_back(d_color.getValue().getImage());
+            }
+            else if (ev->getKey() == 'z' || ev->getKey() == 'Z') {
+                calib_imagelist.pop_back();
+            }
+            else if (ev->getKey() == 's' || ev->getKey() == 'S') {
+                // save
+                const std::string path = d_calibpath.getValue() ;
+                int i = 0 ;
+                for (const auto & image : calib_imagelist) {
+                    std::string imagepath = path + "/" + std::to_string(i) + ".png" ;
+                    cv::imwrite(imagepath, image) ;
+                }
+            }
+        }
     }
 
 protected:

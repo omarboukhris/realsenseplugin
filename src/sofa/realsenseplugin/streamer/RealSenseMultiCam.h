@@ -84,19 +84,6 @@ public:
         d_color.endEdit(); d_depth.endEdit();
 
     }
-
-    std::vector<cv::Mat> calib_imagelist ;
-    void handleEvent(sofa::core::objectmodel::Event* event) override {
-        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
-            if (ev->getKey() == 'I' || ev->getKey() == 'i') {
-                calib_imagelist.push_back(d_color.getValue().getImage());
-            }
-            if (ev->getKey() == 'z' || ev->getKey() == 'Z') {
-                calib_imagelist.pop_back();
-            }
-        }
-    }
-
 } ;
 
 class RealSenseMultiCam : public core::objectmodel::BaseObject {

@@ -91,37 +91,6 @@ public :
         }
     }
 
-//    init 3 cam matrices
-
-// get shessboard corners
-//{
-//    int k1 = k == 0 ? 2 : k == 1 ? 0 : 1;
-//    printf("%s\n", imageList[i*3+k].c_str());
-//    cv::Mat view = imread(imageList[i*3+k], 1);
-
-//    cv::Size boardSize ;
-//    if(!view.empty())
-//    {
-//        vector<Point2f> ptvec;
-//        cv::Size imageSize = view.size();
-//        cvtColor(view, viewGray, COLOR_BGR2GRAY);
-//        bool found = cv::findChessboardCorners( view, boardSize, ptvec, CALIB_CB_ADAPTIVE_THRESH );
-
-//        cv::drawChessboardCorners( view, boardSize, Mat(ptvec), found );
-//        if( found )
-//        {
-//            imgpt[k1][i].resize(ptvec.size());
-//            std::copy(ptvec.begin(), ptvec.end(), imgpt[k1][i].begin());
-//        }
-//        //imshow("view", view);
-//        //int c = waitKey(0) & 255;
-//        //if( c == 27 || c == 'q' || c == 'Q' )
-//        //    return -1;
-//    }
-//}
-
-
-
 };
 
 }
