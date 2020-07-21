@@ -51,7 +51,7 @@ public:
 
     Data<int> depthMode;
 
-    Data<defaulttype::Vector2> d_resolution ;
+    Data<defaulttype::Vector2> d_resolution_rs ;
     Data<opencvplugin::TrackBar1> d_exposure;
     DataCallback c_exposure ;
 
@@ -74,24 +74,21 @@ public:
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-        , d_resolution(initData(&d_resolution, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
+        , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolution_rs", "realsense camera resolution"))
         , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(100,2000), "exposure", "exposure"))
         , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
     {
         c_exposure.addInputs({&d_exposure});
         c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
         this->f_listening.setValue(true) ;
+        initAlign();
     }
 
     ~RealSenseCam () {
     }
 
-    void init() {
-        initAlign();
-    }
-
-    void decodeImage(cv::Mat & /*img*/) {
-        acquireAligned();
+    void decodeImage(cv::Mat & img) {
+        acquireAligned(img);
         writeIntrinsicsToFile();
     }
 
@@ -130,7 +127,7 @@ protected:
 
     inline void configPipe()
     {
-        auto resolution = d_resolution.getValue() ;
+        auto resolution = d_resolution_rs.getValue() ;
         rs2::config cfg ;
         cfg.enable_stream(
             RS2_STREAM_COLOR,
@@ -156,10 +153,11 @@ protected:
         // set config for resolution/fps ...
         configPipe();
         stabilizeAutoExp();
-        acquireAligned();
+        acquireAligned(*d_image.beginEdit());
+        d_image.endEdit();
     }
 
-    void acquireAligned() {
+    void acquireAligned(cv::Mat & img) {
         rs2::frameset frameset = wait_for_frame(pipe) ;
 
         // Trying to get both color and aligned depth frames
@@ -172,8 +170,8 @@ protected:
         //getpointcloud(*color, *depth) ;
 
         // Create depth and color image
-        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
-        d_color.endEdit(); d_depth.endEdit();
+        frame_to_cvmat(*color, *depth, img, *d_depth.beginEdit());
+        d_depth.endEdit();
     }
 
 protected :

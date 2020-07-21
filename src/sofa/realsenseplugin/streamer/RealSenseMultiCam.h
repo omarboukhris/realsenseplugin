@@ -119,15 +119,17 @@ public:
     }
 
     void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, std::string serial, size_t i) {
-        RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;
-        rs_vcam->setName(std::string("RSCam_") + std::to_string(i));
-        node->addObject(rs_vcam) ;
-
         using namespace opencvplugin::scheduler ;
         static OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
         scheduler->setName(std::string("scheduler_rs") + std::to_string(i));
-        scheduler->addStreamer (rs_vcam) ;
+//        scheduler->addStreamer (rs_vcam) ;
         node->addObject(scheduler) ;
+
+        RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;
+        rs_vcam->setName(std::string("RSCam_") + std::to_string(i));
+        rs_vcam->d_scheduler.setValue(scheduler->d_scheduler.getValue());
+        node->addObject(rs_vcam) ;
+
     }
 
 } ;
