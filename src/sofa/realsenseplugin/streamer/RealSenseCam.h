@@ -89,7 +89,6 @@ public:
 
     void decodeImage(cv::Mat & img) {
         acquireAligned(img);
-        writeIntrinsicsToFile();
     }
 
     void handleEvent(sofa::core::objectmodel::Event* event) override {
@@ -98,7 +97,7 @@ public:
                 calib_imagelist.push_back(d_color.getValue().getImage());
             }
             else if (ev->getKey() == 'z' || ev->getKey() == 'Z') {
-                calib_imagelist.pop_back();
+                if (calib_imagelist.size() > 0) calib_imagelist.pop_back();
             }
             else if (ev->getKey() == 's' || ev->getKey() == 'S') {
                 // save
@@ -155,6 +154,7 @@ protected:
         stabilizeAutoExp();
         acquireAligned(*d_image.beginEdit());
         d_image.endEdit();
+        writeIntrinsicsToFile();
     }
 
     void acquireAligned(cv::Mat & img) {
@@ -172,7 +172,8 @@ protected:
         // Create depth and color image
         frame_to_cvmat(*color, *depth, img, *d_depth.beginEdit());
         d_depth.endEdit();
-    }
+        d_color.setValue(img);
+     }
 
 protected :
     void getpointcloud (rs2::frame color, rs2::frame depth) {
