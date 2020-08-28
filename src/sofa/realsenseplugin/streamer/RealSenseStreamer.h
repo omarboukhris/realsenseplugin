@@ -61,6 +61,10 @@ namespace sofa
 namespace rgbdtracking
 {
 
+/*!
+ * \brief The RealSenseStreamer class
+ * Abstract streamer used as a superclass for realsensecam and realsense virtual cam (used with multicam)
+ */
 class RealSenseStreamer : public opencvplugin::streamer::BaseOpenCVStreamer //core::objectmodel::BaseObject
 {
 public :
@@ -77,6 +81,9 @@ public :
 
     Data<helper::fixed_array<double, 5> > d_intrinsicParameters ;
 
+    Data<std::string> d_calibpath ;
+    std::vector<cv::Mat> calib_imagelist ;
+
     Data<int> depthScale;
 
     rs2::video_frame *color ;
@@ -90,15 +97,45 @@ public :
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
+        , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
         , color(nullptr), depth(nullptr)
+        , calib_imagelist()
     {
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
+        this->f_listening.setValue(true) ;
+    }
+
+    /*!
+     * \brief handleEvent : Press i to push image to calibration image list, z to cancel, s to save
+     * \param event
+     */
+    void handleEvent(sofa::core::objectmodel::Event* event) override {
+        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
+            if (ev->getKey() == 'I' || ev->getKey() == 'i') {
+                calib_imagelist.push_back(d_color.getValue().getImage());
+            }
+            else if (ev->getKey() == 'z' || ev->getKey() == 'Z') {
+                if (calib_imagelist.size() > 0) calib_imagelist.pop_back();
+            }
+            else if (ev->getKey() == 's' || ev->getKey() == 'S') {
+                // save
+                const std::string path = d_calibpath.getValue() ;
+                int i = 0 ;
+                for (const auto & image : calib_imagelist) {
+                    std::string imagepath = path + "/" + std::to_string(i) + ".png" ;
+                    cv::imwrite(imagepath, image) ;
+                }
+            }
+        }
     }
 
 protected :
 
+    /*!
+     * \brief writeIntrinsicsToFile : intrinsics path file in sofa data needs to be set
+     */
     void writeIntrinsicsToFile() {
         if (depth == nullptr) return ;
         cam_intrinsics = depth->get_profile().as<rs2::video_stream_profile>().get_intrinsics() ;
@@ -106,6 +143,18 @@ protected :
     }
 
     void writeIntrinsics (std::string filename, const rs2_intrinsics &cam_intrinsics) {
+        // for exporting intrinsics as sofa data
+        helper::fixed_array<double, 5> intrinsics (
+            cam_intrinsics.fx,
+            cam_intrinsics.fy,
+            0.0, // s
+            cam_intrinsics.ppx, // x0
+            cam_intrinsics.ppy // y0
+        ) ;
+        d_intrinsicParameters.setValue(intrinsics);
+        std::cout << "intrinsics : " << intrinsics << std::endl ;
+
+        // export intrinsics for later use (offline reproj)
         std::FILE* filestream = std::fopen(filename.c_str(), "wb") ;
         if (filestream == NULL) {
             std::cerr << "Check rights on intrins.log file" << std::endl ;
@@ -120,19 +169,13 @@ protected :
         std::fwrite(&cam_intrinsics.model, sizeof(rs2_distortion), 1, filestream) ;
         std::fwrite(cam_intrinsics.coeffs, sizeof(float), 5, filestream) ;
         std::fclose(filestream) ;
-
-        // for printing intrinsics
-        helper::fixed_array<double, 5> intrinsics (
-            cam_intrinsics.fx,
-            cam_intrinsics.fy,
-            0.0, // s ?
-            cam_intrinsics.ppx, // x0
-            cam_intrinsics.ppy // y0
-        ) ;
-        d_intrinsicParameters.setValue(intrinsics);
-        //std::cout << "intrinsics : " << intrinsics << std::endl ;
     }
 
+    /*!
+     * \brief wait_for_frame : waits for rgbd frame from realsense
+     * \param pipe
+     * \return realsense current frameset
+     */
     rs2::frameset wait_for_frame(rs2::pipeline & pipe) {
         rs2::align align(RS2_STREAM_COLOR);
         rs2::frameset frameset;

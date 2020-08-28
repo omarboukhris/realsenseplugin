@@ -122,7 +122,6 @@ public:
         using namespace opencvplugin::scheduler ;
         static OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
         scheduler->setName(std::string("scheduler_rs") + std::to_string(i));
-//        scheduler->addStreamer (rs_vcam) ;
         node->addObject(scheduler) ;
 
         RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;

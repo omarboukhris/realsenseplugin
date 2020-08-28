@@ -112,7 +112,7 @@ public :
         , d_scale(initData(&d_scale, opencvplugin::TrackBar1(100, 2550, 1), "scale", "point cloud scaling factor"))
         // offline reco
         , d_distframe(initData(&d_distframe, "distframe", "frame encoding pixel's distance from camera. used for offline deprojection"))
-        , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to realsense intrinsics file to read from"))
+        , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsicsPath", "path to realsense intrinsics file to read from"))
         // visualization
         , d_minmax (initData(&d_minmax, opencvplugin::TrackBar2(helper::fixed_array<double,2>(0, 255)),"minmax", "depth value filter"))
         , d_downsampler(initData(&d_downsampler, 5, "downsample", "point cloud downsampling"))
@@ -194,6 +194,7 @@ public :
      * Load depth/distframe from saved files
      */
     inline void deproject_image_offline () {
+        helper::AdvancedTimer::stepBegin("RS Deprojection offline") ;
         cv::Mat depth_im = d_depth.getValue().getImage() ;
         RealSenseDistFrame distframe = d_distframe.getValue() ;
         RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame() ;
@@ -209,6 +210,7 @@ public :
         }
         m_pointcloud->clear();
         writeOfflineToOutput(diststruct, depth_im, downSample);
+        helper::AdvancedTimer::stepBegin("RS Deprojection offline") ;
     }
 
     /*!
@@ -216,6 +218,7 @@ public :
      * get depth/distframe/intrinsics.. from realsense cam
      */
     inline void deproject_image_online () {
+        helper::AdvancedTimer::stepBegin("RS Deprojection online") ;
         // get intrinsics from link to rs-cam component
         rs2::depth_frame depth = *l_rs_cam->depth ;
         cam_intrinsics = depth.get_profile().as<rs2::video_stream_profile>().get_intrinsics() ;
@@ -233,6 +236,7 @@ public :
         m_pointcloud->clear();
         writeOnlineToOutput(depth, diststruct, depth_im, downSample);
         d_distframe.endEdit() ;
+        helper::AdvancedTimer::stepEnd("RS Deprojection online") ;
     }
 
     void draw(const core::visual::VisualParams* vparams) {
@@ -240,12 +244,13 @@ public :
         // don't draw point cloud
             return ;
         }
-
+        helper::AdvancedTimer::stepBegin("RS Deprojection draw") ;
         helper::vector<defaulttype::Vector3> output = d_output.getValue() ;
         for (unsigned int i=0; i< output.size(); i++) {
-//            vparams->drawTool()->drawSphere(output[i], 0.001);
-            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
+            vparams->drawTool()->drawSphere(output[i], 0.002);
+//            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
         }
+        helper::AdvancedTimer::stepEnd("RS Deprojection draw") ;
     }
     inline void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
     {
@@ -272,7 +277,6 @@ public :
             return ;
         }
 
-        // set units // switch comments for alignment
         pcl::PointXYZ pt = scalePoint(point3d) ;
         m_pointcloud->push_back(pt);
 

@@ -47,15 +47,16 @@ public:
 
     DataCallback c_image ;
 
-    pcl::PointCloud<pcl::Normal>::Ptr m_cloud_normals ;
-    helper::vector<defaulttype::Vector3> m_colors ;
+//    unused
+//    pcl::PointCloud<pcl::Normal>::Ptr m_cloud_normals ;
+//    helper::vector<defaulttype::Vector3> m_colors ;
 
     RealSenseDeprojector()
         : Inherited()
         , d_color(initData(&d_color, "color", "segmented color data image"))
         //offline reco
         , d_snap_path(initData(&d_snap_path, std::string("."), "snap_path", "path to snap shots folder"))
-        , m_cloud_normals(new pcl::PointCloud<pcl::Normal>)
+//        , m_cloud_normals(new pcl::PointCloud<pcl::Normal>)
     {
         c_image.addInputs({&d_color, &this->d_depth});
         c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
@@ -64,6 +65,10 @@ public:
     virtual ~RealSenseDeprojector () {
     }
 
+    /*!
+     * \brief handleEvent : Press P to export 3D snapshot of current frame
+     * \param event
+     */
     void handleEvent(sofa::core::objectmodel::Event *event) {
         if (sofa::core::objectmodel::KeypressedEvent* ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)) {
             //std::cout << ev->getKey() << std::endl ;
@@ -76,7 +81,7 @@ public:
     }
 private :
 
-    void exportSnapShot () {
+    inline void exportSnapShot () {
         static size_t i = 0 ; //< i is a snap shot 'id'
         // set filenames
         std::string
@@ -130,6 +135,12 @@ private :
         std::fclose(filestream) ;
     }
 
+    /*!
+     * \brief writeOfflineToOutput : implementation to reproject the whole scene/frame offline
+     * \param diststruct
+     * \param depth_im
+     * \param downSample
+     */
     virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear() ;
@@ -150,6 +161,13 @@ private :
         d_output.endEdit();
     }
 
+    /*!
+     * \brief writeOnlineToOutput : implementation to reproject the whole scene online
+     * \param depth
+     * \param diststruct
+     * \param depth_im
+     * \param downSample
+     */
     virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear() ;
@@ -168,22 +186,23 @@ private :
         d_output.endEdit();
     }
 
-    void compute_pcl_normals () {
-        // compute normals for remeshing ?
-        pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne ;
-        ne.setInputCloud(m_pointcloud);
-        // Create an empty kdtree representation, and pass it to the normal estimation object.
-        // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
-        pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
-        ne.setSearchMethod (tree);
+//      unused
+//    void compute_pcl_normals () {
+//        // compute normals for remeshing ?
+//        pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne ;
+//        ne.setInputCloud(m_pointcloud);
+//        // Create an empty kdtree representation, and pass it to the normal estimation object.
+//        // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+//        pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
+//        ne.setSearchMethod (tree);
 
-        // Use all neighbors in a sphere of radius 3cm
-        ne.setRadiusSearch (0.03);
+//        // Use all neighbors in a sphere of radius 3cm
+//        ne.setRadiusSearch (0.03);
 
-        // Compute the features
-        m_cloud_normals->clear();
-        ne.compute (*m_cloud_normals);
-    }
+//        // Compute the features
+//        m_cloud_normals->clear();
+//        ne.compute (*m_cloud_normals);
+//    }
 };
 
 }

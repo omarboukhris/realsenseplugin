@@ -55,9 +55,6 @@ public:
     Data<opencvplugin::TrackBar1> d_exposure;
     DataCallback c_exposure ;
 
-    Data<std::string> d_calibpath ;
-    std::vector<cv::Mat> calib_imagelist ;
-
     rs2_intrinsics cam_intrinsics ;
     rs2::pipeline_profile selection ;
 
@@ -71,16 +68,17 @@ public:
     // Declare RealSense pipeline, encapsulating the actual device and sensors
     rs2::pipeline pipe;
 
+    bool pause ;
+
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-        , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolution_rs", "realsense camera resolution"))
+        , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolutionrs", "realsense camera resolution"))
         , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(100,2000), "exposure", "exposure"))
-        , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
+        , pause (false)
     {
         c_exposure.addInputs({&d_exposure});
         c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
-        this->f_listening.setValue(true) ;
         initAlign();
     }
 
@@ -88,25 +86,15 @@ public:
     }
 
     void decodeImage(cv::Mat & img) {
+        if (pause) return ;
         acquireAligned(img);
     }
 
-    void handleEvent(sofa::core::objectmodel::Event* event) override {
+    void handleEvent(sofa::core::objectmodel::Event* event) {
+        Inherited::handleEvent(event) ;
         if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
-            if (ev->getKey() == 'I' || ev->getKey() == 'i') {
-                calib_imagelist.push_back(d_color.getValue().getImage());
-            }
-            else if (ev->getKey() == 'z' || ev->getKey() == 'Z') {
-                if (calib_imagelist.size() > 0) calib_imagelist.pop_back();
-            }
-            else if (ev->getKey() == 's' || ev->getKey() == 'S') {
-                // save
-                const std::string path = d_calibpath.getValue() ;
-                int i = 0 ;
-                for (const auto & image : calib_imagelist) {
-                    std::string imagepath = path + "/" + std::to_string(i) + ".png" ;
-                    cv::imwrite(imagepath, image) ;
-                }
+            if (ev->getKey() == ' ') {
+                pause = ! pause ;
             }
         }
     }

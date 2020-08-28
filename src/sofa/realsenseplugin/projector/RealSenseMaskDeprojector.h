@@ -78,7 +78,6 @@ private :
 
     virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
         // setup output
-        // const cv::Mat & input =  d_input.getValue().getImage() ;
         const cv::Mat & input = d_input.getValue().getImage() ; //.copyTo(input);
         //cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;

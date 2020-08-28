@@ -45,7 +45,7 @@ using DataCallback = core::objectmodel::DataCallback ;
 
 /*!
  * \brief The RealSenseDistFrame class
- * Used for distance frame circulation between sofa components
+ * Used for distance frame usage as sofa data by components
  */
 class RealSenseDistFrame {
 public :
