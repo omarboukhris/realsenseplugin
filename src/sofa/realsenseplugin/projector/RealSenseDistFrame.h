@@ -259,7 +259,7 @@ public:
     }
 } ;
 
-}
+} // namespace rgbd
 
 }
 

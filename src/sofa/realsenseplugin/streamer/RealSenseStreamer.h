@@ -79,7 +79,7 @@ public :
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
-    Data<helper::fixed_array<double, 5> > d_intrinsicParameters ;
+    Data<defaulttype::Vec4f > d_intrinsicParameters ;
 
     Data<std::string> d_calibpath ;
     std::vector<cv::Mat> calib_imagelist ;
@@ -144,15 +144,14 @@ protected :
 
     void writeIntrinsics (std::string filename, const rs2_intrinsics &cam_intrinsics) {
         // for exporting intrinsics as sofa data
-        helper::fixed_array<double, 5> intrinsics (
+        defaulttype::Vec4f intrinsics (
             cam_intrinsics.fx,
             cam_intrinsics.fy,
-            0.0, // s
             cam_intrinsics.ppx, // x0
             cam_intrinsics.ppy // y0
         ) ;
         d_intrinsicParameters.setValue(intrinsics);
-        std::cout << "intrinsics : " << intrinsics << std::endl ;
+        std::cout << "intrinsics : " << d_intrinsicParameters.getValue() << std::endl ;
 
         // export intrinsics for later use (offline reproj)
         std::FILE* filestream = std::fopen(filename.c_str(), "wb") ;
