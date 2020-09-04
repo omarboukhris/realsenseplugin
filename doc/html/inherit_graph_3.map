@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_streamer.html" title="The RealSenseDistFrameStreamer class Streams through distance frames in a file Implements BaseOpenCVS..." alt="" coords="208,5,416,47"/>
+<area shape="rect" id="node3" href="$classsofa_1_1rgbdtracking_1_1_real_sense_streamer.html" title="The RealSenseStreamer class Abstract streamer used as a superclass for realsensecam and realsense vir..." alt="" coords="239,71,385,112"/>
+<area shape="rect" id="node4" href="$classsofa_1_1rgbdtracking_1_1_real_sense_cam.html" title="The RealSenseCam class Streamer to use when only one realsense is connected. " alt="" coords="480,37,607,79"/>
+<area shape="rect" id="node5" href="$classsofa_1_1rgbdtracking_1_1_real_sense_virtual_cam.html" title="The RealSenseVirtualCam class virtual cam instanciated from multicam component. " alt="" coords="464,103,623,144"/>
+</map>

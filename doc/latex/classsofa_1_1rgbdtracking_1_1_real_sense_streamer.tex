@@ -1,0 +1,139 @@
+\hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{}\section{sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Streamer Class Reference}
+\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer}}
+
+
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer} class Abstract streamer used as a superclass for realsensecam and realsense virtual cam (used with multicam)  
+
+
+
+
+{\ttfamily \#include $<$Real\+Sense\+Streamer.\+h$>$}
+
+
+
+Inheritance diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Streamer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=312pt]{classsofa_1_1rgbdtracking_1_1_real_sense_streamer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Streamer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classsofa_1_1rgbdtracking_1_1_real_sense_streamer__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a5f9ea54db5ca5e9cbbda378e0a93e07b}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a5f9ea54db5ca5e9cbbda378e0a93e07b}} 
+typedef opencvplugin\+::streamer\+::\+Base\+Open\+C\+V\+Streamer {\bfseries Inherited}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_af9aacabd087d62ddcc436b9012d70e49}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_af9aacabd087d62ddcc436b9012d70e49}} 
+{\bfseries S\+O\+F\+A\+\_\+\+C\+L\+A\+SS} (\hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer}, opencvplugin\+::streamer\+::\+Base\+Open\+C\+V\+Streamer)
+\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a3881452d7c26ef825640220be00fd034}{handle\+Event} (sofa\+::core\+::objectmodel\+::\+Event $\ast$event) override
+\begin{DoxyCompactList}\small\item\em handle\+Event \+: Press i to push image to calibration image list, z to cancel, s to save \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a4a21504b1c8de26cda98a7dd1b7d43d2}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a4a21504b1c8de26cda98a7dd1b7d43d2}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ {\bfseries d\+\_\+color}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a9fbddc186f4026f029c509b49f5b16f5}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a9fbddc186f4026f029c509b49f5b16f5}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ {\bfseries d\+\_\+depth}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a226a9797423c62c033f9f1961c00cb7c}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a226a9797423c62c033f9f1961c00cb7c}} 
+Data$<$ std\+::string $>$ {\bfseries d\+\_\+intrinsics}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a22b457cc55e1b6c1b0ce649c27c20ee6}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a22b457cc55e1b6c1b0ce649c27c20ee6}} 
+Data\+Callback {\bfseries c\+\_\+intrinsics}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a74e34153116c11df21f4b4630317e8b0}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a74e34153116c11df21f4b4630317e8b0}} 
+Data$<$ defaulttype\+::\+Vec4f $>$ {\bfseries d\+\_\+intrinsic\+Parameters}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a696eba343bf4d7d2f396b7506daab18f}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a696eba343bf4d7d2f396b7506daab18f}} 
+Data$<$ std\+::string $>$ {\bfseries d\+\_\+calibpath}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a01aa309d09c216db55a5596f10740803}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a01aa309d09c216db55a5596f10740803}} 
+std\+::vector$<$ cv\+::\+Mat $>$ {\bfseries calib\+\_\+imagelist}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a293f222ce3fe93aa62ae0475b714dd0d}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a293f222ce3fe93aa62ae0475b714dd0d}} 
+Data$<$ int $>$ {\bfseries depth\+Scale}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_ac8353a52ed5997b5180bcc99f384c351}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_ac8353a52ed5997b5180bcc99f384c351}} 
+rs2\+::video\+\_\+frame $\ast$ {\bfseries color}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_ae5a0ca709953b170ffb596abedd51eed}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_ae5a0ca709953b170ffb596abedd51eed}} 
+rs2\+::depth\+\_\+frame $\ast$ {\bfseries depth}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a9f25b9a13cfab87d3e9878da5f2b6e32}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a9f25b9a13cfab87d3e9878da5f2b6e32}} 
+rs2\+\_\+intrinsics {\bfseries cam\+\_\+intrinsics}
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a1db9130e1444a18c5a5a3f19e8dc32da}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a1db9130e1444a18c5a5a3f19e8dc32da}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a1db9130e1444a18c5a5a3f19e8dc32da}{write\+Intrinsics\+To\+File} ()
+\begin{DoxyCompactList}\small\item\em write\+Intrinsics\+To\+File \+: intrinsics path file in sofa data needs to be set \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_ae7f7303c5cc323868d3bcc36d13c8689}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_ae7f7303c5cc323868d3bcc36d13c8689}} 
+void {\bfseries write\+Intrinsics} (std\+::string filename, const rs2\+\_\+intrinsics \&cam\+\_\+intrinsics)
+\item 
+rs2\+::frameset \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a3ea622968695865d727d67b72e8363c7}{wait\+\_\+for\+\_\+frame} (rs2\+::pipeline \&pipe)
+\begin{DoxyCompactList}\small\item\em wait\+\_\+for\+\_\+frame \+: waits for rgbd frame from realsense \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_aac7fbd7301db4731d78aaf89a2022a01}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_aac7fbd7301db4731d78aaf89a2022a01}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_aac7fbd7301db4731d78aaf89a2022a01}{frame\+\_\+to\+\_\+cvmat} (rs2\+::video\+\_\+frame color, rs2\+::depth\+\_\+frame depth, cv\+::\+Mat \&bgr\+\_\+image, cv\+::\+Mat \&depth8)
+\begin{DoxyCompactList}\small\item\em convert R\+GB \& D rs2\+::frames to cv\+::\+Mat and stores them in data container \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer} class Abstract streamer used as a superclass for realsensecam and realsense virtual cam (used with multicam) 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a3881452d7c26ef825640220be00fd034}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a3881452d7c26ef825640220be00fd034}} 
+\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer}!handle\+Event@{handle\+Event}}
+\index{handle\+Event@{handle\+Event}!sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer}}
+\subsubsection{\texorpdfstring{handle\+Event()}{handleEvent()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer\+::handle\+Event (\begin{DoxyParamCaption}\item[{sofa\+::core\+::objectmodel\+::\+Event $\ast$}]{event }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}}
+
+
+
+handle\+Event \+: Press i to push image to calibration image list, z to cancel, s to save 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a3ea622968695865d727d67b72e8363c7}\label{classsofa_1_1rgbdtracking_1_1_real_sense_streamer_a3ea622968695865d727d67b72e8363c7}} 
+\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer}!wait\+\_\+for\+\_\+frame@{wait\+\_\+for\+\_\+frame}}
+\index{wait\+\_\+for\+\_\+frame@{wait\+\_\+for\+\_\+frame}!sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer}}
+\subsubsection{\texorpdfstring{wait\+\_\+for\+\_\+frame()}{wait\_for\_frame()}}
+{\footnotesize\ttfamily rs2\+::frameset sofa\+::rgbdtracking\+::\+Real\+Sense\+Streamer\+::wait\+\_\+for\+\_\+frame (\begin{DoxyParamCaption}\item[{rs2\+::pipeline \&}]{pipe }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+wait\+\_\+for\+\_\+frame \+: waits for rgbd frame from realsense 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pipe} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+realsense current frameset 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/sofa/realsenseplugin/streamer/Real\+Sense\+Streamer.\+h\end{DoxyCompactItemize}

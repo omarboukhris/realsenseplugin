@@ -1,0 +1,83 @@
+\hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}{}\section{sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Deprojector Class Reference}
+\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector}}
+
+
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}{Real\+Sense\+Deprojector} class Online / Offline 2\+D-\/3D deprojection of whole rgb-\/d scene.  
+
+
+
+
+{\ttfamily \#include $<$Real\+Sense\+Deprojector.\+h$>$}
+
+
+
+Inheritance diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Deprojector\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Deprojector\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_a6bae03808ffd8dcb3a90e7ed450cac45}\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_a6bae03808ffd8dcb3a90e7ed450cac45}} 
+typedef \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector}{Real\+Sense\+Abstract\+Deprojector} {\bfseries Inherited}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_ab83880605bbf09764e64573381b5502c}\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_ab83880605bbf09764e64573381b5502c}} 
+{\bfseries S\+O\+F\+A\+\_\+\+C\+L\+A\+SS} (\hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}{Real\+Sense\+Deprojector}, Inherited)
+\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_aaa5648b58d79dcabc8265d7eec19b78a}{handle\+Event} (sofa\+::core\+::objectmodel\+::\+Event $\ast$event)
+\begin{DoxyCompactList}\small\item\em handle\+Event \+: Press P to export 3D snapshot of current frame \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_a61d80c84f736effdb2ecbd41000b1bea}\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_a61d80c84f736effdb2ecbd41000b1bea}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ {\bfseries d\+\_\+color}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_ae6f6cf6fff6c3cc81e1370d17b627395}\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_ae6f6cf6fff6c3cc81e1370d17b627395}} 
+Data$<$ std\+::string $>$ {\bfseries d\+\_\+snap\+\_\+path}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_a718873322b7771e3ddf7fa1da705ca6f}\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_a718873322b7771e3ddf7fa1da705ca6f}} 
+Data\+Callback {\bfseries c\+\_\+image}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}{Real\+Sense\+Deprojector} class Online / Offline 2\+D-\/3D deprojection of whole rgb-\/d scene. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_aaa5648b58d79dcabc8265d7eec19b78a}\label{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector_aaa5648b58d79dcabc8265d7eec19b78a}} 
+\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector}!handle\+Event@{handle\+Event}}
+\index{handle\+Event@{handle\+Event}!sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector}}
+\subsubsection{\texorpdfstring{handle\+Event()}{handleEvent()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Real\+Sense\+Deprojector\+::handle\+Event (\begin{DoxyParamCaption}\item[{sofa\+::core\+::objectmodel\+::\+Event $\ast$}]{event }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+handle\+Event \+: Press P to export 3D snapshot of current frame 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/sofa/realsenseplugin/projector/Real\+Sense\+Deprojector.\+h\end{DoxyCompactItemize}

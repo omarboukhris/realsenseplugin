@@ -1,0 +1,114 @@
+\hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{}\section{sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Cam Class Reference}
+\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam}\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Cam@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Cam}}
+
+
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{Real\+Sense\+Cam} class Streamer to use when only one realsense is connected.  
+
+
+
+
+{\ttfamily \#include $<$Real\+Sense\+Cam.\+h$>$}
+
+
+
+Inheritance diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Cam\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classsofa_1_1rgbdtracking_1_1_real_sense_cam__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Cam\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{classsofa_1_1rgbdtracking_1_1_real_sense_cam__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a0a77e286d896d3e917359d3e7a3d6c47}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a0a77e286d896d3e917359d3e7a3d6c47}} 
+typedef \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer} {\bfseries Inherited}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a32f3a2ac2480dba52c84620583c4d6e3}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a32f3a2ac2480dba52c84620583c4d6e3}} 
+{\bfseries S\+O\+F\+A\+\_\+\+C\+L\+A\+SS} (\hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{Real\+Sense\+Cam}, \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer})
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_af0fc64dd75ab34819f1341ce97359634}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_af0fc64dd75ab34819f1341ce97359634}} 
+void {\bfseries decode\+Image} (cv\+::\+Mat \&img)
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_abf95b6b7d177c8718c779947e1a19bdc}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_abf95b6b7d177c8718c779947e1a19bdc}} 
+void {\bfseries handle\+Event} (sofa\+::core\+::objectmodel\+::\+Event $\ast$event)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a44e727c66935e408f2ba4de6e0699b6b}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a44e727c66935e408f2ba4de6e0699b6b}} 
+Data$<$ int $>$ {\bfseries depth\+Mode}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a3c62e27c86ce60e15cc8b520fe576994}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a3c62e27c86ce60e15cc8b520fe576994}} 
+Data$<$ defaulttype\+::\+Vector2 $>$ {\bfseries d\+\_\+resolution\+\_\+rs}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_ad605d7bbc20faee2b716df53474412dc}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_ad605d7bbc20faee2b716df53474412dc}} 
+Data$<$ opencvplugin\+::\+Track\+Bar1 $>$ {\bfseries d\+\_\+exposure}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a67ec547de6f69bebef2a7f2e8d584f48}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a67ec547de6f69bebef2a7f2e8d584f48}} 
+Data\+Callback {\bfseries c\+\_\+exposure}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a07b608dff4127a1ea22ffcc93a0a2b8b}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a07b608dff4127a1ea22ffcc93a0a2b8b}} 
+rs2\+\_\+intrinsics {\bfseries cam\+\_\+intrinsics}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a9c40355cbe2db5d7ccd20a6ff3d6c8d2}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a9c40355cbe2db5d7ccd20a6ff3d6c8d2}} 
+rs2\+::pipeline\+\_\+profile {\bfseries selection}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a8763304f41d3eb3ecd0a9c8fc92a1bac}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a8763304f41d3eb3ecd0a9c8fc92a1bac}} 
+rs2\+::colorizer {\bfseries color\+\_\+map}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a622f15e0a08312b92571bd5c4d040ea1}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a622f15e0a08312b92571bd5c4d040ea1}} 
+rs2\+::pointcloud {\bfseries pc}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a4fbb2690c02fea1635913680e08efd7b}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a4fbb2690c02fea1635913680e08efd7b}} 
+rs2\+::points {\bfseries points}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a630e600956571e553972403bba7fcf02}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a630e600956571e553972403bba7fcf02}} 
+rs2\+::pipeline {\bfseries pipe}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a9fce91c3e7d2c1be3aaca521ea28d14f}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a9fce91c3e7d2c1be3aaca521ea28d14f}} 
+bool {\bfseries pause}
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_ad11af2a678cdbe9d4cb69160654ddc59}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_ad11af2a678cdbe9d4cb69160654ddc59}} 
+void {\bfseries set\+Exposure} ()
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a60647ccc41e670ac3f5d7ad8b5d96194}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a60647ccc41e670ac3f5d7ad8b5d96194}} 
+void {\bfseries config\+Pipe} ()
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a90411168a51a6899f412391bfae3b7ed}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a90411168a51a6899f412391bfae3b7ed}} 
+void {\bfseries stabilize\+Auto\+Exp} ()
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a6825194f2f9395c96f27737c574e517d}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a6825194f2f9395c96f27737c574e517d}} 
+void {\bfseries init\+Align} ()
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a29789038ece88a4d6485c0f6d01abe70}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a29789038ece88a4d6485c0f6d01abe70}} 
+void {\bfseries acquire\+Aligned} (cv\+::\+Mat \&img)
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a14c83fdb652f4d40a95a402dd930f7a9}\label{classsofa_1_1rgbdtracking_1_1_real_sense_cam_a14c83fdb652f4d40a95a402dd930f7a9}} 
+void {\bfseries getpointcloud} (rs2\+::frame color, rs2\+::frame depth)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{Real\+Sense\+Cam} class Streamer to use when only one realsense is connected. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/sofa/realsenseplugin/streamer/Real\+Sense\+Cam.\+h\end{DoxyCompactItemize}

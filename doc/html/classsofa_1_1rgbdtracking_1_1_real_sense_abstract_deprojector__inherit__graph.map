@@ -1,0 +1,5 @@
+<map id="sofa::rgbdtracking::RealSenseAbstractDeprojector" name="sofa::rgbdtracking::RealSenseAbstractDeprojector">
+<area shape="rect" id="node3" href="$classsofa_1_1rgbdtracking_1_1_real_sense_deprojector.html" title="The RealSenseDeprojector class Online / Offline 2D&#45;3D deprojection of whole rgb&#45;d scene..." alt="" coords="419,5,580,47"/>
+<area shape="rect" id="node4" href="$classsofa_1_1rgbdtracking_1_1_real_sense_mask_deprojector.html" title="The RealSenseMaskDeprojector class deprojects a set of points depending on a 2D binary mask defined a..." alt="" coords="403,71,596,112"/>
+<area shape="rect" id="node5" href="$classsofa_1_1rgbdtracking_1_1_real_sense_point_deprojector.html" title="The RealSensePointDeprojector class deprojects only a defined set of 2D points defined in d_input (la..." alt="" coords="404,136,595,177"/>
+</map>

@@ -1,0 +1,111 @@
+\hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector}{}\section{sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Abstract\+Deprojector Class Reference}
+\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector}\index{sofa\+::rgbdtracking\+::\+Real\+Sense\+Abstract\+Deprojector@{sofa\+::rgbdtracking\+::\+Real\+Sense\+Abstract\+Deprojector}}
+
+
+Inheritance diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Abstract\+Deprojector\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sofa\+:\+:rgbdtracking\+:\+:Real\+Sense\+Abstract\+Deprojector\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=238pt]{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a9b4cae154f99cca58b05da9c4b0084ab}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a9b4cae154f99cca58b05da9c4b0084ab}} 
+typedef core\+::objectmodel\+::\+Base\+Object {\bfseries Inherited}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a595c10a0bf6eb93a562e9cb12dd269b7}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a595c10a0bf6eb93a562e9cb12dd269b7}} 
+{\bfseries S\+O\+F\+A\+\_\+\+C\+L\+A\+SS} (\hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector}{Real\+Sense\+Abstract\+Deprojector}, core\+::objectmodel\+::\+Base\+Object)
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac809ca0096bb6ec5f003194ecef42533}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac809ca0096bb6ec5f003194ecef42533}} 
+void {\bfseries init} ()
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a9b933303db901af2174388a524b671a1}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a9b933303db901af2174388a524b671a1}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a9b933303db901af2174388a524b671a1}{read\+Intrinsics} ()
+\begin{DoxyCompactList}\small\item\em read\+Intrinsics reads from a specified file (data \char`\"{}intrinsics\char`\"{}) to rs2\+\_\+intrinsics cam\+\_\+intrinsics \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a7b8c549b1df30b374c1431594bcac52b}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a7b8c549b1df30b374c1431594bcac52b}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a7b8c549b1df30b374c1431594bcac52b}{deproject\+\_\+image} ()
+\begin{DoxyCompactList}\small\item\em deproject\+\_\+image dispatches data processing depending on data (link to realsense cam or not) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac0889ca4dee6e9980f9f28909d6f3ba6}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac0889ca4dee6e9980f9f28909d6f3ba6}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac0889ca4dee6e9980f9f28909d6f3ba6}{deproject\+\_\+image\+\_\+offline} ()
+\begin{DoxyCompactList}\small\item\em deproject\+\_\+image\+\_\+offline Load depth/distframe from saved files \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a899c0a0245338c2b771138f667d1825c}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a899c0a0245338c2b771138f667d1825c}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a899c0a0245338c2b771138f667d1825c}{deproject\+\_\+image\+\_\+online} ()
+\begin{DoxyCompactList}\small\item\em deproject\+\_\+image\+\_\+online get depth/distframe/intrinsics.. from realsense cam \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a6e270c7bba84a068595aa361aa3f5f3c}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a6e270c7bba84a068595aa361aa3f5f3c}} 
+void {\bfseries draw} (const core\+::visual\+::\+Visual\+Params $\ast$vparams)
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ad8bc6a2a7cfe182481496dd4e10e6e42}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ad8bc6a2a7cfe182481496dd4e10e6e42}} 
+void {\bfseries push\+\_\+to\+\_\+pointcloud} (helper\+::vector$<$ defaulttype\+::\+Vector3 $>$ \&outpoints, size\+\_\+t i, size\+\_\+t j, int index, \hyperlink{structsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_1_1_real_sense_dist_struct}{Real\+Sense\+Dist\+Frame\+::\+Real\+Sense\+Dist\+Struct} \&diststruct, float dist)
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a39b77c197afd5fe30322103da8c75b74}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a39b77c197afd5fe30322103da8c75b74}} 
+pcl\+::\+Point\+X\+YZ {\bfseries scale\+Point} (float $\ast$point3d)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ae7f5594d19b61c9fb590c52a691640e7}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ae7f5594d19b61c9fb590c52a691640e7}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ {\bfseries d\+\_\+depth}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a2f887b81e72511844e1dccc0bb8f9a2c}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a2f887b81e72511844e1dccc0bb8f9a2c}} 
+Data$<$ defaulttype\+::\+Vector3 $>$ {\bfseries d\+\_\+tr\+\_\+offset}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a3ef009292c2c22613c774b73b327f366}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a3ef009292c2c22613c774b73b327f366}} 
+Data$<$ helper\+::vector$<$ defaulttype\+::\+Vector3 $>$ $>$ {\bfseries d\+\_\+output}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a93bfad0013b406e433cf07e342cdc4b5}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a93bfad0013b406e433cf07e342cdc4b5}} 
+Data$<$ pointcloud\+::\+Point\+Cloud\+Data $>$ {\bfseries d\+\_\+outpcl}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a01e0cd824f7c1e046f9b8a4b0fb5b8ba}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a01e0cd824f7c1e046f9b8a4b0fb5b8ba}} 
+Data$<$ opencvplugin\+::\+Track\+Bar1 $>$ {\bfseries d\+\_\+scale}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac692621d9153db98d722796883b1cb88}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_ac692621d9153db98d722796883b1cb88}} 
+Data\+Callback {\bfseries c\+\_\+scale}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a06f9d1a842d19213587304d7e1889b8d}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a06f9d1a842d19213587304d7e1889b8d}} 
+Data$<$ \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame}{Real\+Sense\+Dist\+Frame} $>$ {\bfseries d\+\_\+distframe}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a8208172bcb64e5ffa7e3ef36182d9fff}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a8208172bcb64e5ffa7e3ef36182d9fff}} 
+Data$<$ std\+::string $>$ {\bfseries d\+\_\+intrinsics}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a1194f7c58abfef73ea623a3bd18b09c7}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a1194f7c58abfef73ea623a3bd18b09c7}} 
+Data\+Callback {\bfseries c\+\_\+intrinsics}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a8c68e247b9ec182e5b014e1d52ed5284}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a8c68e247b9ec182e5b014e1d52ed5284}} 
+Data$<$ opencvplugin\+::\+Track\+Bar2 $>$ {\bfseries d\+\_\+minmax}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_aa28563fc31f5d63f1df5b32940a2e305}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_aa28563fc31f5d63f1df5b32940a2e305}} 
+Data$<$ int $>$ {\bfseries d\+\_\+downsampler}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_afd99828d27af6b6c40cc17dec09fd818}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_afd99828d27af6b6c40cc17dec09fd818}} 
+Data$<$ bool $>$ {\bfseries d\+\_\+drawpcl}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_aab3f3872a892158eb75c162ceb9dc270}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_aab3f3872a892158eb75c162ceb9dc270}} 
+core\+::objectmodel\+::\+Single\+Link$<$ \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector}{Real\+Sense\+Abstract\+Deprojector}, \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{Real\+Sense\+Cam}, Base\+Link\+::\+F\+L\+A\+G\+\_\+\+S\+T\+O\+R\+E\+P\+A\+TH$\vert$Base\+Link\+::\+F\+L\+A\+G\+\_\+\+S\+T\+R\+O\+N\+G\+L\+I\+NK $>$ {\bfseries l\+\_\+rs\+\_\+cam}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a3317c507cc889b1537c708abb50196da}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_a3317c507cc889b1537c708abb50196da}} 
+pcl\+::\+Point\+Cloud$<$ pcl\+::\+Point\+X\+YZ $>$\+::Ptr {\bfseries m\+\_\+pointcloud}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_abb8025a1f9a471ec9370263b637271f4}\label{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector_abb8025a1f9a471ec9370263b637271f4}} 
+rs2\+\_\+intrinsics {\bfseries cam\+\_\+intrinsics}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/sofa/realsenseplugin/projector/Real\+Sense\+Abstract\+Projector.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,10 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector.html" title="sofa::rgbdtracking\l::RealSenseAbstractDeprojector" alt="" coords="144,71,355,112"/>
+<area shape="rect" id="node6" href="$classsofa_1_1rgbdtracking_1_1_real_sense_calibrator.html" title="sofa::rgbdtracking\l::RealSenseCalibrator" alt="" coords="174,136,325,177"/>
+<area shape="rect" id="node7" href="$classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_exporter.html" title="The RealSenseDistFrameExporter class exports distance frames to file for offline processing. " alt="" coords="147,201,351,243"/>
+<area shape="rect" id="node8" href="$classsofa_1_1rgbdtracking_1_1_real_sense_grab_cut.html" title="sofa::rgbdtracking\l::RealSenseGrabCut" alt="" coords="178,267,321,308"/>
+<area shape="rect" id="node9" href="$classsofa_1_1rgbdtracking_1_1_real_sense_multi_cam.html" title="The RealSenseMultiCam class tries listing all realsense cameras connected and instanciates VirtualCam..." alt="" coords="174,332,325,373"/>
+<area shape="rect" id="node3" href="$classsofa_1_1rgbdtracking_1_1_real_sense_deprojector.html" title="The RealSenseDeprojector class Online / Offline 2D&#45;3D deprojection of whole rgb&#45;d scene..." alt="" coords="419,5,580,47"/>
+<area shape="rect" id="node4" href="$classsofa_1_1rgbdtracking_1_1_real_sense_mask_deprojector.html" title="The RealSenseMaskDeprojector class deprojects a set of points depending on a 2D binary mask defined a..." alt="" coords="403,71,596,112"/>
+<area shape="rect" id="node5" href="$classsofa_1_1rgbdtracking_1_1_real_sense_point_deprojector.html" title="The RealSensePointDeprojector class deprojects only a defined set of 2D points defined in d_input (la..." alt="" coords="404,136,595,177"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="sofa::rgbdtracking::RealSenseStreamer" name="sofa::rgbdtracking::RealSenseStreamer">
+<area shape="rect" id="node3" href="$classsofa_1_1rgbdtracking_1_1_real_sense_cam.html" title="The RealSenseCam class Streamer to use when only one realsense is connected. " alt="" coords="5,169,132,211"/>
+<area shape="rect" id="node4" href="$classsofa_1_1rgbdtracking_1_1_real_sense_virtual_cam.html" title="The RealSenseVirtualCam class virtual cam instanciated from multicam component. " alt="" coords="156,169,315,211"/>
+</map>
