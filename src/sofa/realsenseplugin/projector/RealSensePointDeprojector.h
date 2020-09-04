@@ -30,6 +30,10 @@ namespace sofa {
 
 namespace rgbdtracking {
 
+/*!
+ * \brief The RealSensePointDeprojector class
+ * deprojects only a defined  set of 2D points defined in d_input (label input in sofa) from depth frame
+ */
 class RealSensePointDeprojector : public RealSenseAbstractDeprojector
 {
 public:

@@ -43,7 +43,11 @@ using namespace cv;
 using namespace boost;
 using namespace rs2;
 
-class RealSenseCam : public RealSenseStreamer //core::objectmodel::BaseObject
+/*!
+ * \brief The RealSenseCam class
+ * Streamer to use when only one realsense is connected
+ */
+class RealSenseCam : public RealSenseStreamer
 {
 public:
     SOFA_CLASS( RealSenseCam , RealSenseStreamer );
@@ -124,7 +128,6 @@ protected:
             RS2_STREAM_DEPTH,
             resolution.at(0), resolution.at(1),
             RS2_FORMAT_Z16, 30);
-//        pipe.start(cfg);
         selection = pipe.start(cfg);
         if (d_exposure.getValue() > 0) {
             setExposure();

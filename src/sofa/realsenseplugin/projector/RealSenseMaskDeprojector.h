@@ -30,6 +30,10 @@ namespace sofa {
 
 namespace rgbdtracking {
 
+/*!
+ * \brief The RealSenseMaskDeprojector class
+ * deprojects a set of points depending on a 2D binary mask defined as an image in d_input (label input in sofa)
+ */
 class RealSenseMaskDeprojector : public RealSenseAbstractDeprojector
 {
 public:

@@ -293,20 +293,6 @@ public :
             -scale*point3d[2]+tr[2]
         ) ;
     }
-    void handleEvent(sofa::core::objectmodel::Event *event) {
-        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
-            if (ev->getKey() == 'b' || ev->getKey() == 'B') {
-                f_listening.setValue(false);
-            }
-        }
-        if (sofa::core::objectmodel::MouseEvent * ev = dynamic_cast<sofa::core::objectmodel::MouseEvent*>(event)){
-            if (ev->getState() == sofa::core::objectmodel::MouseEvent::LeftPressed) {
-                std::cout << ev->getPosX() << " " << ev->getPosY() << std::endl ;
-            } else if (ev->getState() == sofa::core::objectmodel::MouseEvent::Wheel) {
-                std::cout << ev->getWheelDelta() << std::endl ;
-            }
-        }
-    }
 
 private :
     /// \brief write to output sofa data

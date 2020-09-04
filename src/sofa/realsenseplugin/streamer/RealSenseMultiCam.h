@@ -43,6 +43,10 @@ namespace rgbdtracking
 {
 
 
+/*!
+ * \brief The RealSenseVirtualCam class
+ * virtual cam instanciated from multicam component
+ */
 class RealSenseVirtualCam : public RealSenseStreamer {
 public:
     typedef RealSenseStreamer Inherited;
@@ -86,6 +90,10 @@ public:
     }
 } ;
 
+/*!
+ * \brief The RealSenseMultiCam class
+ * tries listing all realsense cameras connected and instanciates VirtualCamera components accordingly
+ */
 class RealSenseMultiCam : public core::objectmodel::BaseObject {
 public:
     typedef core::objectmodel::BaseObject Inherited;

@@ -32,7 +32,7 @@ namespace rgbdtracking {
 
 /*!
  * \brief The RealSenseDeprojector class
- * Online / Offline 2D-3D deprojection
+ * Online / Offline 2D-3D deprojection of whole rgb-d scene
  */
 class RealSenseDeprojector : public RealSenseAbstractDeprojector
 {
@@ -47,16 +47,11 @@ public:
 
     DataCallback c_image ;
 
-//    unused
-//    pcl::PointCloud<pcl::Normal>::Ptr m_cloud_normals ;
-//    helper::vector<defaulttype::Vector3> m_colors ;
-
     RealSenseDeprojector()
         : Inherited()
         , d_color(initData(&d_color, "color", "segmented color data image"))
         //offline reco
         , d_snap_path(initData(&d_snap_path, std::string("."), "snap_path", "path to snap shots folder"))
-//        , m_cloud_normals(new pcl::PointCloud<pcl::Normal>)
     {
         c_image.addInputs({&d_color, &this->d_depth});
         c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
@@ -110,6 +105,10 @@ private :
         std::cout << "(RealSenseCam) exported " << snapshot_dist_filename << std::endl ;
     }
 
+    /*!
+     * \brief _write_distFrame
+     * \param snapshot_dist_filename
+     */
     inline void _write_distFrame (std::string snapshot_dist_filename) {
         RealSenseDistFrame distframe = d_distframe.getValue() ;
         RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame();
@@ -186,23 +185,6 @@ private :
         d_output.endEdit();
     }
 
-//      unused
-//    void compute_pcl_normals () {
-//        // compute normals for remeshing ?
-//        pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne ;
-//        ne.setInputCloud(m_pointcloud);
-//        // Create an empty kdtree representation, and pass it to the normal estimation object.
-//        // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
-//        pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
-//        ne.setSearchMethod (tree);
-
-//        // Use all neighbors in a sphere of radius 3cm
-//        ne.setRadiusSearch (0.03);
-
-//        // Compute the features
-//        m_cloud_normals->clear();
-//        ne.compute (*m_cloud_normals);
-//    }
 };
 
 }
