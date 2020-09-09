@@ -78,6 +78,7 @@ public :
     Data<opencvplugin::ImageData> d_depth ;
     Data<defaulttype::Vector3> d_tr_offset ;
     Data<helper::vector<defaulttype::Vector3> > d_output ;
+    Data<helper::vector<defaulttype::Vector3> > d_synthvolume ;
     Data <pointcloud::PointCloudData> d_outpcl ;
 
     Data<opencvplugin::TrackBar1> d_scale ;
@@ -93,6 +94,7 @@ public :
     Data<opencvplugin::TrackBar2> d_minmax ;
     Data<int> d_downsampler ;
     Data<bool> d_drawpcl ;
+    Data<int> d_densify ;
 
     core::objectmodel::SingleLink<
         RealSenseAbstractDeprojector,
@@ -108,6 +110,7 @@ public :
         , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
         , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0,0,0), "offset", "translation offset"))
         , d_output(initData(&d_output, "output", "output 3D position"))
+        , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
         , d_outpcl(initData(&d_outpcl, "outpcl", "output pcl PointCloud"))
         , d_scale(initData(&d_scale, opencvplugin::TrackBar1(100, 2550, 1), "scale", "point cloud scaling factor"))
         // offline reco
@@ -117,6 +120,7 @@ public :
         , d_minmax (initData(&d_minmax, opencvplugin::TrackBar2(helper::fixed_array<double,2>(0, 255)),"minmax", "depth value filter"))
         , d_downsampler(initData(&d_downsampler, 5, "downsample", "point cloud downsampling"))
         , d_drawpcl(initData(&d_drawpcl, false, "drawpcl", "true if you want to draw the point cloud"))
+        , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
         // link to realsense for online reco
         , l_rs_cam(initLink("rscam", "link to realsense camera component - used for getting camera intrinsics"))
         , m_pointcloud(new pcl::PointCloud<pcl::PointXYZ>)
@@ -185,6 +189,8 @@ public :
         } else {
             deproject_image_online();
         }
+        //make synthetic volume
+        this->makeSyntheticVolume();
         // set pointcloud to output
         d_outpcl.setValue(m_pointcloud);
     }
@@ -282,6 +288,23 @@ public :
 
         defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
         outpoints.push_back(point) ;
+    }
+
+    void makeSyntheticVolume () {
+        int dense = d_densify.getValue() ;
+        if (dense <= 0) {
+        // do not densify
+            return ;
+        }
+        helper::vector<defaulttype::Vector3> & synth = *d_synthvolume.beginEdit();
+        synth.clear() ;
+        for (const auto && pt : *m_pointcloud) {
+            for (int i = 1 ; i<dense ; i++) {
+                defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
+                synth.push_back(point) ;
+            }
+        }
+        d_synthvolume.endEdit();
     }
 
     inline pcl::PointXYZ scalePoint (float * point3d) {
