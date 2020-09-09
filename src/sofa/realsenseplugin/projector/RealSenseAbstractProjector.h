@@ -47,11 +47,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 
-// pcl
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/features/normal_3d.h>
-
 // c++ stl
 #include <fstream>
 #include <algorithm>

@@ -105,6 +105,7 @@ public:
 
 protected:
 
+    ///\brief set exposure of camera from "exposure" data in sofa
     void setExposure()
     {
         rs2::device selected_device = selection.get_device();
@@ -116,6 +117,7 @@ protected:
         }
     }
 
+    ///\brief setuo realsense data acquisition pipeline
     inline void configPipe()
     {
         auto resolution = d_resolution_rs.getValue() ;
@@ -134,13 +136,13 @@ protected:
         }
     }
 
+    ///\brief wait for a second in order for auto exposure to settle in at initialization
     inline void stabilizeAutoExp() {
         //drop first frames to let auto exposure settle in
         for (int i = 60 ; i-- ;) wait_for_frame(pipe) ;
     }
 
     void initAlign() {
-        // set config for resolution/fps ...
         configPipe();
         stabilizeAutoExp();
         acquireAligned(*d_image.beginEdit());

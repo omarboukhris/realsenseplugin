@@ -139,7 +139,7 @@ public:
         }
     }
 
-    // write the frame in an opened binary file stream
+    ///\brief write the frame in an opened binary file stream
     void saveFrameToStream() {
         RealSenseDistFrame distframe = d_distframe.getValue() ;
         RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame();
@@ -157,7 +157,7 @@ public:
         ) ;
     }
 
-    // Calledback each time distance frame changes
+    ///\brief Calledback each time distance frame changes
     void saveFrame () {
         updateFileStream();
         if (filestream == nullptr) {
@@ -218,7 +218,6 @@ public:
         filestream = nullptr ;
     }
 
-    // implementation of pure virtual function
     virtual void decodeImage(cv::Mat & /*img*/) {
         readFrame();
     }
