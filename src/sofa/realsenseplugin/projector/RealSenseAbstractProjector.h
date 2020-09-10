@@ -293,8 +293,10 @@ public :
         }
         helper::vector<defaulttype::Vector3> & synth = *d_synthvolume.beginEdit();
         synth.clear() ;
-        for (const auto && pt : *m_pointcloud) {
+        for (const auto & ptmp : *m_pointcloud) {
             for (int i = 1 ; i<dense ; i++) {
+                float ptr_pt[3] = {ptmp.x, ptmp.y, ptmp.z} ;
+                pcl::PointXYZ pt = scalePoint(ptr_pt) ;
                 defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
                 synth.push_back(point) ;
             }

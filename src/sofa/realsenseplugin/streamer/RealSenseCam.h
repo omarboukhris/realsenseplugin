@@ -62,6 +62,9 @@ public:
     rs2_intrinsics cam_intrinsics ;
     rs2::pipeline_profile selection ;
 
+    rs2::decimation_filter decimation ;
+    rs2::temporal_filter temporal ;
+
     // Declare depth colorizer for pretty visualization of depth data
     rs2::colorizer color_map;
 
@@ -134,6 +137,9 @@ protected:
         if (d_exposure.getValue() > 0) {
             setExposure();
         }
+        decimation.set_option(RS2_OPTION_FILTER_MAGNITUDE, d_decimation.getValue());
+        temporal.set_option(RS2_OPTION_FILTER_SMOOTH_ALPHA, d_tmp_alpha.getValue());
+        temporal.set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, d_tmp_delta.getValue());
     }
 
     ///\brief wait for a second in order for auto exposure to settle in at initialization
@@ -158,6 +164,7 @@ protected:
         if (depth) delete depth ;
         color = new rs2::video_frame(frameset.get_color_frame()) ;
         depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
+
 
         // extract pointcloud
         //getpointcloud(*color, *depth) ;

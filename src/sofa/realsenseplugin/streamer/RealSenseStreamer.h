@@ -80,6 +80,12 @@ public :
     DataCallback c_intrinsics ;
 
     Data<defaulttype::Vec4f > d_intrinsicParameters ;
+    // decimation filter
+    Data<int> d_decimation ;
+    // temporal filter
+    Data<float> d_tmp_alpha ;
+    Data<float> d_tmp_delta ;
+    DataCallback c_filters ;
 
     Data<std::string> d_calibpath ;
     std::vector<cv::Mat> calib_imagelist ;
@@ -97,15 +103,39 @@ public :
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
+        , d_decimation(initData(&d_decimation, "decimation", "decimation magnitude"))
+        , d_tmp_alpha(initData(&d_tmp_alpha, "alpha", "temporal filter alpha"))
+        , d_tmp_delta(initData(&d_tmp_delta, "delta", "temporal filter delta"))
         , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
         , color(nullptr), depth(nullptr)
         , calib_imagelist()
     {
+        d_decimation.setValue(4200);
+        d_tmp_alpha.setValue(0.);
+        d_tmp_delta.setValue(0.);
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
+        c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
+        c_filters.addCallback(std::bind(&RealSenseStreamer::checkFiltersParams, this));
         this->f_listening.setValue(true) ;
     }
+
+    void checkFiltersParams () {
+        int & decimation = *d_decimation.beginEdit() ;
+        float &
+            alpha = *d_tmp_alpha.beginEdit(),
+            delta = *d_tmp_delta.beginEdit() ;
+        if (decimation >= 8000) decimation = 8000 ;
+        if (decimation <= 8000) decimation = 0 ;
+        if ((int)(alpha*1e5) >= 10000) alpha = 1. ;
+        if ((int)(alpha*1e5) <= 0) alpha = 0. ;
+        if ((int)delta >= 100) delta = 100. ;
+        if ((int)delta <= 0) delta = 0. ;
+        d_decimation.endEdit();
+        d_tmp_alpha.endEdit();
+        d_tmp_delta.endEdit();
+     }
 
     /*!
      * \brief handleEvent : Press i to push image to calibration image list, z to cancel, s to save
