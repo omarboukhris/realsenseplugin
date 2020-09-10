@@ -86,6 +86,9 @@ public :
     Data<float> d_tmp_alpha ;
     Data<float> d_tmp_delta ;
     DataCallback c_filters ;
+    //actual filters
+    rs2::decimation_filter decimation ;
+    rs2::temporal_filter temporal ;
 
     Data<std::string> d_calibpath ;
     std::vector<cv::Mat> calib_imagelist ;
@@ -135,6 +138,9 @@ public :
         d_decimation.endEdit();
         d_tmp_alpha.endEdit();
         d_tmp_delta.endEdit();
+        this->decimation.set_option(RS2_OPTION_FILTER_MAGNITUDE, d_decimation.getValue());
+        this->temporal.set_option(RS2_OPTION_FILTER_SMOOTH_ALPHA, d_tmp_alpha.getValue());
+        this->temporal.set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, d_tmp_delta.getValue());
      }
 
     /*!

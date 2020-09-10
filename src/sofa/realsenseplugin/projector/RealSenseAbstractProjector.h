@@ -113,7 +113,7 @@ public :
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsicsPath", "path to realsense intrinsics file to read from"))
         // visualization
         , d_minmax (initData(&d_minmax, opencvplugin::TrackBar2(helper::fixed_array<double,2>(0, 255)),"minmax", "depth value filter"))
-        , d_downsampler(initData(&d_downsampler, 5, "downsample", "point cloud downsampling"))
+        , d_downsampler(initData(&d_downsampler, 1, "downsample", "point cloud downsampling"))
         , d_drawpcl(initData(&d_drawpcl, false, "drawpcl", "true if you want to draw the point cloud"))
         , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
         // link to realsense for online reco
