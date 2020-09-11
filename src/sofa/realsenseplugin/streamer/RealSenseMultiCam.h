@@ -25,7 +25,7 @@
 #pragma once
 
 #include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
-#include <sofa/opencvplugin/scheduler/OpenCVScheduler.h>
+#include <sofa/sofascheduler/scheduler/GenericScheduler.h>
 
 #include <SofaSimulationCommon/common.h>
 #include <sofa/simulation/Node.h>
@@ -127,8 +127,9 @@ public:
     }
 
     void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, std::string serial, size_t i) {
-        using namespace opencvplugin::scheduler ;
-        static OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
+//        using namespace opencvplugin::scheduler ;
+//        static OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
+        sofascheduler::scheduler::GenericScheduler::SPtr scheduler = new sofascheduler::scheduler::GenericScheduler ;
         scheduler->setName(std::string("scheduler_rs") + std::to_string(i));
         node->addObject(scheduler) ;
 

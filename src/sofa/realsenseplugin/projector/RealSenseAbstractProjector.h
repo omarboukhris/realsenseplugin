@@ -295,8 +295,9 @@ public :
         synth.clear() ;
         for (const auto & ptmp : *m_pointcloud) {
             for (int i = 1 ; i<dense ; i++) {
-                float ptr_pt[3] = {ptmp.x, ptmp.y, ptmp.z} ;
-                pcl::PointXYZ pt = scalePoint(ptr_pt) ;
+//                float ptr_pt[3] = {ptmp.x, ptmp.y, ptmp.z} ;
+//                pcl::PointXYZ pt = scalePoint(ptr_pt) ;
+                pcl::PointXYZ pt = ptmp ;
                 defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
                 synth.push_back(point) ;
             }

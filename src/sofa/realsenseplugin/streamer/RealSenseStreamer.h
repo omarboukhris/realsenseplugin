@@ -114,9 +114,9 @@ public :
         , color(nullptr), depth(nullptr)
         , calib_imagelist()
     {
-        d_decimation.setValue(4200);
+        d_decimation.setValue(420);
         d_tmp_alpha.setValue(0.);
-        d_tmp_delta.setValue(0.);
+        d_tmp_delta.setValue(1.);
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
         c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
@@ -134,7 +134,7 @@ public :
         if ((int)(alpha*1e5) >= 10000) alpha = 1. ;
         if ((int)(alpha*1e5) <= 0) alpha = 0. ;
         if ((int)delta >= 100) delta = 100. ;
-        if ((int)delta <= 0) delta = 0. ;
+        if ((int)delta <= 1) delta = 1. ;
         d_decimation.endEdit();
         d_tmp_alpha.endEdit();
         d_tmp_delta.endEdit();
