@@ -87,6 +87,7 @@ public :
 
     // downsampling and visualization
     Data<opencvplugin::TrackBar2> d_minmax ;
+    Data<bool> d_flip ;
     Data<int> d_downsampler ;
     Data<bool> d_drawpcl ;
     Data<int> d_densify ;
@@ -113,6 +114,7 @@ public :
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsicsPath", "path to realsense intrinsics file to read from"))
         // visualization
         , d_minmax (initData(&d_minmax, opencvplugin::TrackBar2(helper::fixed_array<double,2>(0, 255)),"minmax", "depth value filter"))
+        , d_flip(initData(&d_flip, false, "flip", "flip z axis"))
         , d_downsampler(initData(&d_downsampler, 1, "downsample", "point cloud downsampling"))
         , d_drawpcl(initData(&d_drawpcl, false, "drawpcl", "true if you want to draw the point cloud"))
         , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
@@ -273,7 +275,7 @@ public :
             std::abs(point3d[2]) < 1e-4 ||
             std::abs(point3d[0]) > 5 ||
             std::abs(point3d[1]) > 5 ||
-            std::abs(point3d[2]) > 5) {
+            std::abs(point3d[2]) > 0.45) {
         //invalid point
             return ;
         }
@@ -282,6 +284,9 @@ public :
         m_pointcloud->push_back(pt);
 
         defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
+        if (d_flip.getValue()) {
+            point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
+        }
         outpoints.push_back(point) ;
     }
 
@@ -299,6 +304,9 @@ public :
 //                pcl::PointXYZ pt = scalePoint(ptr_pt) ;
                 pcl::PointXYZ pt = ptmp ;
                 defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
+                if (d_flip.getValue()) {
+                    point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
+                }
                 synth.push_back(point) ;
             }
         }
