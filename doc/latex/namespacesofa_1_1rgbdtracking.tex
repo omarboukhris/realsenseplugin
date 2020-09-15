@@ -1,0 +1,235 @@
+\hypertarget{namespacesofa_1_1rgbdtracking}{}\section{sofa\+:\+:rgbdtracking Namespace Reference}
+\label{namespacesofa_1_1rgbdtracking}\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_abstract_deprojector}{Real\+Sense\+Abstract\+Deprojector}
+\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_calibrator}{Real\+Sense\+Calibrator}
+\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{Real\+Sense\+Cam}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_cam}{Real\+Sense\+Cam} class Streamer to use when only one realsense is connected. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}{Real\+Sense\+Deprojector}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_deprojector}{Real\+Sense\+Deprojector} class Online / Offline 2\+D-\/3D deprojection of whole rgb-\/d scene. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame}{Real\+Sense\+Dist\+Frame}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame}{Real\+Sense\+Dist\+Frame} class Used for distance frame usage as sofa data by components. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_exporter}{Real\+Sense\+Dist\+Frame\+Exporter}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_exporter}{Real\+Sense\+Dist\+Frame\+Exporter} class exports distance frames to file for offline processing. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_streamer}{Real\+Sense\+Dist\+Frame\+Streamer}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_streamer}{Real\+Sense\+Dist\+Frame\+Streamer} class Streams through distance frames in a file Implements Base\+Open\+C\+V\+Streamer. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_grab_cut}{Real\+Sense\+Grab\+Cut}
+\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_mask_deprojector}{Real\+Sense\+Mask\+Deprojector}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_mask_deprojector}{Real\+Sense\+Mask\+Deprojector} class deprojects a set of points depending on a 2D binary mask defined as an image in d\+\_\+input (label input in sofa) \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_multi_cam}{Real\+Sense\+Multi\+Cam}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_multi_cam}{Real\+Sense\+Multi\+Cam} class tries listing all realsense cameras connected and instanciates Virtual\+Camera components accordingly. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_point_deprojector}{Real\+Sense\+Point\+Deprojector}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_point_deprojector}{Real\+Sense\+Point\+Deprojector} class deprojects only a defined set of 2D points defined in d\+\_\+input (label input in sofa) from depth frame. \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_streamer}{Real\+Sense\+Streamer} class Abstract streamer used as a superclass for realsensecam and realsense virtual cam (used with multicam) \end{DoxyCompactList}\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_virtual_cam}{Real\+Sense\+Virtual\+Cam}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_virtual_cam}{Real\+Sense\+Virtual\+Cam} class virtual cam instanciated from multicam component. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \hyperlink{namespacesofa_1_1rgbdtracking_a00834a9204a667746fef9a402ccbfb55}{Data\+Callback} = core\+::objectmodel\+::\+Data\+Callback
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{namespacesofa_1_1rgbdtracking_a596d0c2a2b98cc3dd0091e933070ecce}{init\+External\+Module} ()
+\item 
+const char $\ast$ \hyperlink{namespacesofa_1_1rgbdtracking_a71f655bffd81cca5c72c2fc4a0aa72d3}{get\+Module\+Name} ()
+\item 
+const char $\ast$ \hyperlink{namespacesofa_1_1rgbdtracking_ac45b27a5c97c1ec95aa078ac013bcca7}{get\+Module\+Version} ()
+\item 
+const char $\ast$ \hyperlink{namespacesofa_1_1rgbdtracking_a3d5dee9f71234c539f75d68e90eb4120}{get\+Module\+License} ()
+\item 
+const char $\ast$ \hyperlink{namespacesofa_1_1rgbdtracking_a720f3a55d983babc84a6f4ce8ce7d67f}{get\+Module\+Description} ()
+\item 
+const char $\ast$ \hyperlink{namespacesofa_1_1rgbdtracking_a7687b3685880c0911d3f8f2e97000f5d}{get\+Module\+Component\+List} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_ac3f6d225dbe5a6782bfbb716bc3940e9}{R\+S\+Deprojector\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a1b9f5fecf5affbe66747355df84f3eba}{Dist\+Frame\+Exporter\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a7d552ae238bb3e3f0323220bd43f38d5}{Dist\+Frame\+Streamer\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a585e4b070b41993d28e4c727bcd0b836}{R\+S\+Mask\+Deprojector\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a615e1879a9190fb07f0669c146ecc164}{R\+S\+Point\+Deprojector\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a2430eec90f6511f570bb58f6ce29e745}{Real\+Sense\+Cam\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a30f0b3b59f71c94fac5ceebea2f6cf4b}{Real\+Sense\+Virtual\+Cam\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a5f7b935ae843053a8c1c4aec898c37fb}{Real\+Sense\+Multi\+Cam\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_a5a0fbb78b29abf28ac16247f111a57f6}{Real\+Sense\+Calibrator\+Class}
+\item 
+int \hyperlink{namespacesofa_1_1rgbdtracking_ac0fc03382c0bfe23d9d73d844ce7ee91}{Real\+Sense\+Grab\+Cut\+Class}
+\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a00834a9204a667746fef9a402ccbfb55}\label{namespacesofa_1_1rgbdtracking_a00834a9204a667746fef9a402ccbfb55}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Data\+Callback@{Data\+Callback}}
+\index{Data\+Callback@{Data\+Callback}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Data\+Callback}{DataCallback}}
+{\footnotesize\ttfamily using \hyperlink{namespacesofa_1_1rgbdtracking_a00834a9204a667746fef9a402ccbfb55}{sofa\+::rgbdtracking\+::\+Data\+Callback} = typedef core\+::objectmodel\+::\+Data\+Callback}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a7687b3685880c0911d3f8f2e97000f5d}\label{namespacesofa_1_1rgbdtracking_a7687b3685880c0911d3f8f2e97000f5d}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!get\+Module\+Component\+List@{get\+Module\+Component\+List}}
+\index{get\+Module\+Component\+List@{get\+Module\+Component\+List}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{get\+Module\+Component\+List()}{getModuleComponentList()}}
+{\footnotesize\ttfamily const char $\ast$ sofa\+::rgbdtracking\+::get\+Module\+Component\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a720f3a55d983babc84a6f4ce8ce7d67f}\label{namespacesofa_1_1rgbdtracking_a720f3a55d983babc84a6f4ce8ce7d67f}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!get\+Module\+Description@{get\+Module\+Description}}
+\index{get\+Module\+Description@{get\+Module\+Description}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{get\+Module\+Description()}{getModuleDescription()}}
+{\footnotesize\ttfamily const char $\ast$ sofa\+::rgbdtracking\+::get\+Module\+Description (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a3d5dee9f71234c539f75d68e90eb4120}\label{namespacesofa_1_1rgbdtracking_a3d5dee9f71234c539f75d68e90eb4120}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!get\+Module\+License@{get\+Module\+License}}
+\index{get\+Module\+License@{get\+Module\+License}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{get\+Module\+License()}{getModuleLicense()}}
+{\footnotesize\ttfamily const char $\ast$ sofa\+::rgbdtracking\+::get\+Module\+License (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a71f655bffd81cca5c72c2fc4a0aa72d3}\label{namespacesofa_1_1rgbdtracking_a71f655bffd81cca5c72c2fc4a0aa72d3}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!get\+Module\+Name@{get\+Module\+Name}}
+\index{get\+Module\+Name@{get\+Module\+Name}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{get\+Module\+Name()}{getModuleName()}}
+{\footnotesize\ttfamily const char $\ast$ sofa\+::rgbdtracking\+::get\+Module\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_ac45b27a5c97c1ec95aa078ac013bcca7}\label{namespacesofa_1_1rgbdtracking_ac45b27a5c97c1ec95aa078ac013bcca7}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!get\+Module\+Version@{get\+Module\+Version}}
+\index{get\+Module\+Version@{get\+Module\+Version}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{get\+Module\+Version()}{getModuleVersion()}}
+{\footnotesize\ttfamily const char $\ast$ sofa\+::rgbdtracking\+::get\+Module\+Version (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a596d0c2a2b98cc3dd0091e933070ecce}\label{namespacesofa_1_1rgbdtracking_a596d0c2a2b98cc3dd0091e933070ecce}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!init\+External\+Module@{init\+External\+Module}}
+\index{init\+External\+Module@{init\+External\+Module}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{init\+External\+Module()}{initExternalModule()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::init\+External\+Module (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a1b9f5fecf5affbe66747355df84f3eba}\label{namespacesofa_1_1rgbdtracking_a1b9f5fecf5affbe66747355df84f3eba}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Dist\+Frame\+Exporter\+Class@{Dist\+Frame\+Exporter\+Class}}
+\index{Dist\+Frame\+Exporter\+Class@{Dist\+Frame\+Exporter\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Dist\+Frame\+Exporter\+Class}{DistFrameExporterClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Dist\+Frame\+Exporter\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"exports distance frames in a file"} )
+        .add<RealSenseDistFrameExporter>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a7d552ae238bb3e3f0323220bd43f38d5}\label{namespacesofa_1_1rgbdtracking_a7d552ae238bb3e3f0323220bd43f38d5}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Dist\+Frame\+Streamer\+Class@{Dist\+Frame\+Streamer\+Class}}
+\index{Dist\+Frame\+Streamer\+Class@{Dist\+Frame\+Streamer\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Dist\+Frame\+Streamer\+Class}{DistFrameStreamerClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Dist\+Frame\+Streamer\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"imports distance frames from a file"} )
+        .add<RealSenseDistFrameStreamer>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a5a0fbb78b29abf28ac16247f111a57f6}\label{namespacesofa_1_1rgbdtracking_a5a0fbb78b29abf28ac16247f111a57f6}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Real\+Sense\+Calibrator\+Class@{Real\+Sense\+Calibrator\+Class}}
+\index{Real\+Sense\+Calibrator\+Class@{Real\+Sense\+Calibrator\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Real\+Sense\+Calibrator\+Class}{RealSenseCalibratorClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Real\+Sense\+Calibrator\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"RealSenseCalibrator calibrates one or multiple realsense cameras"} )
+        .add<RealSenseCalibrator>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a2430eec90f6511f570bb58f6ce29e745}\label{namespacesofa_1_1rgbdtracking_a2430eec90f6511f570bb58f6ce29e745}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Real\+Sense\+Cam\+Class@{Real\+Sense\+Cam\+Class}}
+\index{Real\+Sense\+Cam\+Class@{Real\+Sense\+Cam\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Real\+Sense\+Cam\+Class}{RealSenseCamClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Real\+Sense\+Cam\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"A RealSenseCam cam depth-color streaming component for sofa"} )
+        .add<RealSenseCam>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_ac0fc03382c0bfe23d9d73d844ce7ee91}\label{namespacesofa_1_1rgbdtracking_ac0fc03382c0bfe23d9d73d844ce7ee91}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Real\+Sense\+Grab\+Cut\+Class@{Real\+Sense\+Grab\+Cut\+Class}}
+\index{Real\+Sense\+Grab\+Cut\+Class@{Real\+Sense\+Grab\+Cut\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Real\+Sense\+Grab\+Cut\+Class}{RealSenseGrabCutClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Real\+Sense\+Grab\+Cut\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"Grab cut with automatic foreground/background detection"} )
+.add<RealSenseGrabCut>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a5f7b935ae843053a8c1c4aec898c37fb}\label{namespacesofa_1_1rgbdtracking_a5f7b935ae843053a8c1c4aec898c37fb}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Real\+Sense\+Multi\+Cam\+Class@{Real\+Sense\+Multi\+Cam\+Class}}
+\index{Real\+Sense\+Multi\+Cam\+Class@{Real\+Sense\+Multi\+Cam\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Real\+Sense\+Multi\+Cam\+Class}{RealSenseMultiCamClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Real\+Sense\+Multi\+Cam\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"RealSenseMultiCam calibrates one or multiple realsense cameras"} )
+    .add<RealSenseMultiCam>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a30f0b3b59f71c94fac5ceebea2f6cf4b}\label{namespacesofa_1_1rgbdtracking_a30f0b3b59f71c94fac5ceebea2f6cf4b}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!Real\+Sense\+Virtual\+Cam\+Class@{Real\+Sense\+Virtual\+Cam\+Class}}
+\index{Real\+Sense\+Virtual\+Cam\+Class@{Real\+Sense\+Virtual\+Cam\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{Real\+Sense\+Virtual\+Cam\+Class}{RealSenseVirtualCamClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Real\+Sense\+Virtual\+Cam\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"RealSenseVirtualCam selects a single realsense cam by id"} )
+    .add<RealSenseVirtualCam>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_ac3f6d225dbe5a6782bfbb716bc3940e9}\label{namespacesofa_1_1rgbdtracking_ac3f6d225dbe5a6782bfbb716bc3940e9}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!R\+S\+Deprojector\+Class@{R\+S\+Deprojector\+Class}}
+\index{R\+S\+Deprojector\+Class@{R\+S\+Deprojector\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{R\+S\+Deprojector\+Class}{RSDeprojectorClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+R\+S\+Deprojector\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"deprojects realsense depth stream to 3d point cloud in sofa"} )
+        .add<RealSenseDeprojector>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a585e4b070b41993d28e4c727bcd0b836}\label{namespacesofa_1_1rgbdtracking_a585e4b070b41993d28e4c727bcd0b836}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!R\+S\+Mask\+Deprojector\+Class@{R\+S\+Mask\+Deprojector\+Class}}
+\index{R\+S\+Mask\+Deprojector\+Class@{R\+S\+Mask\+Deprojector\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{R\+S\+Mask\+Deprojector\+Class}{RSMaskDeprojectorClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+R\+S\+Mask\+Deprojector\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"deprojects a set of 2d points to a 3d point cloud in sofa using a mask"} )
+        .add<RealSenseMaskDeprojector>(\textcolor{keyword}{true})
+\end{DoxyCode}
+\mbox{\Hypertarget{namespacesofa_1_1rgbdtracking_a615e1879a9190fb07f0669c146ecc164}\label{namespacesofa_1_1rgbdtracking_a615e1879a9190fb07f0669c146ecc164}} 
+\index{sofa\+::rgbdtracking@{sofa\+::rgbdtracking}!R\+S\+Point\+Deprojector\+Class@{R\+S\+Point\+Deprojector\+Class}}
+\index{R\+S\+Point\+Deprojector\+Class@{R\+S\+Point\+Deprojector\+Class}!sofa\+::rgbdtracking@{sofa\+::rgbdtracking}}
+\subsubsection{\texorpdfstring{R\+S\+Point\+Deprojector\+Class}{RSPointDeprojectorClass}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+R\+S\+Point\+Deprojector\+Class}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= core::RegisterObject ( \textcolor{stringliteral}{"deprojects a set of 2d points to a 3d point cloud in sofa"} )
+        .add<RealSensePointDeprojector>(\textcolor{keyword}{true})
+\end{DoxyCode}

@@ -1,0 +1,67 @@
+\hypertarget{_real_sense_grab_cut_8h}{}\section{src/sofa/realsenseplugin/utils/\+Real\+Sense\+Grab\+Cut.h File Reference}
+\label{_real_sense_grab_cut_8h}\index{src/sofa/realsenseplugin/utils/\+Real\+Sense\+Grab\+Cut.\+h@{src/sofa/realsenseplugin/utils/\+Real\+Sense\+Grab\+Cut.\+h}}
+{\ttfamily \#include $<$sofa/defaulttype/\+Vec.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/core/objectmodel/\+Base\+Object.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/core/objectmodel/\+Data\+File\+Name.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/core/visual/\+Visual\+Params.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/defaulttype/\+Bounding\+Box.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/core/objectmodel/\+Event.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/simulation/\+Animate\+Begin\+Event.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/simulation/\+Animate\+End\+Event.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/defaulttype/\+Mat.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/defaulttype/\+Quat.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/helper/rmath.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/helper/\+Options\+Group.\+h$>$}\newline
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/imgproc.\+hpp$>$}\newline
+{\ttfamily \#include $<$librealsense2/rs.\+hpp$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$sofa/opencvplugin/\+Open\+C\+V\+Widget.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/opencvplugin/\+Base\+Open\+C\+V\+Streamer.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/opencvplugin/utils/\+Open\+C\+V\+Mouse\+Events.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/realsenseplugin/streamer/\+Real\+Sense\+Cam.\+h$>$}\newline
+{\ttfamily \#include $<$sofa/realsenseplugin/cv-\/helpers.\+hpp$>$}\newline
+Include dependency graph for Real\+Sense\+Grab\+Cut.\+h\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{_real_sense_grab_cut_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{_real_sense_grab_cut_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classsofa_1_1rgbdtracking_1_1_real_sense_grab_cut}{sofa\+::rgbdtracking\+::\+Real\+Sense\+Grab\+Cut}
+\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespacesofa}{sofa}
+\item 
+ \hyperlink{namespacesofa_1_1rgbdtracking}{sofa\+::rgbdtracking}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{_real_sense_grab_cut_8h_a6f89e724bdd5e5bfc46f749348191dbb}{E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE}~cv\+::\+Size(3, 3)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{_real_sense_grab_cut_8h_a6f89e724bdd5e5bfc46f749348191dbb}\label{_real_sense_grab_cut_8h_a6f89e724bdd5e5bfc46f749348191dbb}} 
+\index{Real\+Sense\+Grab\+Cut.\+h@{Real\+Sense\+Grab\+Cut.\+h}!E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE@{E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE}}
+\index{E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE@{E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE}!Real\+Sense\+Grab\+Cut.\+h@{Real\+Sense\+Grab\+Cut.\+h}}
+\subsubsection{\texorpdfstring{E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE}{EROSION\_KERNEL\_SIZE}}
+{\footnotesize\ttfamily \#define E\+R\+O\+S\+I\+O\+N\+\_\+\+K\+E\+R\+N\+E\+L\+\_\+\+S\+I\+ZE~cv\+::\+Size(3, 3)}
+

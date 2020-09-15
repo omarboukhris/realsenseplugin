@@ -15,7 +15,7 @@
 
 namespace sofa {
 
-namespace opencvplugin {
+namespace rgbdtracking {
 
     //Here are just several convenient functions to help user to know what contains the plugin
 

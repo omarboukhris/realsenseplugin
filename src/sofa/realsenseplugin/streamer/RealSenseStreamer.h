@@ -71,25 +71,29 @@ public :
     SOFA_CLASS( RealSenseStreamer , opencvplugin::streamer::BaseOpenCVStreamer );
     typedef opencvplugin::streamer::BaseOpenCVStreamer Inherited;
 
-    // RGBD image data
+    /// \brief RGB image data
     Data<opencvplugin::ImageData> d_color ;
+    /// \brief depth image data
     Data<opencvplugin::ImageData> d_depth ;
 
-    // path to intrinsics file
+    /// \brief path to intrinsics file
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
+    /// \brief output camera's inrinsic parameters
     Data<defaulttype::Vec4f > d_intrinsicParameters ;
-    // decimation filter
+    /// \brief magnitude for decimation filter
     Data<int> d_decimation ;
-    // temporal filter
+    /// \brief smooth alpha for temporal filter
     Data<float> d_tmp_alpha ;
+    /// \brief smooth delta for temporal filter
     Data<float> d_tmp_delta ;
     DataCallback c_filters ;
     //actual filters
     rs2::decimation_filter decimation ;
     rs2::temporal_filter temporal ;
 
+    /// \brief path to save snapshots for potentiel calibration
     Data<std::string> d_calibpath ;
     std::vector<cv::Mat> calib_imagelist ;
 
@@ -124,6 +128,10 @@ public :
         this->f_listening.setValue(true) ;
     }
 
+
+    /*!
+     * \brief checkFiltersParams check that parameters are valid
+     */
     void checkFiltersParams () {
         int & decimation = *d_decimation.beginEdit() ;
         float &

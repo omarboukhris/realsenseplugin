@@ -1,0 +1,12 @@
+<map id="src/sofa/realsenseplugin/streamer/RealSenseCam.h" name="src/sofa/realsenseplugin/streamer/RealSenseCam.h">
+<area shape="rect" id="node2" href="$_real_sense_abstract_projector_8h.html" title="src/sofa/realsenseplugin\l/projector/RealSenseAbstractProjector.h" alt="" coords="301,95,557,136"/>
+<area shape="rect" id="node9" href="$_real_sense_cam_8cpp.html" title="src/sofa/realsenseplugin\l/streamer/RealSenseCam.cpp" alt="" coords="596,95,795,136"/>
+<area shape="rect" id="node10" href="$_real_sense_grab_cut_8h.html" title="src/sofa/realsenseplugin\l/utils/RealSenseGrabCut.h" alt="" coords="826,95,1005,136"/>
+<area shape="rect" id="node3" href="$_real_sense_deprojector_8h.html" title="src/sofa/realsenseplugin\l/projector/RealSenseDeprojector.h" alt="" coords="19,184,241,225"/>
+<area shape="rect" id="node5" href="$_real_sense_mask_deprojector_8h.html" title="src/sofa/realsenseplugin\l/projector/RealSenseMaskDeprojector.h" alt="" coords="272,184,527,225"/>
+<area shape="rect" id="node7" href="$_real_sense_point_deprojector_8h.html" title="src/sofa/realsenseplugin\l/projector/RealSensePointDeprojector.h" alt="" coords="551,184,803,225"/>
+<area shape="rect" id="node4" href="$_real_sense_deprojector_8cpp.html" title="src/sofa/realsenseplugin\l/projector/RealSenseDeprojector.cpp" alt="" coords="5,273,241,315"/>
+<area shape="rect" id="node6" href="$_real_sense_mask_deprojector_8cpp.html" title="src/sofa/realsenseplugin\l/projector/RealSenseMaskDeprojector.cpp" alt="" coords="265,273,533,315"/>
+<area shape="rect" id="node8" href="$_real_sense_point_deprojector_8cpp.html" title="src/sofa/realsenseplugin\l/projector/RealSensePointDeprojector.cpp" alt="" coords="558,273,825,315"/>
+<area shape="rect" id="node11" href="$_real_sense_grab_cut_8cpp.html" title="src/sofa/realsenseplugin\l/utils/RealSenseGrabCut.cpp" alt="" coords="827,184,1019,225"/>
+</map>
