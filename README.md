@@ -42,14 +42,14 @@ You can add a translation offset to any pointcloud using the `@deprojector.offse
 ### Whole scene deprojector 
 This one is used if you want to create a point cloud for the whole observed frame.
 ```xml
-	<RealSenseDeprojector
-		name="deproj"
-		color="@realsense.color"
-		depth="@realsense.depth"
-		rscam="@realsense"
-		downsample="5"
-		drawpcl="1"
-	/>
+<RealSenseDeprojector
+ name="deproj"
+ color="@realsense.color"
+ depth="@realsense.depth"
+ rscam="@realsense"
+ downsample="5"
+ drawpcl="1"
+/>
 ```
 
 ### Mask deprojector 
@@ -76,13 +76,13 @@ The difference with this one is it only reprojects a set of points specified in 
 ```xml
 <OpticalFlowOrSomeTracker
  name="tracker"
-	in="@interest.markers"
-	frame="@rs.color"
+ in="@interest.markers"
+ frame="@rs.color"
 />
 <RealSensePointDeprojector
-	name="deproj"
-	input="@tracker.out"
-	depth="@rs.depth"
-	rscam="@rs"
-	drawpcl="1" />
+ name="deproj"
+ input="@tracker.out"
+ depth="@rs.depth"
+ rscam="@rs"
+ drawpcl="1" />
 ```
