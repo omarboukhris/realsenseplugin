@@ -158,8 +158,7 @@ protected:
         if (depth) delete depth ;
         color = new rs2::video_frame(frameset.get_color_frame()) ;
         depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
-//        *depth = decimation.process(*depth) ;
-        *depth = temporal.process(*depth) ;
+        this->applyfilters(*depth);
 
         // extract pointcloud
         //getpointcloud(*color, *depth) ;

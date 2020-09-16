@@ -87,7 +87,7 @@ public :
     /// \brief smooth alpha for temporal filter
     Data<float> d_tmp_alpha ;
     /// \brief smooth delta for temporal filter
-    Data<float> d_tmp_delta ;
+    Data<int> d_tmp_delta ;
     DataCallback c_filters ;
     //actual filters
     rs2::decimation_filter decimation ;
@@ -110,24 +110,21 @@ public :
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
-        , d_decimation(initData(&d_decimation, "decimation", "decimation magnitude"))
-        , d_tmp_alpha(initData(&d_tmp_alpha, "alpha", "temporal filter alpha"))
-        , d_tmp_delta(initData(&d_tmp_delta, "delta", "temporal filter delta"))
+        , d_decimation(initData(&d_decimation, 4, "decimation", "decimation magnitude"))
+        , d_tmp_alpha(initData(&d_tmp_alpha, 0.420f, "alpha", "temporal filter alpha [0, 1]"))
+        , d_tmp_delta(initData(&d_tmp_delta, 20, "delta", "temporal filter delta [1, 100]"))
         , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
         , color(nullptr), depth(nullptr)
         , calib_imagelist()
     {
-        d_decimation.setValue(420);
-        d_tmp_alpha.setValue(0.);
-        d_tmp_delta.setValue(1.);
+        checkFiltersParams();
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
         c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
         c_filters.addCallback(std::bind(&RealSenseStreamer::checkFiltersParams, this));
         this->f_listening.setValue(true) ;
     }
-
 
     /*!
      * \brief checkFiltersParams check that parameters are valid
@@ -137,12 +134,12 @@ public :
         float &
             alpha = *d_tmp_alpha.beginEdit(),
             delta = *d_tmp_delta.beginEdit() ;
-        if (decimation >= 8000) decimation = 8000 ;
-        if (decimation <= 8000) decimation = 0 ;
-        if ((int)(alpha*1e5) >= 10000) alpha = 1. ;
-        if ((int)(alpha*1e5) <= 0) alpha = 0. ;
-        if ((int)delta >= 100) delta = 100. ;
-        if ((int)delta <= 1) delta = 1. ;
+        if (decimation >= 8) decimation = 8 ;
+        if (decimation <= 2) decimation = 2 ;
+        if ((int)(alpha*1e2) > 100) alpha = 1. ;
+        if ((int)(alpha*1e2) < 1) alpha = .01 ;
+        if ((int)delta > 100) delta = 100 ;
+        if ((int)delta < 1) delta = 1 ;
         d_decimation.endEdit();
         d_tmp_alpha.endEdit();
         d_tmp_delta.endEdit();
@@ -168,7 +165,7 @@ public :
                 const std::string path = d_calibpath.getValue() ;
                 int i = 0 ;
                 for (const auto & image : calib_imagelist) {
-                    std::string imagepath = path + "/" + std::to_string(i) + ".png" ;
+                    std::string imagepath = path + "/" + std::to_string(i++) + ".png" ;
                     cv::imwrite(imagepath, image) ;
                 }
             }
@@ -212,6 +209,15 @@ protected :
         std::fwrite(&cam_intrinsics.model, sizeof(rs2_distortion), 1, filestream) ;
         std::fwrite(cam_intrinsics.coeffs, sizeof(float), 5, filestream) ;
         std::fclose(filestream) ;
+    }
+
+    /*!
+     * \brief applyfilters :: applies decimation and temporal filters to depth frame
+     * \param depth : rs2::depth_frame to process
+     */
+    void applyfilters(rs2::depth_frame & depth) {
+//        depth = decimation.process(depth) ;
+        depth = temporal.process(depth) ;
     }
 
     /*!

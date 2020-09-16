@@ -32,6 +32,7 @@
 #include <sofa/simulation/config.h> // #defines SOFA_HAVE_DAG (or not)
 #include <SofaSimulationTree/init.h>
 #include <SofaSimulationTree/TreeSimulation.h>
+#include <sofa/helper/system/FileSystem.h>
 
 #include <sofa/core/objectmodel/KeypressedEvent.h>
 #include <sofa/core/objectmodel/KeyreleasedEvent.h>
@@ -76,17 +77,27 @@ public:
         pipe.start(cfg) ;
     }
 
-    void decodeImage(cv::Mat & /*img*/) {
+    void decodeImage(cv::Mat & img) {
         rs2::frameset frameset = wait_for_frame(pipe) ;
 
         if (color) delete color ;
         if (depth) delete depth ;
         color = new rs2::video_frame (frameset.get_color_frame()) ;
         depth = new rs2::depth_frame (frameset.get_depth_frame()) ;
+        this->applyfilters(*depth);
 
-        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
-        d_color.endEdit(); d_depth.endEdit();
+        frame_to_cvmat(*color, *depth, img, *d_depth.beginEdit());
+//        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
+//        d_color.endEdit();
+        d_depth.endEdit();
+    }
 
+    void handleEvent(sofa::core::objectmodel::Event* event) {
+        RealSenseStreamer::handleEvent(event);
+        if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
+            decodeImage(*d_color.beginEdit());
+            d_color.endEdit();
+        }
     }
 } ;
 
@@ -99,8 +110,11 @@ public:
     typedef core::objectmodel::BaseObject Inherited;
     SOFA_CLASS( RealSenseMultiCam , Inherited);
 
+    Data<std::string> d_calibpath ;
+
     RealSenseMultiCam()
         : Inherited()
+        , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
     {
         this->f_listening.setValue(true);
     }
@@ -127,17 +141,14 @@ public:
     }
 
     void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, std::string serial, size_t i) {
-//        using namespace opencvplugin::scheduler ;
-//        static OpenCVScheduler::SPtr scheduler = new OpenCVScheduler ;
-        sofascheduler::scheduler::GenericScheduler::SPtr scheduler = new sofascheduler::scheduler::GenericScheduler ;
-        scheduler->setName(std::string("scheduler_rs") + std::to_string(i));
-        node->addObject(scheduler) ;
-
         RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;
         rs_vcam->setName(std::string("RSCam_") + std::to_string(i));
-        rs_vcam->d_scheduler.setValue(scheduler->d_scheduler.getValue());
+        std::string calibpath = d_calibpath.getValue()+std::to_string(i) ;
+        rs_vcam->d_calibpath.setValue(calibpath);
+        if (!helper::system::FileSystem::exists(calibpath)) {
+            helper::system::FileSystem::createDirectory(calibpath) ;
+        }
         node->addObject(rs_vcam) ;
-
     }
 
 } ;
