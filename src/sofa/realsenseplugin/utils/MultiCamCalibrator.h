@@ -76,7 +76,7 @@ static void calcChessboardCorners(cv::Size boardSize, float squareSize, std::vec
                                       float(i*squareSize), 0));
 }
 
-class RealSenseCalibrator : public core::objectmodel::BaseObject
+class MultiCamCalibrator : public core::objectmodel::BaseObject
 {
 public :
 

@@ -24,7 +24,7 @@
 ******************************************************************************/
 
 
-#include "RealSenseCalibrator.h"
+#include "MultiCamCalibrator.h"
 #include <sofa/core/ObjectFactory.h>
 
 namespace sofa
@@ -38,11 +38,11 @@ using namespace std;
 using namespace cv;
 using namespace boost;
 
-SOFA_DECL_CLASS (RealSenseCalibrator)
+SOFA_DECL_CLASS (MultiCamCalibrator)
 // Register in the Factory
 
-int RealSenseCalibratorClass = core::RegisterObject ( "RealSenseCalibrator calibrates one or multiple realsense cameras" )
-        .add<RealSenseCalibrator>(true)
+int MultiCamCalibratorClass = core::RegisterObject ( "MultiCamCalibrator calibrates one or multiple realsense cameras" )
+        .add<MultiCamCalibrator>(true)
         ;
 	
 
