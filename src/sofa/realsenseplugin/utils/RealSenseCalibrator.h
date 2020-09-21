@@ -88,6 +88,9 @@ public :
     Data<defaulttype::Vector2> d_chessboardsize ;
     DataCallback callback ;
 
+    Data<defaulttype::Mat3x3f> d_projectionmatrix ;
+    Data<defaulttype::Vector3> d_translation ;
+
     std::vector<cv::Mat> calibimage1;
     std::vector<cv::Mat> calibimage2;
 
@@ -100,6 +103,9 @@ public :
         , d_calibcam1(initData(&d_calibcam1, std::string("./"), "calibcam1", "path to folder with calibration images from camera 1"))
         , d_calibcam2(initData(&d_calibcam2, std::string("./"), "calibcam2", "path to folder with calibration images from camera 2"))
         , d_chessboardsize(initData(&d_chessboardsize, defaulttype::Vector2(6,9), "size", "dimensions of the chessboard"))
+        //output
+        , d_projectionmatrix(initData(&d_projectionmatrix, "projectionmatrix", "computed projection matrix between camera 1 and 2"))
+        , d_translation(initData(&d_translation, "translation", "computed translation vector"))
     {
         callback.addInputs({&d_calibcam1, &d_calibcam2, &d_chessboardsize}) ;
         callback.addCallback(std::bind(&RealSenseCalibrator::process, this)) ;
@@ -215,6 +221,18 @@ public :
             cv::CALIB_SAME_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST,
             cv::TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 100, 1e-5));
         std::cout << "(RealSenseCalibrator) Done calibrating : " << R << " " << T << std::endl ;
+
+        defaulttype::Mat3x3f & projmat = *d_projectionmatrix.beginEdit() ;
+        for (int i = 0 ; i < 3 ; i++){
+            for (int j = 0 ; j < 3 ; j++) {
+                projmat[i][j] = R.at<float>(i, j) ;
+            }
+        }
+        defaulttype::Vector3 & translation = *d_translation.beginEdit() ;
+        for (int i = 0 ; i < 3 ; i++)
+            translation[i] = T.at<double>(i) ;
+        d_translation.endEdit();
+        d_projectionmatrix.endEdit();
     }
 
     void handleEvent(sofa::core::objectmodel::Event* event) {

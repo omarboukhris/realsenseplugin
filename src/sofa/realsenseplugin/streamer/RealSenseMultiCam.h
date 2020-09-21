@@ -92,13 +92,6 @@ public:
         d_depth.endEdit();
     }
 
-    void handleEvent(sofa::core::objectmodel::Event* event) {
-        RealSenseStreamer::handleEvent(event);
-        if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
-            decodeImage(*d_color.beginEdit());
-            d_color.endEdit();
-        }
-    }
 } ;
 
 /*!
@@ -119,6 +112,10 @@ public:
         this->f_listening.setValue(true);
     }
 
+    /*!
+     * \brief listSerialNum
+     * \return a list of the connected realsense camera's serial numbers
+     */
     std::vector<std::string> listSerialNum()
     {
         std::vector<std::string> serial_list ;
@@ -129,6 +126,10 @@ public:
         return serial_list ;
     }
 
+    /*!
+     * \brief init
+     * at the initialization of the component a virtual realsensecamera component will be added to the scene
+     */
     void init () {
         auto serial_list = listSerialNum();
 
@@ -140,11 +141,18 @@ public:
         }
     }
 
+    /*!
+     * \brief add_realsenseCam create the component and add it to the corresponding node
+     * \param node : usually actual context
+     * \param serial : realsense serial number
+     * \param i : index interator
+     */
     void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, std::string serial, size_t i) {
         RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;
         rs_vcam->setName(std::string("RSCam_") + std::to_string(i));
         std::string calibpath = d_calibpath.getValue()+std::to_string(i) ;
         rs_vcam->d_calibpath.setValue(calibpath);
+        rs_vcam->d_serialnum.setValue(serial);
         if (!helper::system::FileSystem::exists(calibpath)) {
             helper::system::FileSystem::createDirectory(calibpath) ;
         }

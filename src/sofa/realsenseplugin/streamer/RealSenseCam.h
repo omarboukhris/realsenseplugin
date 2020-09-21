@@ -55,21 +55,17 @@ public:
 
     Data<int> depthMode;
 
-    Data<defaulttype::Vector2> d_resolution_rs ;
     Data<opencvplugin::TrackBar1> d_exposure;
     DataCallback c_exposure ;
 
     rs2_intrinsics cam_intrinsics ;
     rs2::pipeline_profile selection ;
 
-    // Declare depth colorizer for pretty visualization of depth data
-    rs2::colorizer color_map;
-
-    // for pointcloud extraction
+    /// \brief for pointcloud extraction, deprecated
     rs2::pointcloud pc ;
     rs2::points points ;
 
-    // Declare RealSense pipeline, encapsulating the actual device and sensors
+    /// \brief RealSense pipeline, encapsulating the actual device and sensors
     rs2::pipeline pipe;
 
     bool pause ;
@@ -77,7 +73,6 @@ public:
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-        , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolutionrs", "realsense camera resolution"))
         , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(100,2000), "exposure", "exposure"))
         , pause (false)
     {
@@ -117,11 +112,15 @@ protected:
         }
     }
 
-    ///\brief setuo realsense data acquisition pipeline
+    ///\brief setup realsense data acquisition pipeline
     inline void configPipe()
     {
         auto resolution = d_resolution_rs.getValue() ;
         rs2::config cfg ;
+        if (d_serialnum.getValue().size() != 0) {
+            std::cout << d_serialnum.getValue() << " used" << std::endl ;
+            cfg.enable_device(d_serialnum.getValue());
+        }
         cfg.enable_stream(
             RS2_STREAM_COLOR,
             resolution.at(0), resolution.at(1),
@@ -145,8 +144,8 @@ protected:
     void initAlign() {
         configPipe();
         stabilizeAutoExp();
-        acquireAligned(*d_image.beginEdit());
-        d_image.endEdit();
+        acquireAligned(*d_color.beginEdit());
+        d_color.endEdit();
         writeIntrinsicsToFile();
     }
 

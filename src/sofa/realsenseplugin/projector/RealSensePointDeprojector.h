@@ -40,6 +40,7 @@ public:
     typedef RealSenseAbstractDeprojector Inherited;
     SOFA_CLASS( RealSensePointDeprojector , Inherited);
 
+    /// \brief input list of 2d points to project in 3d
     Data<helper::vector<defaulttype::Vector2> > d_input ;
     DataCallback c_image ;
 

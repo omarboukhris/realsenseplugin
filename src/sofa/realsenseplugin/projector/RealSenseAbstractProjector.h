@@ -70,42 +70,68 @@ public :
     SOFA_CLASS( RealSenseAbstractDeprojector , core::objectmodel::BaseObject);
     typedef core::objectmodel::BaseObject Inherited;
 
+    /// \brief depth frame
     Data<opencvplugin::ImageData> d_depth ;
+    /// \brief translation offset
     Data<defaulttype::Vector3> d_tr_offset ;
+    /// \brief projection matrix for pointcloud rotation/translation
+    Data<defaulttype::Mat3x3> d_projectionmatrix ;
+    DataCallback c_projmat ;
+    /// \brief output pointcloud sofa
     Data<helper::vector<defaulttype::Vector3> > d_output ;
+    /// \brief synthetic volume pointcloud
     Data<helper::vector<defaulttype::Vector3> > d_synthvolume ;
+    /// \brief output pointcloud pcl
     Data <pointcloud::PointCloudData> d_outpcl ;
 
     Data<opencvplugin::TrackBar1> d_scale ;
     DataCallback c_scale ;
 
-    // distance frame for offline reco
+    /// \brief distance frame for offline reco
     Data<RealSenseDistFrame> d_distframe ;
-    // path to intrinsics file
+    /// \brief path to intrinsics file
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
-    // downsampling and visualization
     Data<opencvplugin::TrackBar2> d_minmax ;
+    ///\brief true to flip pointcloud over z-axis
     Data<bool> d_flip ;
+    ///\brief downsampling
     Data<int> d_downsampler ;
+    /// \brief true to render pointcloud in viewer
     Data<bool> d_drawpcl ;
+    /// \brief true to add synthetic volume
     Data<int> d_densify ;
 
+    /// \brief link for realsense camera
     core::objectmodel::SingleLink<
         RealSenseAbstractDeprojector,
         RealSenseCam,
         BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
     > l_rs_cam ; //for intrinsics
 
+    /// \brief pcl pointcloud as internal data
     pcl::PointCloud<pcl::PointXYZ>::Ptr m_pointcloud ;
+    /// \brief camera intrinsics read from file or realsensecam component
     rs2_intrinsics cam_intrinsics ;
+    /// \brief for rotating the pointcloud
+    helper::Quater<double> q ;
 
     RealSenseAbstractDeprojector()
         : Inherited()
         , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
         , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0,0,0), "offset", "translation offset"))
-        , d_output(initData(&d_output, "output", "output 3D position"))
+        , d_projectionmatrix(
+            initData(
+                &d_projectionmatrix,
+                defaulttype::Mat3x3(
+                    defaulttype::Vector3(1,0,0),
+                    defaulttype::Vector3(0,1,0),
+                    defaulttype::Vector3(0,0,1)),
+                "projectionMatrix",
+                "projection matrix for rotating/translating pointcloud"
+            )
+        ), d_output(initData(&d_output, "output", "output 3D position"))
         , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
         , d_outpcl(initData(&d_outpcl, "outpcl", "output pcl PointCloud"))
         , d_scale(initData(&d_scale, opencvplugin::TrackBar1(100, 2550, 1), "scale", "point cloud scaling factor"))
@@ -126,11 +152,19 @@ public :
         c_intrinsics.addCallback(std::bind(&RealSenseAbstractDeprojector::readIntrinsics, this));
         c_scale.addInputs({&d_scale, &d_tr_offset}) ;
         c_scale.addCallback(std::bind(&RealSenseAbstractDeprojector::deproject_image, this));
+        c_projmat.addInputs({&d_projectionmatrix}) ;
+        c_projmat.addCallback(std::bind(&RealSenseAbstractDeprojector::updateRotation, this)) ;
         this->f_listening.setValue(true) ;
+        updateRotation();
     }
 
     void init () {
         readIntrinsics();
+    }
+
+    void updateRotation () {
+        defaulttype::Mat3x3 pmat = d_projectionmatrix.getValue() ;
+        q.fromMatrix(pmat);
     }
 
     /*!
@@ -283,10 +317,17 @@ public :
         pcl::PointXYZ pt = scalePoint(point3d) ;
         m_pointcloud->push_back(pt);
 
-        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
+//        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
+//        if (d_flip.getValue()) {
+//            point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
+//        }
+        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
+        std::cout << point << std::endl ;
         if (d_flip.getValue()) {
-            point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
+            point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
         }
+//        q.rotate(point) ;
+        std::cout << point << " ##" << std::endl ;
         outpoints.push_back(point) ;
     }
 
@@ -307,6 +348,7 @@ public :
                 if (d_flip.getValue()) {
                     point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
                 }
+//                q.rotate(point) ;
                 synth.push_back(point) ;
             }
         }

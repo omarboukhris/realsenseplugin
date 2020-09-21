@@ -40,6 +40,7 @@ public:
     typedef RealSenseAbstractDeprojector Inherited;
     SOFA_CLASS( RealSenseMaskDeprojector , Inherited);
 
+    /// \brief input binary mask for filtering reprojections
     Data<opencvplugin::ImageData> d_input ;
     DataCallback c_image ;
 

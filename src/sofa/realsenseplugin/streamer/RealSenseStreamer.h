@@ -41,7 +41,7 @@
 #include <sofa/helper/OptionsGroup.h>
 
 #include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
+//#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
 
 #include <librealsense2/rs.hpp>
 
@@ -65,11 +65,14 @@ namespace rgbdtracking
  * \brief The RealSenseStreamer class
  * Abstract streamer used as a superclass for realsensecam and realsense virtual cam (used with multicam)
  */
-class RealSenseStreamer : public opencvplugin::streamer::BaseOpenCVStreamer //core::objectmodel::BaseObject
+class RealSenseStreamer : public core::objectmodel::BaseObject
 {
 public :
-    SOFA_CLASS( RealSenseStreamer , opencvplugin::streamer::BaseOpenCVStreamer );
-    typedef opencvplugin::streamer::BaseOpenCVStreamer Inherited;
+    SOFA_CLASS( RealSenseStreamer , core::objectmodel::BaseObject );
+    typedef core::objectmodel::BaseObject Inherited;
+
+    /// \brief realsense camera resolution
+    Data<defaulttype::Vector2> d_resolution_rs ;
 
     /// \brief RGB image data
     Data<opencvplugin::ImageData> d_color ;
@@ -80,8 +83,10 @@ public :
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
+    /// \brief camera's serial number
+    Data <std::string> d_serialnum ;
     /// \brief output camera's inrinsic parameters
-    Data<defaulttype::Vec4f > d_intrinsicParameters ;
+    Data<defaulttype::Vector4 > d_intrinsicParameters ;
     /// \brief magnitude for decimation filter
     Data<int> d_decimation ;
     /// \brief smooth alpha for temporal filter
@@ -89,8 +94,9 @@ public :
     /// \brief smooth delta for temporal filter
     Data<int> d_tmp_delta ;
     DataCallback c_filters ;
-    //actual filters
+    /// \brief decimation filter
     rs2::decimation_filter decimation ;
+    /// \brief temporal filter
     rs2::temporal_filter temporal ;
 
     /// \brief path to save snapshots for potentiel calibration
@@ -106,9 +112,11 @@ public :
 
     RealSenseStreamer ()
         : Inherited()
+        , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
         , d_color(initData(&d_color, "color", "RGB data image"))
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
+        , d_serialnum(initData(&d_serialnum, std::string(""), "serial", "camera's serial number (check multicam for details)"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
         , d_decimation(initData(&d_decimation, 4, "decimation", "decimation magnitude"))
         , d_tmp_alpha(initData(&d_tmp_alpha, 0.420f, "alpha", "temporal filter alpha [0, 1]"))
@@ -148,11 +156,17 @@ public :
         this->temporal.set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, d_tmp_delta.getValue());
      }
 
+    virtual void decodeImage(cv::Mat & img) = 0 ;
+
     /*!
      * \brief handleEvent : Press i to push image to calibration image list, z to cancel, s to save
      * \param event
      */
     void handleEvent(sofa::core::objectmodel::Event* event) override {
+        if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
+            decodeImage(*d_color.beginEdit());
+            d_color.endEdit();
+        }
         if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
             if (ev->getKey() == 'I' || ev->getKey() == 'i') {
                 calib_imagelist.push_back(d_color.getValue().getImage());
@@ -185,13 +199,14 @@ protected :
 
     void writeIntrinsics (std::string filename, const rs2_intrinsics &cam_intrinsics) {
         // for exporting intrinsics as sofa data
-        defaulttype::Vec4f intrinsics (
+        defaulttype::Vector4 & intrinsics = *d_intrinsicParameters.beginEdit() ;
+        intrinsics = defaulttype::Vector4 (
             cam_intrinsics.fx,
             cam_intrinsics.fy,
             cam_intrinsics.ppx, // x0
             cam_intrinsics.ppy // y0
         ) ;
-        d_intrinsicParameters.setValue(intrinsics);
+        d_intrinsicParameters.endEdit();
         std::cout << "intrinsics : " << d_intrinsicParameters.getValue() << std::endl ;
 
         // export intrinsics for later use (offline reproj)

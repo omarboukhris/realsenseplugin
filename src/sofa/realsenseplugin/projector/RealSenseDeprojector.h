@@ -41,8 +41,9 @@ public:
     typedef RealSenseAbstractDeprojector Inherited;
     SOFA_CLASS( RealSenseDeprojector , Inherited);
 
+    /// \brief color frame for snapshot exportation
     Data<opencvplugin::ImageData> d_color ;
-    // path to save snapshots to
+    /// \brief path to save snapshots to
     Data<std::string> d_snap_path ;
 
     DataCallback c_image ;
@@ -76,6 +77,9 @@ public:
     }
 private :
 
+    /*!
+     * \brief exportSnapShot exports color and depth frames
+     */
     inline void exportSnapShot () {
         static size_t i = 0 ; //< i is a snap shot 'id'
         // set filenames
