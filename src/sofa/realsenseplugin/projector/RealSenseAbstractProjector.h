@@ -154,12 +154,11 @@ public :
         c_scale.addCallback(std::bind(&RealSenseAbstractDeprojector::deproject_image, this));
         c_projmat.addInputs({&d_projectionmatrix}) ;
         c_projmat.addCallback(std::bind(&RealSenseAbstractDeprojector::updateRotation, this)) ;
-        this->f_listening.setValue(true) ;
-        updateRotation();
     }
 
     void init () {
         readIntrinsics();
+        updateRotation();
     }
 
     void updateRotation () {
@@ -317,17 +316,11 @@ public :
         pcl::PointXYZ pt = scalePoint(point3d) ;
         m_pointcloud->push_back(pt);
 
-//        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
-//        if (d_flip.getValue()) {
-//            point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
-//        }
-        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
-        std::cout << point << std::endl ;
+        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
         if (d_flip.getValue()) {
-            point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
+            point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
         }
-//        q.rotate(point) ;
-        std::cout << point << " ##" << std::endl ;
+        q.rotate(point) ;
         outpoints.push_back(point) ;
     }
 
@@ -341,14 +334,12 @@ public :
         synth.clear() ;
         for (const auto & ptmp : *m_pointcloud) {
             for (int i = 1 ; i<dense ; i++) {
-//                float ptr_pt[3] = {ptmp.x, ptmp.y, ptmp.z} ;
-//                pcl::PointXYZ pt = scalePoint(ptr_pt) ;
                 pcl::PointXYZ pt = ptmp ;
                 defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
                 if (d_flip.getValue()) {
                     point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
                 }
-//                q.rotate(point) ;
+                q.rotate(point) ;
                 synth.push_back(point) ;
             }
         }

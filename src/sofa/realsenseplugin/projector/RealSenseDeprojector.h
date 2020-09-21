@@ -54,7 +54,7 @@ public:
         //offline reco
         , d_snap_path(initData(&d_snap_path, std::string("."), "snap_path", "path to snap shots folder"))
     {
-        c_image.addInputs({&d_color, &this->d_depth});
+        c_image.addInputs({&this->d_depth});
         c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
     }
 
