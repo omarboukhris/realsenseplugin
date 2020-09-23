@@ -1,0 +1,244 @@
+\hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator}{}\section{sofa\+:\+:rgbdtracking\+:\+:Multi\+Cam\+Calibrator Class Reference}
+\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator}\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+
+
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator}{Multi\+Cam\+Calibrator} class Utility component for calibrating offline a multicam setup.  
+
+
+
+
+{\ttfamily \#include $<$Multi\+Cam\+Calibrator.\+h$>$}
+
+
+
+Inheritance diagram for sofa\+:\+:rgbdtracking\+:\+:Multi\+Cam\+Calibrator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=205pt]{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sofa\+:\+:rgbdtracking\+:\+:Multi\+Cam\+Calibrator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=187pt]{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a3ce8331b99321a13884a6c0cea468f72}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a3ce8331b99321a13884a6c0cea468f72}} 
+typedef core\+::objectmodel\+::\+Base\+Object {\bfseries Inherited}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_afe02f454d01807003120c2105b5a7e5e}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_afe02f454d01807003120c2105b5a7e5e}} 
+{\bfseries S\+O\+F\+A\+\_\+\+C\+L\+A\+SS} (\hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator}{Multi\+Cam\+Calibrator}, Inherited)
+\item 
+int \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a57189fd694afe501755e15c483fecd12}{load\+Images} (const std\+::string \&path, std\+::vector$<$ cv\+::\+Mat $>$ \&output)
+\begin{DoxyCompactList}\small\item\em load\+Images loads calibration images from specified folder \end{DoxyCompactList}\item 
+bool \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aa59f42320d2dcd3f3d28239ff0fb4eda}{get\+Corners} (const cv\+::\+Size boardsize, cv\+::\+Mat img1, std\+::vector$<$ cv\+::\+Point2f $>$ \&corners1, cv\+::\+Mat img2, std\+::vector$<$ cv\+::\+Point2f $>$ \&corners2)
+\begin{DoxyCompactList}\small\item\em get\+Corners computes corners from stereo images \end{DoxyCompactList}\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a600d0021721e3a1c5c6714b72b9a42b1}{get\+\_\+image\+\_\+points} (const cv\+::\+Size boardsize, std\+::vector$<$ cv\+::\+Mat $>$ \&imglist1, std\+::vector$<$ cv\+::\+Mat $>$ \&imglist2)
+\begin{DoxyCompactList}\small\item\em get\+\_\+image\+\_\+points computes images points from list of stereo calibration frames \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aa9bd50057bc3e8ae2300f2d3f370f81e}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aa9bd50057bc3e8ae2300f2d3f370f81e}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aa9bd50057bc3e8ae2300f2d3f370f81e}{add\+\_\+obj\+\_\+points} ()
+\begin{DoxyCompactList}\small\item\em add\+\_\+obj\+\_\+points adds static object points for stereo calibration \end{DoxyCompactList}\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_adc2012d92a9088f490ae73aff4da67a8}{calibratemono} (cv\+::\+Mat \&CM, cv\+::\+Mat \&D, const std\+::vector$<$ std\+::vector$<$ cv\+::\+Point2f $>$ $>$ \&image\+Points, const cv\+::\+Size \&imgsize)
+\begin{DoxyCompactList}\small\item\em calibratemono \end{DoxyCompactList}\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_ae08d1a20d3ceb8e33a1d1a99365e1187}{write2output} (cv\+::\+Mat T, cv\+::\+Mat R)
+\begin{DoxyCompactList}\small\item\em write2output writes Translation and rotation matrix to sofa data \end{DoxyCompactList}\item 
+bool \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a837bc9cd6cc234bee5a9bde7bca5e3d6}{check\+Img\+Points\+Valid} ()
+\begin{DoxyCompactList}\small\item\em check\+Img\+Points\+Valid simple guard for esthetics \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a589e7638f8f213616affc2e7abcfb407}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a589e7638f8f213616affc2e7abcfb407}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a589e7638f8f213616affc2e7abcfb407}{load\+\_\+all} ()
+\begin{DoxyCompactList}\small\item\em load\+\_\+all loads stereo images and computes images points (results are stored into class members) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a50dace4711bcf01c8e8bcd317e414adb}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a50dace4711bcf01c8e8bcd317e414adb}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a50dace4711bcf01c8e8bcd317e414adb}{process} ()
+\begin{DoxyCompactList}\small\item\em process applies mono then stereo calibration on both cameras \end{DoxyCompactList}\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_af01cd89bb1d0974023fe015a6dc7fcff}{handle\+Event} (sofa\+::core\+::objectmodel\+::\+Event $\ast$event)
+\begin{DoxyCompactList}\small\item\em handle\+Event press C to launch calibration \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_ae825d554252d1d949fe190d7e0be87cf}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_ae825d554252d1d949fe190d7e0be87cf}} 
+Data$<$ std\+::string $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_ae825d554252d1d949fe190d7e0be87cf}{d\+\_\+calibcam1}
+\begin{DoxyCompactList}\small\item\em path for calibration images from camera 1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a78946ecf07203cb902661d33db59ae89}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a78946ecf07203cb902661d33db59ae89}} 
+Data$<$ std\+::string $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a78946ecf07203cb902661d33db59ae89}{d\+\_\+calibcam2}
+\begin{DoxyCompactList}\small\item\em path for calibration images from camera 2 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a318ab469409b4b3980971ab6db0f3355}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a318ab469409b4b3980971ab6db0f3355}} 
+Data$<$ defaulttype\+::\+Vector2 $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a318ab469409b4b3980971ab6db0f3355}{d\+\_\+chessboardsize}
+\begin{DoxyCompactList}\small\item\em chessboard size, usual chessboard is 7x7 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a10d2ea529fa0d39c80ce4a33ef12c8f4}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a10d2ea529fa0d39c80ce4a33ef12c8f4}} 
+Data\+Callback {\bfseries callback}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a28a099352b2407922e6a1d06e8e6d67c}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a28a099352b2407922e6a1d06e8e6d67c}} 
+Data$<$ defaulttype\+::\+Mat3x3 $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a28a099352b2407922e6a1d06e8e6d67c}{d\+\_\+rotation}
+\begin{DoxyCompactList}\small\item\em output rotation matrix \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_adeaf7f08d528ed949f2d45593c0c9000}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_adeaf7f08d528ed949f2d45593c0c9000}} 
+Data$<$ defaulttype\+::\+Vector3 $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_adeaf7f08d528ed949f2d45593c0c9000}{d\+\_\+translation}
+\begin{DoxyCompactList}\small\item\em output translation vector \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aca06611c99ba2fb969cb88e04e0c7e07}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aca06611c99ba2fb969cb88e04e0c7e07}} 
+std\+::vector$<$ cv\+::\+Mat $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aca06611c99ba2fb969cb88e04e0c7e07}{calibimage1}
+\begin{DoxyCompactList}\small\item\em set of calibration images from camera 1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a5b8c9fb0835eec99c954c9a85698555b}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a5b8c9fb0835eec99c954c9a85698555b}} 
+std\+::vector$<$ cv\+::\+Mat $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a5b8c9fb0835eec99c954c9a85698555b}{calibimage2}
+\begin{DoxyCompactList}\small\item\em set of calibration images from camera 2 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a965bea101a949a3ed561530939987da1}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a965bea101a949a3ed561530939987da1}} 
+std\+::vector$<$ std\+::vector$<$ cv\+::\+Point3f $>$ $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a965bea101a949a3ed561530939987da1}{obj\+\_\+points}
+\begin{DoxyCompactList}\small\item\em computed during calibration \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a194892e284e58a82692954b9eb79fb26}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a194892e284e58a82692954b9eb79fb26}} 
+std\+::vector$<$ std\+::vector$<$ cv\+::\+Point2f $>$ $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a194892e284e58a82692954b9eb79fb26}{img\+\_\+points1}
+\begin{DoxyCompactList}\small\item\em computed during calibration, image points from camera 1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a866a5fed57246db85d44a860efd805bb}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a866a5fed57246db85d44a860efd805bb}} 
+std\+::vector$<$ std\+::vector$<$ cv\+::\+Point2f $>$ $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a866a5fed57246db85d44a860efd805bb}{img\+\_\+points2}
+\begin{DoxyCompactList}\small\item\em computed during calibration, image points from camera 2 \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator}{Multi\+Cam\+Calibrator} class Utility component for calibrating offline a multicam setup. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_adc2012d92a9088f490ae73aff4da67a8}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_adc2012d92a9088f490ae73aff4da67a8}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!calibratemono@{calibratemono}}
+\index{calibratemono@{calibratemono}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{calibratemono()}{calibratemono()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::calibratemono (\begin{DoxyParamCaption}\item[{cv\+::\+Mat \&}]{CM,  }\item[{cv\+::\+Mat \&}]{D,  }\item[{const std\+::vector$<$ std\+::vector$<$ cv\+::\+Point2f $>$ $>$ \&}]{image\+Points,  }\item[{const cv\+::\+Size \&}]{imgsize }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+calibratemono 
+
+
+\begin{DoxyParams}{Parameters}
+{\em CM} & \\
+\hline
+{\em D} & \\
+\hline
+{\em image\+Points} & \\
+\hline
+{\em imgsize} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a837bc9cd6cc234bee5a9bde7bca5e3d6}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a837bc9cd6cc234bee5a9bde7bca5e3d6}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!check\+Img\+Points\+Valid@{check\+Img\+Points\+Valid}}
+\index{check\+Img\+Points\+Valid@{check\+Img\+Points\+Valid}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{check\+Img\+Points\+Valid()}{checkImgPointsValid()}}
+{\footnotesize\ttfamily bool sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::check\+Img\+Points\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+check\+Img\+Points\+Valid simple guard for esthetics 
+
+\begin{DoxyReturn}{Returns}
+true if images points\textquotesingle{}s sizes correspont on left and right (image points) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a600d0021721e3a1c5c6714b72b9a42b1}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a600d0021721e3a1c5c6714b72b9a42b1}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!get\+\_\+image\+\_\+points@{get\+\_\+image\+\_\+points}}
+\index{get\+\_\+image\+\_\+points@{get\+\_\+image\+\_\+points}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{get\+\_\+image\+\_\+points()}{get\_image\_points()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::get\+\_\+image\+\_\+points (\begin{DoxyParamCaption}\item[{const cv\+::\+Size}]{boardsize,  }\item[{std\+::vector$<$ cv\+::\+Mat $>$ \&}]{imglist1,  }\item[{std\+::vector$<$ cv\+::\+Mat $>$ \&}]{imglist2 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+get\+\_\+image\+\_\+points computes images points from list of stereo calibration frames 
+
+
+\begin{DoxyParams}{Parameters}
+{\em boardsize} & chessboard size \\
+\hline
+{\em imglist1} & camera 1\textquotesingle{}s calibration frames \\
+\hline
+{\em imglist2} & camera 2\textquotesingle{}s calibration frames \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aa59f42320d2dcd3f3d28239ff0fb4eda}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_aa59f42320d2dcd3f3d28239ff0fb4eda}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!get\+Corners@{get\+Corners}}
+\index{get\+Corners@{get\+Corners}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{get\+Corners()}{getCorners()}}
+{\footnotesize\ttfamily bool sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::get\+Corners (\begin{DoxyParamCaption}\item[{const cv\+::\+Size}]{boardsize,  }\item[{cv\+::\+Mat}]{img1,  }\item[{std\+::vector$<$ cv\+::\+Point2f $>$ \&}]{corners1,  }\item[{cv\+::\+Mat}]{img2,  }\item[{std\+::vector$<$ cv\+::\+Point2f $>$ \&}]{corners2 }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+get\+Corners computes corners from stereo images 
+
+
+\begin{DoxyParams}{Parameters}
+{\em boardsize} & chessboard size \\
+\hline
+{\em img1} & cv\+::\+Mat from camera 1 \\
+\hline
+{\em corners1} & output corners for 1st frame \\
+\hline
+{\em img2} & cv\+::\+Mat from camera 2 \\
+\hline
+{\em corners2} & output corners for 2nd frame \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if corners found on both images, else false 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_af01cd89bb1d0974023fe015a6dc7fcff}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_af01cd89bb1d0974023fe015a6dc7fcff}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!handle\+Event@{handle\+Event}}
+\index{handle\+Event@{handle\+Event}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{handle\+Event()}{handleEvent()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::handle\+Event (\begin{DoxyParamCaption}\item[{sofa\+::core\+::objectmodel\+::\+Event $\ast$}]{event }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+handle\+Event press C to launch calibration 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a57189fd694afe501755e15c483fecd12}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_a57189fd694afe501755e15c483fecd12}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!load\+Images@{load\+Images}}
+\index{load\+Images@{load\+Images}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{load\+Images()}{loadImages()}}
+{\footnotesize\ttfamily int sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::load\+Images (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{path,  }\item[{std\+::vector$<$ cv\+::\+Mat $>$ \&}]{output }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+load\+Images loads calibration images from specified folder 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & to directory containing images \\
+\hline
+{\em output} & vector of cv\+::\+Mat containing list of loaded images \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+number of loaded images 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_ae08d1a20d3ceb8e33a1d1a99365e1187}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator_ae08d1a20d3ceb8e33a1d1a99365e1187}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}!write2output@{write2output}}
+\index{write2output@{write2output}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator}}
+\subsubsection{\texorpdfstring{write2output()}{write2output()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Multi\+Cam\+Calibrator\+::write2output (\begin{DoxyParamCaption}\item[{cv\+::\+Mat}]{T,  }\item[{cv\+::\+Mat}]{R }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+write2output writes Translation and rotation matrix to sofa data 
+
+
+\begin{DoxyParams}{Parameters}
+{\em T} & translation vector \\
+\hline
+{\em R} & Rotation matrix \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/sofa/realsenseplugin/utils/Multi\+Cam\+Calibrator.\+h\end{DoxyCompactItemize}

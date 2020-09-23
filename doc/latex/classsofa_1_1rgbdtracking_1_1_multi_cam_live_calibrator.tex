@@ -1,0 +1,92 @@
+\hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator}{}\section{sofa\+:\+:rgbdtracking\+:\+:Multi\+Cam\+Live\+Calibrator Class Reference}
+\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator}\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator}}
+
+
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator}{Multi\+Cam\+Live\+Calibrator} class Doesn\textquotesingle{}t need saved images to calibrate, just plug in stream of images from camera to calibrate.  
+
+
+
+
+{\ttfamily \#include $<$Multi\+Cam\+Live\+Calibrator.\+h$>$}
+
+
+
+Inheritance diagram for sofa\+:\+:rgbdtracking\+:\+:Multi\+Cam\+Live\+Calibrator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=205pt]{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for sofa\+:\+:rgbdtracking\+:\+:Multi\+Cam\+Live\+Calibrator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=205pt]{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a1f35bfc142bbd24ba42965d2e62cc11c}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a1f35bfc142bbd24ba42965d2e62cc11c}} 
+typedef \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator}{Multi\+Cam\+Calibrator} {\bfseries Inherited}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a007f7836150579364a71841a4533c922}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a007f7836150579364a71841a4533c922}} 
+{\bfseries S\+O\+F\+A\+\_\+\+C\+L\+A\+SS} (\hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator}{Multi\+Cam\+Live\+Calibrator}, Inherited)
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a667b64f8e2f667838f9c27c35c0edd19}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a667b64f8e2f667838f9c27c35c0edd19}} 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a667b64f8e2f667838f9c27c35c0edd19}{check\+For\+Corners} ()
+\begin{DoxyCompactList}\small\item\em check\+For\+Corners check if streamed images can be coupled for stereo calibration and affect them to appropriate lists for later processing \end{DoxyCompactList}\item 
+void \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a55eaadf487e62562e626cb15598f3f3b}{handle\+Event} (sofa\+::core\+::objectmodel\+::\+Event $\ast$event)
+\begin{DoxyCompactList}\small\item\em handle\+Event Press C to do calibration \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a827eadbff8631696b08a3ea602cc14ab}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a827eadbff8631696b08a3ea602cc14ab}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a827eadbff8631696b08a3ea602cc14ab}{d\+\_\+img1}
+\begin{DoxyCompactList}\small\item\em image from camera 1 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_aceaf52be6b8643804966da5f04fedad2}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_aceaf52be6b8643804966da5f04fedad2}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_aceaf52be6b8643804966da5f04fedad2}{d\+\_\+img2}
+\begin{DoxyCompactList}\small\item\em image from camera 2 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a4149c91fbcbbe68d1d1caebd6737f4a6}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a4149c91fbcbbe68d1d1caebd6737f4a6}} 
+Data\+Callback {\bfseries callback\+\_\+img}
+\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a60619533af2e9c19b9e97ef8cb61a28f}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a60619533af2e9c19b9e97ef8cb61a28f}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a60619533af2e9c19b9e97ef8cb61a28f}{d\+\_\+img1out}
+\begin{DoxyCompactList}\small\item\em image from camera 1 with corners \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a36bdd9fcadde54d1e6dbef00ab5840e6}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a36bdd9fcadde54d1e6dbef00ab5840e6}} 
+Data$<$ opencvplugin\+::\+Image\+Data $>$ \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a36bdd9fcadde54d1e6dbef00ab5840e6}{d\+\_\+img2out}
+\begin{DoxyCompactList}\small\item\em image from camera 2 with corners \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator}{Multi\+Cam\+Live\+Calibrator} class Doesn\textquotesingle{}t need saved images to calibrate, just plug in stream of images from camera to calibrate. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a55eaadf487e62562e626cb15598f3f3b}\label{classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator_a55eaadf487e62562e626cb15598f3f3b}} 
+\index{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator}!handle\+Event@{handle\+Event}}
+\index{handle\+Event@{handle\+Event}!sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator@{sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator}}
+\subsubsection{\texorpdfstring{handle\+Event()}{handleEvent()}}
+{\footnotesize\ttfamily void sofa\+::rgbdtracking\+::\+Multi\+Cam\+Live\+Calibrator\+::handle\+Event (\begin{DoxyParamCaption}\item[{sofa\+::core\+::objectmodel\+::\+Event $\ast$}]{event }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+handle\+Event Press C to do calibration 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/sofa/realsenseplugin/utils/Multi\+Cam\+Live\+Calibrator.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,3 @@
+<map id="sofa::rgbdtracking::MultiCamCalibrator" name="sofa::rgbdtracking::MultiCamCalibrator">
+<area shape="rect" id="node3" href="$classsofa_1_1rgbdtracking_1_1_multi_cam_live_calibrator.html" title="The MultiCamLiveCalibrator class Doesn&#39;t need saved images to calibrate, just plug in stream of image..." alt="" coords="5,169,172,211"/>
+</map>

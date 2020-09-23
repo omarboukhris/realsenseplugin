@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['_5fdistdata',['_distdata',['../classsofa_1_1rgbdtracking_1_1_real_sense_dist_frame.html#a95575d91b20d0cdc8cb9a9ba3795f928',1,'sofa::rgbdtracking::RealSenseDistFrame']]],
-  ['_5fheight',['_height',['../structsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_1_1_real_sense_dist_struct.html#a7f08a343322668464a50912a970e1246',1,'sofa::rgbdtracking::RealSenseDistFrame::RealSenseDistStruct']]],
-  ['_5fwidth',['_width',['../structsofa_1_1rgbdtracking_1_1_real_sense_dist_frame_1_1_real_sense_dist_struct.html#a9aebe63c9f0144dbc95337cc09c2266f',1,'sofa::rgbdtracking::RealSenseDistFrame::RealSenseDistStruct']]]
+  ['add_5fobj_5fpoints',['add_obj_points',['../classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator.html#aa9bd50057bc3e8ae2300f2d3f370f81e',1,'sofa::rgbdtracking::MultiCamCalibrator']]],
+  ['add_5frealsensecam',['add_realsenseCam',['../classsofa_1_1rgbdtracking_1_1_real_sense_multi_cam.html#a1aea376ebf5a7ee03af4cae251380e89',1,'sofa::rgbdtracking::RealSenseMultiCam']]],
+  ['applyfilters',['applyfilters',['../classsofa_1_1rgbdtracking_1_1_real_sense_streamer.html#a2764d9aa83b005b5872f195599b98fc6',1,'sofa::rgbdtracking::RealSenseStreamer']]]
 ];

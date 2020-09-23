@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['erosion_5fkernel_5fsize',['EROSION_KERNEL_SIZE',['../_real_sense_grab_cut_8h.html#a6f89e724bdd5e5bfc46f749348191dbb',1,'RealSenseGrabCut.h']]]
+  ['get_5fimage_5fpoints',['get_image_points',['../classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator.html#a600d0021721e3a1c5c6714b72b9a42b1',1,'sofa::rgbdtracking::MultiCamCalibrator']]],
+  ['getcorners',['getCorners',['../classsofa_1_1rgbdtracking_1_1_multi_cam_calibrator.html#aa59f42320d2dcd3f3d28239ff0fb4eda',1,'sofa::rgbdtracking::MultiCamCalibrator']]]
 ];
