@@ -105,21 +105,21 @@ In this example, a realsense multicamera components instantiates virtual cameras
 ```xml
 <RealSenseCam
   name="rs"
-		serial="rsserialnum1"
-		intrinsics="/path/to/save/intrinsics1.log"
+  serial="rsserialnum1"
+  intrinsics="/path/to/save/intrinsics1.log"
 	/>
 
 <RealSenseCam
   name="rs"
   serial="rsserialnum2"
-		intrinsics="/path/to/save/intrinsics2.log"
+  intrinsics="/path/to/save/intrinsics2.log"
 	/>
 
 <MultiCamLiveCalibrator
   name="calib"
   imgmaster="@rs.color"
-		imgslave="@rs2.color"
-		size="6 9"
+  imgslave="@rs2.color"
+  size="6 9"
 />
 ```
 The resulting rotation/translation are stored in the appropriate sofa data, which are `@calib.rotation` and `@calib.translation`.
