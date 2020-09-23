@@ -78,7 +78,6 @@ public:
     {
         c_exposure.addInputs({&d_exposure});
         c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
-        initAlign();
     }
 
     ~RealSenseCam () {
@@ -118,7 +117,7 @@ protected:
         auto resolution = d_resolution_rs.getValue() ;
         rs2::config cfg ;
         if (d_serialnum.getValue().size() != 0) {
-            std::cout << d_serialnum.getValue() << " used" << std::endl ;
+            std::cout << "(RealSenseCam) serial number <" << d_serialnum.getValue() << "> used" << std::endl ;
             cfg.enable_device(d_serialnum.getValue());
         }
         cfg.enable_stream(
@@ -141,7 +140,7 @@ protected:
         for (int i = 60 ; i-- ;) wait_for_frame(pipe) ;
     }
 
-    void initAlign() {
+    void init() {
         configPipe();
         stabilizeAutoExp();
         acquireAligned(*d_color.beginEdit());

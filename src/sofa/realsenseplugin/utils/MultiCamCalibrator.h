@@ -76,42 +76,63 @@ static void calcChessboardCorners(cv::Size boardSize, float squareSize, std::vec
                                       float(i*squareSize), 0));
 }
 
+/*!
+ * \brief The MultiCamCalibrator class
+ * Utility component for calibrating offline a multicam setup
+ */
 class MultiCamCalibrator : public core::objectmodel::BaseObject
 {
 public :
 
     typedef core::objectmodel::BaseObject Inherited;
-    SOFA_CLASS( RealSenseCalibrator, Inherited);
+    SOFA_CLASS( MultiCamCalibrator, Inherited);
 
+    /// \brief path for calibration images from camera 1
     Data<std::string> d_calibcam1 ;
+    /// \brief path for calibration images from camera 2
     Data<std::string> d_calibcam2 ;
+    /// \brief chessboard size, usual chessboard is 7x7
     Data<defaulttype::Vector2> d_chessboardsize ;
     DataCallback callback ;
 
-    Data<defaulttype::Mat3x3f> d_projectionmatrix ;
+    /// \brief output rotation matrix
+    Data<defaulttype::Mat3x3> d_rotation ;
+    /// \brief output translation vector
     Data<defaulttype::Vector3> d_translation ;
 
+    /// \brief set of calibration images from camera 1
     std::vector<cv::Mat> calibimage1;
+    /// \brief set of calibration images from camera 2
     std::vector<cv::Mat> calibimage2;
 
+    /// \brief computed during calibration
     std::vector<std::vector<cv::Point3f> > obj_points ;
+    /// \brief computed during calibration, image points from camera 1
     std::vector<std::vector<cv::Point2f> > img_points1 ;
+    /// \brief computed during calibration, image points from camera 2
     std::vector<std::vector<cv::Point2f> > img_points2 ;
 
-    RealSenseCalibrator()
+    MultiCamCalibrator()
         : Inherited()
         , d_calibcam1(initData(&d_calibcam1, std::string("./"), "calibcam1", "path to folder with calibration images from camera 1"))
         , d_calibcam2(initData(&d_calibcam2, std::string("./"), "calibcam2", "path to folder with calibration images from camera 2"))
         , d_chessboardsize(initData(&d_chessboardsize, defaulttype::Vector2(6,9), "size", "dimensions of the chessboard"))
         //output
-        , d_projectionmatrix(initData(&d_projectionmatrix, "projectionmatrix", "computed projection matrix between camera 1 and 2"))
-        , d_translation(initData(&d_translation, "translation", "computed translation vector"))
+        , d_rotation(
+            initData(
+                &d_rotation,
+                defaulttype::Mat3x3(
+                    defaulttype::Vector3(1,0,0),
+                    defaulttype::Vector3(0,1,0),
+                    defaulttype::Vector3(0,0,1)),
+                "projectionMatrix",
+                "projection matrix for rotating/translating pointcloud"
+            )
+        ), d_translation(initData(&d_translation, defaulttype::Vector3(0,0,0), "translation", "computed translation vector"))
     {
         callback.addInputs({&d_calibcam1, &d_calibcam2, &d_chessboardsize}) ;
-        callback.addCallback(std::bind(&RealSenseCalibrator::process, this)) ;
-//        std::vector<cv::Mat> x ;
-//        loadImages("/home/omar/Data/1/", x);
-//        loadImages("/home/omar/Data/2/", x);
+        callback.addCallback(std::bind(&MultiCamCalibrator::load_all, this)) ;
+        this->f_listening.setValue(true);
     }
 
     int loadImages (const std::string & path, std::vector<cv::Mat> & output) {
@@ -130,6 +151,31 @@ public :
         return 0 ;
     }
 
+    bool getCorners(
+        const cv::Size boardsize,
+            cv::Mat img1, std::vector<cv::Point2f> & corners1,
+            cv::Mat img2, std::vector<cv::Point2f> & corners2)
+    {
+        bool found1 = cv::findChessboardCorners(img1, boardsize, corners1, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS) ;
+        bool found2 = cv::findChessboardCorners(img2, boardsize, corners2, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS) ;
+//        std::cout << found1 << found2 << std::endl ;
+        if (found1 && found2) {
+            cv::cornerSubPix(
+                img1, corners1,
+                cv::Size(5,5), cv::Size(-1,-1),
+                cv::TermCriteria(CV_TERMCRIT_EPS|CV_TERMCRIT_ITER, 42, 1e-2)) ;
+            cv::cornerSubPix(
+                img2, corners2,
+                cv::Size(5,5), cv::Size(-1,-1),
+                cv::TermCriteria(CV_TERMCRIT_EPS|CV_TERMCRIT_ITER, 42, 1e-2)) ;
+            img_points1.push_back(corners1);
+            img_points2.push_back(corners2);
+            add_obj_points();
+            return true ;
+        }
+        return false ;
+    }
+
     void get_image_points (
         const cv::Size boardsize,
         std::vector<cv::Mat> & imglist1,
@@ -141,22 +187,7 @@ public :
         for (int i = 0 ; i < imglist1.size() ; i++) {
             cv::Mat img1 = imglist1[i], img2 = imglist2[i] ;
             std::vector<cv::Point2f> corners1, corners2 ;
-            bool found1 = cv::findChessboardCorners(img1, boardsize, corners1, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS) ;
-            bool found2 = cv::findChessboardCorners(img2, boardsize, corners2, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS) ;
-            std::cout << found1 << found2 << std::endl ;
-            if (found1 && found2) {
-                cv::cornerSubPix(
-                    img1, corners1,
-                    cv::Size(5,5), cv::Size(-1,-1),
-                    cv::TermCriteria(CV_TERMCRIT_EPS|CV_TERMCRIT_ITER, 42, 1e-2)) ;
-                cv::cornerSubPix(
-                    img2, corners2,
-                    cv::Size(5,5), cv::Size(-1,-1),
-                    cv::TermCriteria(CV_TERMCRIT_EPS|CV_TERMCRIT_ITER, 42, 1e-2)) ;
-                img_points1.push_back(corners1);
-                img_points2.push_back(corners2);
-                add_obj_points();
-            }
+            getCorners(boardsize, img1, corners1, img2, corners2);
         }
     }
 
@@ -183,33 +214,62 @@ public :
         cv::calibrateCamera(obj_points, imagePoints, imgsize, CM, D, rvecs, tvecs);
     }
 
-    void process () {
-//        load images
+    void write2output(cv::Mat T, cv::Mat R)
+    {
+        defaulttype::Mat3x3 & rotmat = *d_rotation.beginEdit() ;
+        for (int i = 0 ; i < 3 ; i++){
+            for (int j = 0 ; j < 3 ; j++) {
+                rotmat[i][j] = R.at<float>(i, j) ;
+            }
+        }
+        defaulttype::Vector3 & translation = *d_translation.beginEdit() ;
+        for (int i = 0 ; i < 3 ; i++)
+            translation[i] = T.at<double>(i) ;
+        d_translation.endEdit();
+        d_rotation.endEdit();
+    }
+
+    inline bool checkImgPointsValid() {
+        //img_points and calibimages should be aligned in size
+        return (img_points1.size() * img_points2.size() == 0) ;
+    }
+
+    void load_all()
+    {
+        img_points1.clear() ; img_points2.clear();
         int i1 = loadImages(d_calibcam1.getValue(),calibimage1) ;
         int i2 = loadImages(d_calibcam2.getValue(),calibimage2) ;
         if (i1 != i2 || i1 * i2 == 0) {
-            std::cerr << "(RealSenseCalibrator) numbers of images is different, check input folders" << std::endl ;
+            std::cerr << "(MultiCamCalibrator) numbers of images is different, check input folders" << std::endl ;
             return ;
         }
-        std::cout << "loading done : " << d_calibcam1.getValue() << " " << calibimage1.size() << std::endl ;
-//        get image points
+        std::cout << "loading done : got " << calibimage1.size() << " images" << std::endl ;
+
         defaulttype::Vector2 bsize = d_chessboardsize.getValue() ;
         cv::Size boardsize = cv::Size(bsize[0],bsize[1]) ;
         get_image_points(boardsize, calibimage1, calibimage2);
         std::cout << "got img points : " << img_points1.size() << std::endl ;
-        if (img_points1.size() * img_points2.size() == 0) {
-            std::cerr << "(RealSenseCalibrator) Error computing image points" << std::endl ;
+    }
+
+    void process () {
+//        load images
+        if (checkImgPointsValid()) {
+            std::cerr << "(MultiCamCalibrator) Error computing image points" << std::endl ;
             return ;
         }
+        std::cout << "(MultiCamCalibrator) Valid image points" << std::endl ;
 
 //        call camera calibration then
+        std::cout << "(MultiCamCalibrator) Intrinsic calibration" << std::endl ;
         cv::Mat cm1, d1, cm2, d2 ;
         cv::Size imgsize = calibimage1[0].size() ;
         calibratemono(cm1, d1, img_points1, imgsize);
         calibratemono(cm2, d2, img_points2, imgsize);
+        std::cout << "(MultiCamCalibrator) Intrinsic calibration done" << std::endl ;
 
 //        call cv::stereoCalibrate()
 //        output is extrinsic R|T matrix
+        std::cout << "(MultiCamCalibrator) Extrinsic calibration" << std::endl ;
         cv::Mat R, T, E, F;
         cv::stereoCalibrate(
             obj_points,
@@ -220,24 +280,15 @@ public :
             R, T, E, F,
             cv::CALIB_SAME_FOCAL_LENGTH | cv::CALIB_ZERO_TANGENT_DIST,
             cv::TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 100, 1e-5));
-        std::cout << "(RealSenseCalibrator) Done calibrating : " << R << " " << T << std::endl ;
+        std::cout << "(MultiCamCalibrator) Done calibrating : " << R << " " << T << std::endl ;
 
-        defaulttype::Mat3x3f & projmat = *d_projectionmatrix.beginEdit() ;
-        for (int i = 0 ; i < 3 ; i++){
-            for (int j = 0 ; j < 3 ; j++) {
-                projmat[i][j] = R.at<float>(i, j) ;
-            }
-        }
-        defaulttype::Vector3 & translation = *d_translation.beginEdit() ;
-        for (int i = 0 ; i < 3 ; i++)
-            translation[i] = T.at<double>(i) ;
-        d_translation.endEdit();
-        d_projectionmatrix.endEdit();
+        write2output(T, R);
     }
 
     void handleEvent(sofa::core::objectmodel::Event* event) {
         if (core::objectmodel::KeypressedEvent* ev = dynamic_cast<core::objectmodel::KeypressedEvent*>(event)) {
             if (ev->getKey() == 'c'||ev->getKey() == 'C') {
+                load_all() ;
                 process();
             }
         }

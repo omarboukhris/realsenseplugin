@@ -288,6 +288,12 @@ public :
         }
         helper::AdvancedTimer::stepEnd("RS Deprojection draw") ;
     }
+    void applyRotationTranslation(defaulttype::Vector3 point)
+    {
+        q.rotate(point) ;
+        point = point + d_tr_offset.getValue() ;
+    }
+
     inline void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
     {
         float
@@ -320,7 +326,7 @@ public :
         if (d_flip.getValue()) {
             point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
         }
-        q.rotate(point) ;
+        applyRotationTranslation(point);
         outpoints.push_back(point) ;
     }
 
@@ -339,7 +345,7 @@ public :
                 if (d_flip.getValue()) {
                     point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
                 }
-                q.rotate(point) ;
+                applyRotationTranslation(point);
                 synth.push_back(point) ;
             }
         }
@@ -348,11 +354,10 @@ public :
 
     inline pcl::PointXYZ scalePoint (float * point3d) {
         float scale = (float)d_scale.getValue()/100.f ;
-        defaulttype::Vector3 tr = d_tr_offset.getValue() ;
         return pcl::PointXYZ(
-            scale*point3d[0]+tr[0],
-            scale*point3d[1]+tr[1],
-            -scale*point3d[2]+tr[2]
+            scale*point3d[0],
+            scale*point3d[1],
+            -scale*point3d[2]
         ) ;
     }
 
