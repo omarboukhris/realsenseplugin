@@ -65,6 +65,10 @@ namespace sofa
 namespace rgbdtracking
 {
 
+/*!
+ * \brief The MultiCamLiveCalibrator class
+ * Doesn't need saved images to calibrate, just plug in stream of images from camera to calibrate
+ */
 class MultiCamLiveCalibrator : public MultiCamCalibrator
 {
 public :
@@ -72,10 +76,14 @@ public :
     typedef MultiCamCalibrator Inherited;
     SOFA_CLASS( MultiCamLiveCalibrator, Inherited);
 
+    /// \brief image from camera 1
     Data<opencvplugin::ImageData> d_img1 ;
+    /// \brief image from camera 2
     Data<opencvplugin::ImageData> d_img2 ;
     DataCallback callback_img ;
+    /// \brief image from camera 1 with corners
     Data<opencvplugin::ImageData> d_img1out ;
+    /// \brief image from camera 2 with corners
     Data<opencvplugin::ImageData> d_img2out ;
 
     MultiCamLiveCalibrator()
@@ -94,10 +102,15 @@ public :
         calibimage2.clear();
     }
 
+    /*!
+     * \brief checkForCorners
+     * check if streamed images can be coupled for stereo calibration
+     * and affect them to appropriate lists for later processing
+     */
     void checkForCorners() {
         if (calibimage1.size() == 30 || !activated) {
             activated = false ;
-            return ; // 030 should be enough, can be changed
+            return ; // 30 should be enough, can be changed
         }
         defaulttype::Vector2 bsize = d_chessboardsize.getValue() ;
         cv::Size boardsize = cv::Size(bsize[0],bsize[1]) ;
@@ -122,6 +135,10 @@ public :
         }
     }
 
+    /*!
+     * \brief handleEvent Press C to do calibration
+     * \param event
+     */
     void handleEvent(sofa::core::objectmodel::Event* event) {
         if (core::objectmodel::KeypressedEvent* ev = dynamic_cast<core::objectmodel::KeypressedEvent*>(event)) {
             if (ev->getKey() == 'c'||ev->getKey() == 'C') {

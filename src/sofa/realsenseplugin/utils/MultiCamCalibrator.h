@@ -135,6 +135,12 @@ public :
         this->f_listening.setValue(true);
     }
 
+    /*!
+     * \brief loadImages loads calibration images from specified folder
+     * \param path to directory containing images
+     * \param output vector of cv::Mat containing list of loaded images
+     * \return number of loaded images
+     */
     int loadImages (const std::string & path, std::vector<cv::Mat> & output) {
         output.clear() ;
         if (helper::system::FileSystem::isDirectory(path)) {
@@ -151,6 +157,15 @@ public :
         return 0 ;
     }
 
+    /*!
+     * \brief getCorners computes corners from stereo images
+     * \param boardsize chessboard size
+     * \param img1 cv::Mat from camera 1
+     * \param corners1 output corners for 1st frame
+     * \param img2 cv::Mat from camera 2
+     * \param corners2 output corners for 2nd frame
+     * \return true if corners found on both images, else false
+     */
     bool getCorners(
         const cv::Size boardsize,
             cv::Mat img1, std::vector<cv::Point2f> & corners1,
@@ -158,7 +173,6 @@ public :
     {
         bool found1 = cv::findChessboardCorners(img1, boardsize, corners1, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS) ;
         bool found2 = cv::findChessboardCorners(img2, boardsize, corners2, cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS) ;
-//        std::cout << found1 << found2 << std::endl ;
         if (found1 && found2) {
             cv::cornerSubPix(
                 img1, corners1,
@@ -176,6 +190,12 @@ public :
         return false ;
     }
 
+    /*!
+     * \brief get_image_points computes images points from list of stereo calibration frames
+     * \param boardsize chessboard size
+     * \param imglist1 camera 1's calibration frames
+     * \param imglist2 camera 2's calibration frames
+     */
     void get_image_points (
         const cv::Size boardsize,
         std::vector<cv::Mat> & imglist1,
@@ -191,6 +211,9 @@ public :
         }
     }
 
+    /*!
+     * \brief add_obj_points adds static object points for stereo calibration
+     */
     void add_obj_points()
     {
         std::vector<cv::Point3f> corners ;
@@ -205,6 +228,13 @@ public :
         obj_points.push_back(corners) ;
     }
 
+    /*!
+     * \brief calibratemono
+     * \param CM
+     * \param D
+     * \param imagePoints
+     * \param imgsize
+     */
     void calibratemono(cv::Mat & CM, cv::Mat & D, const std::vector<std::vector<cv::Point2f> > & imagePoints, const cv::Size & imgsize)
     {
         std::vector<cv::Mat> rvecs, tvecs;
@@ -214,6 +244,11 @@ public :
         cv::calibrateCamera(obj_points, imagePoints, imgsize, CM, D, rvecs, tvecs);
     }
 
+    /*!
+     * \brief write2output writes Translation and rotation matrix to sofa data
+     * \param T translation vector
+     * \param R Rotation matrix
+     */
     void write2output(cv::Mat T, cv::Mat R)
     {
         defaulttype::Mat3x3 & rotmat = *d_rotation.beginEdit() ;
@@ -229,11 +264,19 @@ public :
         d_rotation.endEdit();
     }
 
+    /*!
+     * \brief checkImgPointsValid simple guard for esthetics
+     * \return true if images points's sizes correspont on left and right (image points)
+     */
     inline bool checkImgPointsValid() {
         //img_points and calibimages should be aligned in size
         return (img_points1.size() * img_points2.size() == 0) ;
     }
 
+    /*!
+     * \brief load_all
+     * loads stereo images and computes images points (results are stored into class members)
+     */
     void load_all()
     {
         img_points1.clear() ; img_points2.clear();
@@ -251,6 +294,10 @@ public :
         std::cout << "got img points : " << img_points1.size() << std::endl ;
     }
 
+    /*!
+     * \brief process
+     * applies mono then stereo calibration on both cameras
+     */
     void process () {
 //        load images
         if (checkImgPointsValid()) {
@@ -285,6 +332,10 @@ public :
         write2output(T, R);
     }
 
+    /*!
+     * \brief handleEvent press C to launch calibration
+     * \param event
+     */
     void handleEvent(sofa::core::objectmodel::Event* event) {
         if (core::objectmodel::KeypressedEvent* ev = dynamic_cast<core::objectmodel::KeypressedEvent*>(event)) {
             if (ev->getKey() == 'c'||ev->getKey() == 'C') {
