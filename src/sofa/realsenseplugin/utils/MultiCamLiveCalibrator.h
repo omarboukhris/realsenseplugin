@@ -86,12 +86,19 @@ public :
         // highligthed output images
         , d_img1out(initData(&d_img1out, "imgcorners1", "image from camera 1 with highlighted corners"))
         , d_img2out(initData(&d_img2out, "imgcorners2", "image from camera 2 with highlighted corners"))
+        , activated(true)
     {
         callback_img.addInputs({&d_img1}) ;
         callback_img.addCallback(std::bind(&MultiCamLiveCalibrator::checkForCorners, this)) ;
+        calibimage1.clear();
+        calibimage2.clear();
     }
 
     void checkForCorners() {
+        if (calibimage1.size() == 30 || !activated) {
+            activated = false ;
+            return ; // 030 should be enough, can be changed
+        }
         defaulttype::Vector2 bsize = d_chessboardsize.getValue() ;
         cv::Size boardsize = cv::Size(bsize[0],bsize[1]) ;
 
@@ -106,7 +113,6 @@ public :
         cv::cvtColor(img2, grey2, cv::COLOR_BGR2GRAY) ;
         bool gotCorners = getCorners(boardsize, grey1, corners1, grey2, corners2);
         if (gotCorners) {
-            std::cout << "3a" << corners1.size() << " " << corners2.size() << std::endl ;
             calibimage1.push_back(grey1);
             calibimage2.push_back(grey2);
             cv::drawChessboardCorners(grey1,boardsize,corners1,true) ;
@@ -124,6 +130,8 @@ public :
         }
     }
 
+private:
+    bool activated ;
 };
 
 }
