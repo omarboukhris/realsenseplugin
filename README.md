@@ -86,3 +86,41 @@ The difference with this one is it only reprojects a set of points specified in 
  rscam="@rs"
  drawpcl="1" />
 ```
+
+## Multicam Calibration 
+There two components for calibrating a stereo data acquisition system; `MultiCamCalibrator` and `MultiCamLiveCalibrator`.
+Both wrap the same method for calibrating using OpenCV.
+```xml
+	<Node name="streamers">
+	    <RealSenseMultiCam name="rs" calibpath="/path/to/folder/" />
+	</Node>
+	<MultiCamCalibrator
+	    name="calib"
+		calibcam1="/path/to/folder/1/"
+		calibcam2="/path/to/folder/2/"
+		size="6 9"
+	/>
+```
+In this example, a realsense multicamera components instantiates virtual cameras. The specified `calibpath` path is used to create folders containing calibration images in generated directories.
+```xml
+<RealSenseCam
+  name="rs"
+		serial="rsserialnum1"
+		intrinsics="/path/to/save/intrinsics1.log"
+	/>
+
+<RealSenseCam
+  name="rs"
+  serial="rsserialnum2"
+		intrinsics="/path/to/save/intrinsics2.log"
+	/>
+
+<MultiCamLiveCalibrator
+  name="calib"
+  imgmaster="@rs.color"
+		imgslave="@rs2.color"
+		size="6 9"
+/>
+```
+The resulting rotation/translation are stored in the appropriate sofa data, which are `@calib.rotation` and `@calib.translation`.
+These data can be fed to any Realsense Reprojector, respectively through `rotation` and `offset` labels.
