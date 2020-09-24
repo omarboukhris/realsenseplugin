@@ -55,25 +55,27 @@ public:
 
     rs2::pipeline pipe ;
 
-    std::string serial ;
+    int serial ;
 
     RealSenseVirtualCam()
         : Inherited()
+        , serial (0)
     {}
 
-    RealSenseVirtualCam(std::string serialnum)
+    RealSenseVirtualCam(int serialnum)
         : Inherited()
         , serial(serialnum)
     {
     }
 
     void init() {
-        if (serial.empty()) {
-            std::cout << "(RealSenseVirtualCam) cam id is invalid" << std::endl ;
-            return ;
+        std::vector<std::string> seriallist = listSerialNum() ;
+        if (serial < 0 || serial >= seriallist.size()) {
+            std::cout << "(RealSenseCam) serial number index invalid <" << serial << "> "
+                      << "should be between [0.." << seriallist.size() << "]" << std::endl ;
         }
         rs2::config cfg ;
-        cfg.enable_device(serial);
+        cfg.enable_device(seriallist[serial]);
         pipe.start(cfg) ;
     }
 
@@ -136,8 +138,10 @@ public:
         core::objectmodel::BaseContext::SPtr context = this->getContext() ;
 
         size_t i = 0 ;
-        for (std::string serial : serial_list) {
-            add_realsenseCam(context, serial, ++i);
+//        for (std::string serial : serial_list) {
+//            add_realsenseCam(context, serial, i);
+        for (int i = 0 ; i < serial_list.size() ; i++) {
+            add_realsenseCam(context, i);
         }
     }
 
@@ -147,12 +151,12 @@ public:
      * \param serial : realsense serial number
      * \param i : index interator
      */
-    void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, std::string serial, size_t i) {
-        RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serial) ;
-        rs_vcam->setName(std::string("RSCam_") + std::to_string(i));
-        std::string calibpath = d_calibpath.getValue()+std::to_string(i) ;
+    void add_realsenseCam (core::objectmodel::BaseContext::SPtr node, int serialid) {
+        RealSenseVirtualCam* rs_vcam = new RealSenseVirtualCam(serialid) ;
+        rs_vcam->setName(std::string("RSCam_") + std::to_string(serialid));
+        std::string calibpath = d_calibpath.getValue()+std::to_string(serialid) ;
         rs_vcam->d_calibpath.setValue(calibpath);
-        rs_vcam->d_serialnum.setValue(serial);
+        rs_vcam->d_serialnum.setValue(serialid);
         if (!helper::system::FileSystem::exists(calibpath)) {
             helper::system::FileSystem::createDirectory(calibpath) ;
         }

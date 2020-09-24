@@ -116,9 +116,12 @@ protected:
     {
         auto resolution = d_resolution_rs.getValue() ;
         rs2::config cfg ;
-        if (d_serialnum.getValue().size() != 0) {
-            std::cout << "(RealSenseCam) serial number <" << d_serialnum.getValue() << "> used" << std::endl ;
-            cfg.enable_device(d_serialnum.getValue());
+        int serialid = d_serialnum.getValue() ;
+        if (serialid < 0 || serialid >= seriallist.size()) {
+            std::cout << "(RealSenseCam) serial number index invalid <" << serialid << "> "
+                      << "should be between [0.." << seriallist.size() << "]" << std::endl ;
+        } else {
+            cfg.enable_device(seriallist[serialid]);
         }
         cfg.enable_stream(
             RS2_STREAM_COLOR,

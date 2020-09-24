@@ -83,8 +83,8 @@ public :
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
 
-    /// \brief camera's serial number
-    Data <std::string> d_serialnum ;
+    /// \brief camera's serial number index
+    Data <int> d_serialnum ;
     /// \brief output camera's inrinsic parameters
     Data<defaulttype::Vector4 > d_intrinsicParameters ;
     /// \brief magnitude for decimation filter
@@ -116,7 +116,7 @@ public :
         , d_color(initData(&d_color, "color", "RGB data image"))
         , d_depth(initData(&d_depth, "depth", "depth data image"))
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
-        , d_serialnum(initData(&d_serialnum, std::string(""), "serial", "camera's serial number (check multicam for details)"))
+        , d_serialnum(initData(&d_serialnum, 0, "serialid", "camera's serial number id (between 0 and number of connected cams-1)"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
         , d_decimation(initData(&d_decimation, 4, "decimation", "decimation magnitude"))
         , d_tmp_alpha(initData(&d_tmp_alpha, 0.420f, "alpha", "temporal filter alpha [0, 1]"))
@@ -132,6 +132,10 @@ public :
         c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
         c_filters.addCallback(std::bind(&RealSenseStreamer::checkFiltersParams, this));
         this->f_listening.setValue(true) ;
+    }
+
+    void init() {
+        seriallist = listSerialNum() ;
     }
 
     /*!
@@ -187,6 +191,21 @@ public :
     }
 
 protected :
+
+    std::vector<std::string> seriallist ;
+    /*!
+     * \brief listSerialNum
+     * \return a list of the connected realsense camera's serial numbers
+     */
+    std::vector<std::string> listSerialNum()
+    {
+        std::vector<std::string> serial_list ;
+        rs2::context ctx ;
+        for (auto && device : ctx.query_devices()) {
+            serial_list.push_back(device.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+        }
+        return serial_list ;
+    }
 
     /*!
      * \brief writeIntrinsicsToFile : intrinsics path file in sofa data needs to be set

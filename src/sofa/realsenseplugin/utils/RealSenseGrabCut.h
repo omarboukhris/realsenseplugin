@@ -49,10 +49,6 @@
 #include <string>
 #include <map>
 
-#include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
-#include <sofa/opencvplugin/utils/OpenCVMouseEvents.h>
-
 #include <sofa/realsenseplugin/streamer/RealSenseCam.h>
 #include <sofa/realsenseplugin/cv-helpers.hpp>
 
@@ -103,12 +99,6 @@ public :
     {
         c_image_in.addInputs({&d_image_in, &d_far_thr, &d_near_thr, &d_rectangle});
         c_image_in.addCallback(std::bind(&RealSenseGrabCut::realsense_grabcut, this));
-    }
-
-    void init() {
-        //cv::namedWindow("rect") ;
-        //rect = opencvplugin::utils::mouseevents::rectangleDrawer(
-        //    "rect", d_image_in.getValue()) ;
     }
 
     void realsense_grabcut () {
