@@ -132,9 +132,6 @@ public :
         c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
         c_filters.addCallback(std::bind(&RealSenseStreamer::checkFiltersParams, this));
         this->f_listening.setValue(true) ;
-    }
-
-    void init() {
         seriallist = listSerialNum() ;
     }
 

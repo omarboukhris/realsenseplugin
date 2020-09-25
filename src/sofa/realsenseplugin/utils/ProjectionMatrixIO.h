@@ -35,7 +35,6 @@ public:
     Data<defaulttype::Vector4 > d_translation;
     core::objectmodel::DataCallback d_exportsplit ;
 
-
     ProjectionMatrixExport()
     : f_filename(initData (&f_filename, "filename", "file name"))
     , d_extrinsecMatrix(initData(&d_extrinsecMatrix,"modelView", "extrinsec matrix calibration"))

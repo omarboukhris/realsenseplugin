@@ -130,7 +130,7 @@ public :
             )
         ), d_translation(initData(&d_translation, defaulttype::Vector3(0,0,0), "translation", "computed translation vector"))
     {
-        callback.addInputs({&d_calibcam1, &d_calibcam2, &d_chessboardsize}) ;
+        callback.addInputs({&d_calibcam1, &d_calibcam2}) ;
         callback.addCallback(std::bind(&MultiCamCalibrator::load_all, this)) ;
         this->f_listening.setValue(true);
     }

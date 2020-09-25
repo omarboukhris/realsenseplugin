@@ -121,6 +121,8 @@ protected:
             std::cout << "(RealSenseCam) serial number index invalid <" << serialid << "> "
                       << "should be between [0.." << seriallist.size() << "]" << std::endl ;
         } else {
+            std::cout << "(RealSenseCam) serial number index valid" << std::endl
+                      << "using serial <" << seriallist[serialid] << "> " << std::endl ;
             cfg.enable_device(seriallist[serialid]);
         }
         cfg.enable_stream(
