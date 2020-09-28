@@ -30,7 +30,8 @@
 #include <sofa/simulation/AnimateBeginEvent.h>
 #include <sofa/simulation/AnimateEndEvent.h>
 
-#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
+//#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
+#include <opencv4/opencv2/core.hpp>
 
 #include <fstream>
 #include <algorithm>
@@ -195,12 +196,12 @@ protected :
  * Streams through distance frames in a file
  * Implements BaseOpenCVStreamer
  */
-class RealSenseDistFrameStreamer : public opencvplugin::streamer::BaseOpenCVStreamer
+class RealSenseDistFrameStreamer : public core::objectmodel::BaseObject
 {
 
 public:
-    SOFA_CLASS( RealSenseDistFrameStreamer, opencvplugin::streamer::BaseOpenCVStreamer);
-    typedef opencvplugin::streamer::BaseOpenCVStreamer Inherited;
+    SOFA_CLASS( RealSenseDistFrameStreamer, core::objectmodel::BaseObject);
+    typedef core::objectmodel::BaseObject Inherited;
 
     Data<std::string>  d_filename ;
     Data<RealSenseDistFrame>  d_distframe ;
@@ -216,10 +217,17 @@ public:
         c_filename.addInput(&d_filename);
         c_filename.addCallback(std::bind(&RealSenseDistFrameStreamer::updateFileStream, this));
         filestream = nullptr ;
+        this->f_listening.setValue(true);
     }
 
-    virtual void decodeImage(cv::Mat & /*img*/) {
+    virtual void decodeframe() {
         readFrame();
+    }
+
+    void handleEvent(sofa::core::objectmodel::Event* event) override {
+        if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
+            decodeframe();
+        }
     }
 
     void updateFileStream () {

@@ -75,7 +75,7 @@ public :
     /// \brief translation offset
     Data<defaulttype::Vector3> d_tr_offset ;
     /// \brief projection matrix for pointcloud rotation/translation
-    Data<defaulttype::Mat3x3> d_projectionmatrix ;
+    Data<defaulttype::Mat3x3> d_rotation ;
     DataCallback c_projmat ;
     /// \brief output pointcloud sofa
     Data<helper::vector<defaulttype::Vector3> > d_output ;
@@ -121,15 +121,15 @@ public :
         : Inherited()
         , d_depth(initData(&d_depth, "depth", "segmented depth data image"))
         , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0,0,0), "offset", "translation offset"))
-        , d_projectionmatrix(
+        , d_rotation(
             initData(
-                &d_projectionmatrix,
+                &d_rotation,
                 defaulttype::Mat3x3(
                     defaulttype::Vector3(1,0,0),
                     defaulttype::Vector3(0,1,0),
                     defaulttype::Vector3(0,0,1)),
-                "projectionMatrix",
-                "projection matrix for rotating/translating pointcloud"
+                "rotation",
+                "rotation matrix for rotating pointcloud"
             )
         ), d_output(initData(&d_output, "output", "output 3D position"))
         , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
@@ -152,7 +152,7 @@ public :
         c_intrinsics.addCallback(std::bind(&RealSenseAbstractDeprojector::readIntrinsics, this));
         c_scale.addInputs({&d_scale, &d_tr_offset}) ;
         c_scale.addCallback(std::bind(&RealSenseAbstractDeprojector::deproject_image, this));
-        c_projmat.addInputs({&d_projectionmatrix}) ;
+        c_projmat.addInputs({&d_rotation}) ;
         c_projmat.addCallback(std::bind(&RealSenseAbstractDeprojector::updateRotation, this)) ;
     }
 
@@ -161,8 +161,12 @@ public :
         updateRotation();
     }
 
+    /*!
+     * \brief updateRotation updates quaternion for rotating pointcloud
+     */
     void updateRotation () {
-        defaulttype::Mat3x3 pmat = d_projectionmatrix.getValue() ;
+        std::cout << "(RealSenseReprojector) updated rotation matrix" << std::endl ;
+        defaulttype::Mat3x3 pmat = d_rotation.getValue() ;
         q.fromMatrix(pmat);
     }
 
@@ -288,13 +292,28 @@ public :
         }
         helper::AdvancedTimer::stepEnd("RS Deprojection draw") ;
     }
+
+    /*!
+     * \brief applyRotationTranslation apply rotation then translation (offset) to point
+     * \param point
+     */
     void applyRotationTranslation(defaulttype::Vector3 point)
     {
         q.rotate(point) ;
         point = point + d_tr_offset.getValue() ;
     }
 
-    inline void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
+    /*!
+     * \brief push_to_pointcloud
+     * push a single point to pointcloud set
+     * \param outpoints : output points set
+     * \param i : pixel coordinate to deproject in x-axis
+     * \param j : pixel coordinate to deproject in y-axis
+     * \param index : index of dist frame to use
+     * \param diststruct : dist structure containing distance information
+     * \param dist : distance value to use
+     */
+    void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, size_t i, size_t j, int index, RealSenseDistFrame::RealSenseDistStruct& diststruct, float dist)
     {
         float
             point3d[3] = {0.f, 0.f, 0.f},
@@ -330,6 +349,10 @@ public :
         outpoints.push_back(point) ;
     }
 
+    /*!
+     * \brief makeSyntheticVolume
+     * creates synthetic volume from surface (used for rigid registration)
+     */
     void makeSyntheticVolume () {
         int dense = d_densify.getValue() ;
         if (dense <= 0) {
@@ -352,6 +375,11 @@ public :
         d_synthvolume.endEdit();
     }
 
+    /*!
+     * \brief scalePoint : self explanatory
+     * \param point3d
+     * \return scaled point as pcl::PointXYZ
+     */
     inline pcl::PointXYZ scalePoint (float * point3d) {
         float scale = (float)d_scale.getValue()/100.f ;
         return pcl::PointXYZ(
@@ -362,11 +390,12 @@ public :
     }
 
 private :
-    /// \brief write to output sofa data
+    /// \brief write to output sofa data offline (post processing)
     virtual void writeOfflineToOutput (
         RealSenseDistFrame::RealSenseDistStruct & diststruct,
         const cv::Mat & depth_im,
         int downSample) = 0 ;
+    /// \brief write to output sofa data online (live processing)
     virtual void writeOnlineToOutput (
         rs2::depth_frame & depth,
         RealSenseDistFrame::RealSenseDistStruct & diststruct,

@@ -125,8 +125,8 @@ public :
                     defaulttype::Vector3(1,0,0),
                     defaulttype::Vector3(0,1,0),
                     defaulttype::Vector3(0,0,1)),
-                "projectionMatrix",
-                "projection matrix for rotating/translating pointcloud"
+                "rotation",
+                "rotation matrix for rotating/translating pointcloud"
             )
         ), d_translation(initData(&d_translation, defaulttype::Vector3(0,0,0), "translation", "computed translation vector"))
     {
