@@ -165,7 +165,7 @@ public :
      * \brief updateRotation updates quaternion for rotating pointcloud
      */
     void updateRotation () {
-        std::cout << "(RealSenseReprojector) updated rotation matrix" << std::endl ;
+//        std::cout << "(RealSenseReprojector) updated rotation matrix" << std::endl ;
         defaulttype::Mat3x3 pmat = d_rotation.getValue() ;
         q.fromMatrix(pmat);
     }
@@ -299,8 +299,8 @@ public :
      */
     void applyRotationTranslation(defaulttype::Vector3 & point)
     {
-        q.rotate(point) ;
-        point = point + d_tr_offset.getValue() ;
+//        point = point + d_tr_offset.getValue() ;
+        point = q.rotate(point) + d_tr_offset.getValue() ;
     }
 
     /*!
