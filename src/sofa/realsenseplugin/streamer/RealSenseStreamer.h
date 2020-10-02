@@ -104,6 +104,8 @@ public :
 
     /// \brief depth scale for converting depth to meters
     Data<int> depthScale;
+    /// \brief for colorizing depth frame
+    Data<bool> d_colorize;
 
     /// \brief color frame pointer
     rs2::video_frame *color ;
@@ -131,8 +133,9 @@ public :
         , d_tmp_delta(initData(&d_tmp_delta, 20, "delta", "temporal filter delta [1, 100]"))
         // path to store calib images
         , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
-        // depth scale
+        // depth scale and colorizer
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
+        , d_colorize(initData(&d_colorize,false,"colorize","colorize depth frame"))
         // class members init
         , color(nullptr), depth(nullptr)
         , calib_imagelist()
@@ -292,7 +295,7 @@ protected :
      * @brief convert RGB & D rs2::frames to cv::Mat and stores them in data container
      */
     void frame_to_cvmat(rs2::video_frame color, rs2::depth_frame depth,
-                        cv::Mat& bgr_image, cv::Mat& depth8, bool colorize=false) {
+                        cv::Mat& bgr_image, cv::Mat& depth8) {
 //        int widthc = color.get_width();
 //        int heightc = color.get_height();
 
@@ -301,16 +304,15 @@ protected :
 
 //        bgr_image = cv::Mat(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
 
-//        int widthd = depth.get_width();
-//        int heightd = depth.get_height();
-//        cv::Mat depth16 = cv::Mat(heightd, widthd, CV_16U, (void*)depth.get_data()) ;
-//        depth16.convertTo(depth8, CV_8U, 1.f/64*depthScale.getValue()); //depth32 is output
         bgr_image = frame_to_mat(color) ;
-        if (colorize) {
+        if (d_colorize.getValue()) {
             rs2::frame bw_depth = depth.apply_filter(rizer) ;
             depth8 = frame_to_mat(bw_depth) ;
         } else {
-            depth8 = frame_to_mat(depth) ;
+            int widthd = depth.get_width();
+            int heightd = depth.get_height();
+            cv::Mat depth16 = cv::Mat(heightd, widthd, CV_16U, (void*)depth.get_data()) ;
+            depth16.convertTo(depth8, CV_8U, 1.f/64*depthScale.getValue()); //depth32 is output
         }
     }
 } ;

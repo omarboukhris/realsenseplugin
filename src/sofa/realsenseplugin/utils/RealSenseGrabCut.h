@@ -70,13 +70,6 @@ public :
     SOFA_CLASS( RealSenseGrabCut, core::objectmodel::BaseObject);
     typedef core::objectmodel::BaseObject Inherited;
 
-    /// \brief link to realsense camera component
-    core::objectmodel::SingleLink<
-        RealSenseGrabCut,
-        RealSenseCam,
-        BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
-    > l_rs_cam ; //for rgbd-rs2::frame-s
-
     /// \brief input color image
     Data<opencvplugin::ImageData> d_image_in ;
     /// \brief output color image
@@ -103,8 +96,7 @@ public :
     std::vector<cv::Point2f> m_contour ;
 
     RealSenseGrabCut()
-        : l_rs_cam(initLink("rscam", "link to realsense camera component - used for getting camera intrinsics"))
-        , d_image_in(initData(&d_image_in, "in", "input data image"))
+        : d_image_in(initData(&d_image_in, "in", "input data image"))
         , d_image_out(initData(&d_image_out, "out", "output data image"))
         , d_depth_in(initData(&d_depth_in, "din", "input data image"))
         , d_depth_out(initData(&d_depth_out, "dout", "output data image"))
@@ -136,28 +128,21 @@ public :
      * applies grabcut then applies mask to input color and depth frames
      */
     void realsense_grabcut () {
-        if (!l_rs_cam) {
-        // we need a valid link to realsense cam sofa component
-            std::cerr <<
-                "(RealSenseGrabCut) link to realsense cam component is broken" <<
-            std::endl ;
+        if (d_depth_in.getValue().getImage().empty()) {
+            std::cerr << "(RSGrabCut) depth frame is not setup" << std::endl ;
             return ;
         }
-
-        // get depth frame
-        rs2::colorizer rizer ;
-        rizer.set_option(RS2_OPTION_COLOR_SCHEME, 2);
-        rs2::depth_frame depth = *l_rs_cam->depth ;
-        rs2::frame bw_depth = depth.apply_filter(rizer) ;
-
-        // get near image mask
-        cv::Mat near = frame_to_mat(bw_depth) ;
+        if (d_contour.getValue().size() < 4) {
+            std::cerr << "(RSGrabCut) check contour size" << std::endl ;
+            return ;
+        }
+        cv::Mat near = d_depth_in.getValue().getImage() ;
 //        cv::imwrite("/home/omar/Data/tmp.png", near) ; // for logging
         cv::cvtColor(near, near, cv::COLOR_BGR2GRAY);
         create_mask_from_depth(near, d_near_thr.getValue(), cv::THRESH_BINARY);
 
         // get far image mask
-        cv::Mat far = frame_to_mat(bw_depth) ;
+        cv::Mat far = d_depth_in.getValue().getImage() ;
         cv::cvtColor(far, far, cv::COLOR_BGR2GRAY) ;
         far.setTo(255, far==0) ;
         create_mask_from_depth(far, d_far_thr.getValue(), cv::THRESH_BINARY_INV);
@@ -187,6 +172,7 @@ public :
             cv::GC_INIT_WITH_MASK
         );
 
+
         // Extract foreground pixels based on refined mask from the algorithm
         cv::Mat maskimg , & imageDest = *d_image_out.beginEdit(), imgtmp, imgtmp2, & depthDest = *d_depth_out.beginEdit() ;
         cv::compare(mask,cv::GC_PR_FGD,maskimg,cv::CMP_EQ);
@@ -198,6 +184,7 @@ public :
 
         color_mat.copyTo(imgtmp, maskimg); // imageDest is the output
         imageDest = imgtmp.clone() ;
+//        cv::rectangle(imageDest, rect, cv::Scalar(255,0,0,1)) ;
 
         d_image_out.endEdit();
         d_depth_out.endEdit();
