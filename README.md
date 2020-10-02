@@ -4,10 +4,8 @@ Sofa components for using realsense cam
 ## Streamers
 Streamers are a class of components that acquire RGB-D data stream from a RealSense camera.
 ```xml
-<GenericScheduler name="scheduler" frequency="1" />
 <RealSenseCam
  name="rs"
- scheduler="@scheduler.scheduler"
  intrinsics="/path/to/intrinsics.log"
 />
 ```
@@ -22,6 +20,26 @@ It instantiates a RealSenseVirtualCam for each depth camera connected. this is u
 <Node name="streamers">
  <RealSenseMultiCam name="rs" />
 </Node>
+```
+
+Another methode for instantiating multiple cameras is to use `serialid` with an index starting at 0.
+```xml
+<RealSenseCam
+ name="rs0"
+ serialid="0"
+ intrinsics="/path/to/intrinsics0.log"
+/>
+<RealSenseCam
+ name="rs1"
+ serialid="1"
+ intrinsics="/path/to/intrinsics1.log"
+/>
+...
+<RealSenseCam
+ name="rsn-1"
+ serialid="n-1"
+ intrinsics="/path/to/intrinsics_n-1.log"
+/>
 ```
 
 ## Deprojectors
@@ -101,7 +119,10 @@ Both wrap the same method for calibrating using OpenCV.
 		size="6 9"
 	/>
 ```
-In this example, a realsense multicamera components instantiates virtual cameras. The specified `calibpath` path is used to create folders containing calibration images in generated directories.
+In this example, a realsense multicamera components instantiates virtual cameras. 
+The specified `calibpath` path is used to create folders containing calibration images in generated directories.
+
+The following snippet instantiates two realsense sensors and setups calibration component.
 ```xml
 <RealSenseCam
   name="rs"
@@ -121,6 +142,15 @@ In this example, a realsense multicamera components instantiates virtual cameras
   imgslave="@rs2.color"
   size="6 9"
 />
+
+<ProjectionMatrixExport
+  name="exporter"
+  rotation="@calib.rotation"
+  translation="@calib.translation"
+  filename="/path/to/file.txt"
+/>
 ```
+
 The resulting rotation/translation are stored in the appropriate sofa data, which are `@calib.rotation` and `@calib.translation`.
 These data can be fed to any Realsense Reprojector, respectively through `rotation` and `offset` labels.
+The result is exported to a file for usage in another scene.
