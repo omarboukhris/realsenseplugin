@@ -24,40 +24,9 @@
 ******************************************************************************/
 #pragma once
 
-//#include <opencv2/ccalib/randpattern.hpp>
+#include <sofa/realsenseplugin/calib/MultiCamCalibrator.h>
 
-#include <sofa/defaulttype/Vec.h>
-#include <sofa/core/objectmodel/BaseObject.h>
-#include <sofa/core/objectmodel/DataFileName.h>
-#include <sofa/core/visual/VisualParams.h>
-#include <sofa/defaulttype/BoundingBox.h>
-#include <sofa/core/objectmodel/Event.h>
-#include <sofa/core/objectmodel/KeypressedEvent.h>
-#include <sofa/simulation/AnimateBeginEvent.h>
-#include <sofa/simulation/AnimateEndEvent.h>
-#include <sofa/defaulttype/Mat.h>
-#include <sofa/defaulttype/Quat.h>
-#include <sofa/helper/rmath.h>
-#include <sofa/helper/OptionsGroup.h>
-#include <sofa/helper/system/FileSystem.h>
-
-#include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/realsenseplugin/utils/MultiCamCalibrator.h>
-#include <librealsense2/rs.hpp>
-
-#include <opencv4/opencv2/calib3d/calib3d.hpp>
-#include <opencv4/opencv2/core/types_c.h>
-#include <opencv4/opencv2/imgproc/imgproc.hpp>
-
-#include <fstream>
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <map>
-
-#include <sofa/realsenseplugin/cv-helpers.hpp>
-
-#include <exception>
+#include <sofa/opencvplugin/BaseOpenCVData.h>
 
 namespace sofa
 {

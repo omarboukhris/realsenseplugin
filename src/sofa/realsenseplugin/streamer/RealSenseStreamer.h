@@ -41,7 +41,6 @@
 #include <sofa/helper/OptionsGroup.h>
 
 #include <sofa/opencvplugin/OpenCVWidget.h>
-//#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
 
 #include <librealsense2/rs.hpp>
 
@@ -103,30 +102,43 @@ public :
     Data<std::string> d_calibpath ;
     std::vector<cv::Mat> calib_imagelist ;
 
+    /// \brief depth scale for converting depth to meters
     Data<int> depthScale;
 
+    /// \brief color frame pointer
     rs2::video_frame *color ;
+    /// \brief depth frame pointer
     rs2::depth_frame *depth ;
 
+    /// \brief sensor's intrinsics
     rs2_intrinsics cam_intrinsics ;
+    /// \brief colorizer used for colorizing depth frame
+    rs2::colorizer rizer ;
 
     RealSenseStreamer ()
         : Inherited()
+        // frame attributes
         , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
         , d_color(initData(&d_color, "color", "RGB data image"))
         , d_depth(initData(&d_depth, "depth", "depth data image"))
+        // sensor's attributes
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
         , d_serialnum(initData(&d_serialnum, 0, "serialid", "camera's serial number id (between 0 and number of connected cams-1)"))
         , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
+        // filters parameters
         , d_decimation(initData(&d_decimation, 4, "decimation", "decimation magnitude"))
         , d_tmp_alpha(initData(&d_tmp_alpha, 0.420f, "alpha", "temporal filter alpha [0, 1]"))
         , d_tmp_delta(initData(&d_tmp_delta, 20, "delta", "temporal filter delta [1, 100]"))
+        // path to store calib images
         , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
+        // depth scale
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
+        // class members init
         , color(nullptr), depth(nullptr)
         , calib_imagelist()
     {
         checkFiltersParams();
+        rizer.set_option(RS2_OPTION_COLOR_SCHEME, 2);
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
         c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
@@ -189,6 +201,7 @@ public :
 
 protected :
 
+    /// \brief list of connected realsense sensors serial numbers
     std::vector<std::string> seriallist ;
     /*!
      * \brief listSerialNum
@@ -213,6 +226,11 @@ protected :
         this->writeIntrinsics(d_intrinsics.getValue(), cam_intrinsics);
     }
 
+    /*!
+     * \brief writeIntrinsics write realsense cam intrinsics into file (for offline reconstruction)
+     * \param filename
+     * \param cam_intrinsics
+     */
     void writeIntrinsics (std::string filename, const rs2_intrinsics &cam_intrinsics) {
         // for exporting intrinsics as sofa data
         defaulttype::Vector4 & intrinsics = *d_intrinsicParameters.beginEdit() ;
@@ -274,19 +292,26 @@ protected :
      * @brief convert RGB & D rs2::frames to cv::Mat and stores them in data container
      */
     void frame_to_cvmat(rs2::video_frame color, rs2::depth_frame depth,
-                        cv::Mat& bgr_image, cv::Mat& depth8) {
-        int widthc = color.get_width();
-        int heightc = color.get_height();
+                        cv::Mat& bgr_image, cv::Mat& depth8, bool colorize=false) {
+//        int widthc = color.get_width();
+//        int heightc = color.get_height();
 
-//        cv::Mat rgb0(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
-//        cv::cvtColor (rgb0, bgr_image, cv::COLOR_RGB2BGR); // bgr_image is output
+////        cv::Mat rgb0(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
+////        cv::cvtColor (rgb0, bgr_image, cv::COLOR_RGB2BGR); // bgr_image is output
 
-        bgr_image = cv::Mat(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
+//        bgr_image = cv::Mat(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
 
-        int widthd = depth.get_width();
-        int heightd = depth.get_height();
-        cv::Mat depth16 = cv::Mat(heightd, widthd, CV_16U, (void*)depth.get_data()) ;
-        depth16.convertTo(depth8, CV_8U, 1.f/64*depthScale.getValue()); //depth32 is output
+//        int widthd = depth.get_width();
+//        int heightd = depth.get_height();
+//        cv::Mat depth16 = cv::Mat(heightd, widthd, CV_16U, (void*)depth.get_data()) ;
+//        depth16.convertTo(depth8, CV_8U, 1.f/64*depthScale.getValue()); //depth32 is output
+        bgr_image = frame_to_mat(color) ;
+        if (colorize) {
+            rs2::frame bw_depth = depth.apply_filter(rizer) ;
+            depth8 = frame_to_mat(bw_depth) ;
+        } else {
+            depth8 = frame_to_mat(depth) ;
+        }
     }
 } ;
 

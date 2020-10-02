@@ -31,6 +31,7 @@
 #include <sofa/core/objectmodel/DataFileName.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/BoundingBox.h>
+#include <sofa/core/objectmodel/DataCallback.h>
 #include <sofa/core/objectmodel/Event.h>
 #include <sofa/core/objectmodel/KeypressedEvent.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
@@ -40,9 +41,6 @@
 #include <sofa/helper/rmath.h>
 #include <sofa/helper/OptionsGroup.h>
 #include <sofa/helper/system/FileSystem.h>
-
-#include <sofa/opencvplugin/OpenCVWidget.h>
-#include <sofa/opencvplugin/BaseOpenCVStreamer.h>
 
 #include <librealsense2/rs.hpp>
 
@@ -93,7 +91,7 @@ public :
     Data<std::string> d_calibcam2 ;
     /// \brief chessboard size, usual chessboard is 7x7
     Data<defaulttype::Vector2> d_chessboardsize ;
-    DataCallback callback ;
+    core::objectmodel::DataCallback callback ;
 
     /// \brief output rotation matrix
     Data<defaulttype::Mat3x3> d_rotation ;
@@ -229,11 +227,11 @@ public :
     }
 
     /*!
-     * \brief calibratemono
-     * \param CM
-     * \param D
-     * \param imagePoints
-     * \param imgsize
+     * \brief calibratemono intrinsic calibration of one camera
+     * \param CM output camera matrix
+     * \param D output distortion matrix
+     * \param imagePoints image points used for calibration
+     * \param imgsize images' size
      */
     void calibratemono(cv::Mat & CM, cv::Mat & D, const std::vector<std::vector<cv::Point2f> > & imagePoints, const cv::Size & imgsize)
     {

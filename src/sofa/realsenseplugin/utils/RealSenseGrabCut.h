@@ -60,30 +60,47 @@ namespace rgbdtracking
 /// /!\ See https://github.com/IntelRealSense/librealsense/blob/master/wrappers/opencv/grabcuts/rs-grabcuts.cpp
 /// for implementation details
 
+/*!
+ * \brief The RealSenseGrabCut class
+ * Applies grabcut on RGBD frames
+ * ROI's BBOX is defined by contour
+ */
 class RealSenseGrabCut : public core::objectmodel::BaseObject {
 public :
     SOFA_CLASS( RealSenseGrabCut, core::objectmodel::BaseObject);
     typedef core::objectmodel::BaseObject Inherited;
 
+    /// \brief link to realsense camera component
     core::objectmodel::SingleLink<
         RealSenseGrabCut,
         RealSenseCam,
         BaseLink::FLAG_STOREPATH|BaseLink::FLAG_STRONGLINK
     > l_rs_cam ; //for rgbd-rs2::frame-s
+
+    /// \brief input color image
     Data<opencvplugin::ImageData> d_image_in ;
+    /// \brief output color image
     Data<opencvplugin::ImageData> d_image_out ;
 
+    /// \brief input depth image
     Data<opencvplugin::ImageData> d_depth_in ;
+    /// \brief output depth image
     Data<opencvplugin::ImageData> d_depth_out ;
 
+    /// \brief near threshold
     Data<int> d_near_thr ;
+    /// \brief far threshold
     Data<int> d_far_thr ;
-    Data<defaulttype::Vec4i> d_rectangle ;
+
+    /// \brief contour from which to extract ROI BBox
+    Data<helper::vector<defaulttype::Vector2> > d_contour;
 
     DataCallback c_image_in ;
+    DataCallback c_contour ;
 
     // bounding box rectangle
     cv::Rect rect ;
+    std::vector<cv::Point2f> m_contour ;
 
     RealSenseGrabCut()
         : l_rs_cam(initLink("rscam", "link to realsense camera component - used for getting camera intrinsics"))
@@ -93,14 +110,31 @@ public :
         , d_depth_out(initData(&d_depth_out, "dout", "output data image"))
         , d_near_thr(initData(&d_near_thr, 200, "nearthr", "threshold value for near mask"))
         , d_far_thr(initData(&d_far_thr, 80, "farthr", "threshold value for far mask"))
-
-        , d_rectangle (initData(&d_rectangle, "rectangle", "ROI containing a segmented object. (x, y, width, height)"))
-
+        , d_contour( initData(&d_contour, "contour", "contour to compute ROI rectangle"))
+        , m_contour()
     {
-        c_image_in.addInputs({&d_image_in, &d_far_thr, &d_near_thr, &d_rectangle});
+        c_image_in.addInputs({&d_image_in, &d_far_thr, &d_near_thr});
         c_image_in.addCallback(std::bind(&RealSenseGrabCut::realsense_grabcut, this));
+        c_contour.addInputs({&d_contour});
+        c_contour.addCallback(std::bind(&RealSenseGrabCut::updateContour, this));
     }
 
+    /*!
+     * \brief updateContour updates contour to appropriate data format
+     */
+    void updateContour () {
+        const helper::vector<defaulttype::Vector2> contourdata = d_contour.getValue() ;
+        m_contour.clear();
+        for (defaulttype::Vector2 point : contourdata) {
+            m_contour.push_back(cv::Point2f(point[0], point[1]));
+        }
+    }
+
+    /*!
+     * \brief realsense_grabcut
+     * creates thresholding masks, computes bounding box from contour,
+     * applies grabcut then applies mask to input color and depth frames
+     */
     void realsense_grabcut () {
         if (!l_rs_cam) {
         // we need a valid link to realsense cam sofa component
@@ -118,6 +152,7 @@ public :
 
         // get near image mask
         cv::Mat near = frame_to_mat(bw_depth) ;
+//        cv::imwrite("/home/omar/Data/tmp.png", near) ; // for logging
         cv::cvtColor(near, near, cv::COLOR_BGR2GRAY);
         create_mask_from_depth(near, d_near_thr.getValue(), cv::THRESH_BINARY);
 
@@ -140,20 +175,7 @@ public :
             depth_mat = d_depth_in.getValue() ;
 
         // get ROI
-//        defaulttype::Vec4i & roi = *d_rectangle.beginEdit() ;
-//        cv::Rect2d rect ;
-//        if (roi[0] == 0 && roi[1] == 0 && roi[2] == 0 && roi[3] == 0) {
-//            // rect = cv::selectROI(color_mat);
-//            cv::namedWindow("rect") ;
-//            rect = opencvplugin::utils::mouseevents::rectangleDrawer(
-//                "rect", d_image_in.getValue()) ;
-//            roi[0] = rect.x ; roi[1] = rect.y ;
-//            roi[2] = rect.width ; roi[3] = rect.height ;
-//            std::cout << roi << std::endl ;
-//        } else {
-//            rect = cv::Rect2d(roi[0],roi[1],roi[2],roi[3]) ;
-//        }
-//        d_rectangle.endEdit();
+        rect = cv::boundingRect(m_contour) ;
 
         cv::grabCut(
             color_mat,
@@ -183,6 +205,12 @@ public :
 
 protected :
 
+    /*!
+     * \brief create_mask_from_depth applies thresholding then dilation and erosion
+     * \param depth depth cv::mat
+     * \param thresh
+     * \param type
+     */
     void create_mask_from_depth (cv::Mat& depth, int thresh, cv::ThresholdTypes type) {
         #define EROSION_KERNEL_SIZE cv::Size(3, 3)
         cv::Mat
