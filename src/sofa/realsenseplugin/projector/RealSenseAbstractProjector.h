@@ -161,6 +161,12 @@ public :
         updateRotation();
     }
 
+    void handleEvent(sofa::core::objectmodel::Event* event) {
+        if(sofa::simulation::AnimateEndEvent::checkEventType(event)) {
+            deproject_image();
+        }
+    }
+
     /*!
      * \brief updateRotation updates quaternion for rotating pointcloud
      */

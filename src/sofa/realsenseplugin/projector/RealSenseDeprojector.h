@@ -54,8 +54,9 @@ public:
         //offline reco
         , d_snap_path(initData(&d_snap_path, std::string("."), "snap_path", "path to snap shots folder"))
     {
-        c_image.addInputs({&this->d_depth});
-        c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
+        f_listening.setValue(true);
+//        c_image.addInputs({&this->d_depth});
+//        c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
     }
 
     virtual ~RealSenseDeprojector () {
@@ -66,6 +67,7 @@ public:
      * \param event
      */
     void handleEvent(sofa::core::objectmodel::Event *event) {
+        Inherited::handleEvent(event) ;
         if (sofa::core::objectmodel::KeypressedEvent* ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)) {
             //std::cout << ev->getKey() << std::endl ;
 

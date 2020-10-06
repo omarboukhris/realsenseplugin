@@ -82,7 +82,11 @@ public :
         return _distdata.frame ;
     }
 
-    inline RealSenseDistStruct & getFrame () {
+    RealSenseDistStruct & getFrame () {
+        return _distdata ;
+    }
+
+    const RealSenseDistStruct & getFrame () const {
         return _distdata ;
     }
 

@@ -137,7 +137,6 @@ public :
             return ;
         }
         cv::Mat near = d_depth_in.getValue().getImage() ;
-//        cv::imwrite("/home/omar/Data/tmp.png", near) ; // for logging
         cv::cvtColor(near, near, cv::COLOR_BGR2GRAY);
         create_mask_from_depth(near, d_near_thr.getValue(), cv::THRESH_BINARY);
 
