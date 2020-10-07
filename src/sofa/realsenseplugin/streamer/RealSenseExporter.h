@@ -79,7 +79,7 @@ public:
         , d_depth(initData(&d_depth, "depth", "depth frame"))
         , d_dist(initData(&d_dist, "dist", "dist frame"))
 
-        , d_fps(initData(&d_fps, 30.0, "fps", "frame rate"))
+        , d_fps(initData(&d_fps, 15.0, "fps", "frame rate"))
     {
         c_color.addInputs({&d_color});
         c_color.addCallback(std::bind(&RealSenseExporter::write_color, this));
@@ -92,33 +92,60 @@ public:
     }
 
     void write_color () {
-        writer_rgb << d_color.getValue().getImage() ;
+        if (!writer_rgb.isOpened()) opencolor();
+        const cv::Mat & color = d_color.getValue().getImage() ;
+        if (color.empty()) return ;
+        writer_rgb.write(color);
+//        writer_rgb << color ;
     }
     void write_depth () {
-        writer_d << d_depth.getValue().getImage() ;
+        if (!writer_d.isOpened()) opendepth();
+        const cv::Mat & depth = d_depth.getValue().getImage() ;
+        if (depth.empty()) return ;
+        writer_d.write(depth);
+//        writer_d << d_depth.getValue().getImage() ;
     }
     void write_dist () {
         distout.d_distframe.setValue(d_dist.getValue());
     }
 
-    void init () {
+    void opendist()
+    {
         distout.d_filename.setValue(d_path_dist.getValue());
+    }
+
+    void opencolor()
+    {
+        int codec = cv::VideoWriter::fourcc('M', 'J', 'P', 'G') ;
         cv::Mat color = d_color.getValue().getImage() ;
+        cv::Size size = cv::Size(color.cols, color.rows) ;
         writer_rgb.open(
             d_path_c.getValue(),
-            cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+            codec,
             d_fps.getValue(),
-            cv::Size(color.rows, color.cols),
+            size,
             (color.channels() != 1)
         ) ;
+    }
+
+    void opendepth()
+    {
         cv::Mat depth = d_depth.getValue().getImage() ;
+        int codec = cv::VideoWriter::fourcc('M', 'J', 'P', 'G') ;
+        cv::Size size = cv::Size(depth.cols, depth.rows) ;
         writer_d.open(
             d_path_d.getValue(),
-            cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+            codec,
             d_fps.getValue(),
-            cv::Size(depth.rows, depth.cols),
+            size,
             (depth.channels() != 1)
         ) ;
+    }
+
+    void init () {
+        opendist();
+        opencolor();
+        opendepth();
     }
 
 	~RealSenseExporter () {
