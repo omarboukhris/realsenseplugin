@@ -303,9 +303,7 @@ public :
      * \brief applyRotationTranslation apply rotation then translation (offset) to point
      * \param point
      */
-    void applyRotationTranslation(defaulttype::Vector3 & point)
-    {
-//        point = point + d_tr_offset.getValue() ;
+    void applyRotationTranslation(defaulttype::Vector3 & point) {
         point = q.rotate(point) + d_tr_offset.getValue() ;
     }
 

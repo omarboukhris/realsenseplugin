@@ -69,8 +69,6 @@ public:
     void handleEvent(sofa::core::objectmodel::Event *event) {
         Inherited::handleEvent(event) ;
         if (sofa::core::objectmodel::KeypressedEvent* ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)) {
-            //std::cout << ev->getKey() << std::endl ;
-
             // screen shot : ctrl+shift+P
             if ((int)ev->getKey() == 'P') {
                 exportSnapShot () ;
