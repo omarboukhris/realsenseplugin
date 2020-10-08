@@ -156,8 +156,6 @@ protected:
         rs2::frameset frameset = wait_for_frame(pipe) ;
 
         // Trying to get both color and aligned depth frames
-//        if (color) delete color ;
-//        if (depth) delete depth ;
         RealSenseDataFrame::RealSenseFrame _frame ;
         _frame.color = new rs2::video_frame(frameset.get_color_frame()) ;
         _frame.depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
@@ -167,10 +165,6 @@ protected:
         // extract pointcloud
         //getpointcloud(*color, *depth) ;
 
-        // Create depth and color image
-//        frame_to_cvmat(*_frame.color, *_frame.depth, img, *d_depth.beginEdit());
-//        d_depth.endEdit();
-//        d_color.setValue(img);
      }
 
 protected :

@@ -269,7 +269,7 @@ protected :
      * \return realsense current frameset
      */
     rs2::frameset wait_for_frame(rs2::pipeline & pipe) {
-        rs2::align align(RS2_STREAM_COLOR);
+//        rs2::align align(RS2_STREAM_COLOR);
         rs2::frameset frameset;
         while (
             (!frameset.first_or_default(RS2_STREAM_DEPTH) ||
@@ -277,34 +277,11 @@ protected :
         ) {
             frameset = pipe.wait_for_frames();
         }
-        rs2::frameset processed = align.process(frameset);
-
-        return processed;
+//        rs2::frameset processed = align.process(frameset);
+//        return processed;
+        return frameset ;
     }
 
-//    /*!
-//     * @brief convert RGB & D rs2::frames to cv::Mat and stores them in data container
-//     */
-//    void frame_to_cvmat(RealSenseDataFrame & df, Reals
-//                        cv::Mat& bgr_image, cv::Mat& depth8) {
-////        int widthc = color.get_width();
-////        int heightc = color.get_height();
-
-//////        cv::Mat rgb0(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
-//////        cv::cvtColor (rgb0, bgr_image, cv::COLOR_RGB2BGR); // bgr_image is output
-
-////        bgr_image = cv::Mat(heightc,widthc, CV_8UC3, (void*) color.get_data()) ;
-//        bgr_image = frame_to_mat(color) ;
-//        if (d_colorize.getValue()) {
-//            rs2::frame bw_depth = depth.apply_filter(rizer) ;
-//            depth8 = frame_to_mat(bw_depth) ;
-//        } else {
-//            int widthd = depth.get_width();
-//            int heightd = depth.get_height();
-//            cv::Mat depth16 = cv::Mat(heightd, widthd, CV_16U, (void*)depth.get_data()) ;
-//            depth16.convertTo(depth8, CV_8U, 1.f/64*depthScale.getValue()); //depth32 is output
-//        }
-//    }
 } ;
 
 }
