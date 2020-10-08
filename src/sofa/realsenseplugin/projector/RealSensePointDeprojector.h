@@ -28,7 +28,7 @@
 
 namespace sofa {
 
-namespace rgbdtracking {
+namespace realsenseplugin {
 
 /*!
  * \brief The RealSensePointDeprojector class
@@ -56,27 +56,8 @@ public:
     }
 
 private :
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
-        // setup output
-        const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
-        for (defaulttype::Vec2i vec : input){
-            size_t i = vec[1], j = vec[0] ;
-            if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
-                depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
-            // deprojection
-                int index = static_cast<int>(i/downSample) * diststruct._width +
-                    static_cast<int>(j/downSample) ;
-                float dist = diststruct.frame[index] ;
-                push_to_pointcloud (output, i, j, index, diststruct, dist) ;
-            }
-        }
-        // the end
-        d_output.endEdit();
-    }
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, const cv::Mat & depth_im, int downSample) override {
         // setup output
         const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
@@ -87,10 +68,7 @@ private :
             if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
                 depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
                 // deprojection
-                float dist = depth.get_distance(j, i) ;
-                int index = static_cast<int>(i/downSample) * diststruct._width +
-                    static_cast<int>(j/downSample) ;
-                push_to_pointcloud (output, i, j, index, diststruct, dist) ;
+                push_to_pointcloud (output, depth, i, j) ;
             }
         }
         // the end

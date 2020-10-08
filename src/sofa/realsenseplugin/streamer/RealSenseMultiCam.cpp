@@ -30,7 +30,7 @@
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
 
 SOFA_DECL_CLASS (RealSenseVirtualCam)

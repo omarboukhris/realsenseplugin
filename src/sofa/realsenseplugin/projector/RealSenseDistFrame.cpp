@@ -30,7 +30,7 @@
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
 
 using namespace defaulttype;

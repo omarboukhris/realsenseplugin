@@ -2,9 +2,7 @@
 
 namespace sofa {
 
-namespace opencvplugin {
-
-namespace tracker {
+namespace realsenseplugin {
 
 SOFA_DECL_CLASS(MaskFromContour)
 
@@ -15,4 +13,3 @@ int MaskFromContourClass = core::RegisterObject("MaskFromContour : generates bin
 
 }
 
-}

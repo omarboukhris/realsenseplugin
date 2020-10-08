@@ -31,7 +31,7 @@
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
 
 using namespace cimg_library;

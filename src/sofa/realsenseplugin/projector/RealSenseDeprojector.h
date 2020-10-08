@@ -28,7 +28,7 @@
 
 namespace sofa {
 
-namespace rgbdtracking {
+namespace realsenseplugin {
 
 /*!
  * \brief The RealSenseDeprojector class
@@ -41,8 +41,6 @@ public:
     typedef RealSenseAbstractDeprojector Inherited;
     SOFA_CLASS( RealSenseDeprojector , Inherited);
 
-    /// \brief color frame for snapshot exportation
-    Data<opencvplugin::ImageData> d_color ;
     /// \brief path to save snapshots to
     Data<std::string> d_snap_path ;
 
@@ -50,13 +48,9 @@ public:
 
     RealSenseDeprojector()
         : Inherited()
-        , d_color(initData(&d_color, "color", "segmented color data image"))
-        //offline reco
         , d_snap_path(initData(&d_snap_path, std::string("."), "snap_path", "path to snap shots folder"))
     {
         f_listening.setValue(true);
-//        c_image.addInputs({&this->d_depth});
-//        c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
     }
 
     virtual ~RealSenseDeprojector () {
@@ -90,78 +84,24 @@ private :
             snapshot_depth_filename =
                 d_snap_path.getValue() +
                 "/depth_snap_" + std::to_string(i) + ".png",
-            snapshot_dist_filename =
+            snap_rsframe_filename =
                 d_snap_path.getValue() +
-                "/dist_snap_" + std::to_string(i) + ".dist" ;
+                "/rs_frame_" + std::to_string(i) + ".png" ;
         i++ ;
 
         // get images to export
-        cv::Mat colormat = d_color.getValue().getImage(),
-                depthmat = d_depth.getValue().getImage() ;
+        cv::Mat colormat = d_rsframe.getValue().getcvColor(),
+                depthmat = d_rsframe.getValue().getcvDepth() ;
         // export pngs
         cv::imwrite(snapshot_color_filename.c_str(), colormat) ;
         std::cout << "(RealSenseCam) exported " << snapshot_color_filename << std::endl ;
         cv::imwrite(snapshot_depth_filename.c_str(), depthmat) ;
         std::cout << "(RealSenseCam) exported " << snapshot_depth_filename << std::endl ;
 
-        // export dist frames
-        this->_write_distFrame(snapshot_dist_filename);
-        std::cout << "(RealSenseCam) exported " << snapshot_dist_filename << std::endl ;
-    }
-
-    /*!
-     * \brief _write_distFrame
-     * \param snapshot_dist_filename
-     */
-    inline void _write_distFrame (std::string snapshot_dist_filename) {
-        RealSenseDistFrame distframe = d_distframe.getValue() ;
-        RealSenseDistFrame::RealSenseDistStruct diststruct = distframe.getFrame();
-
-        std::FILE* filestream = std::fopen(snapshot_dist_filename.c_str(), "wb") ;
-        if (filestream == nullptr) {
-            std::cerr << "(RealSenseDeprojector) check writing rights on file : "
-                     << snapshot_dist_filename
-                     << std::endl ;
-            return ;
-        }
-        // write width and height
-        std::fwrite(&diststruct._width, sizeof(size_t), 1, filestream) ;
-        std::fwrite(&diststruct._height, sizeof(size_t), 1, filestream) ;
-
-        // write frame data
-        std::fwrite (
-            diststruct.frame,
-            sizeof(float),
-            diststruct._width * diststruct._height,
-            filestream
-        ) ;
-        std::fclose(filestream) ;
-    }
-
-    /*!
-     * \brief writeOfflineToOutput : implementation to reproject the whole scene/frame offline
-     * \param diststruct
-     * \param depth_im
-     * \param downSample
-     */
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
-        helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
-        outpoints.clear() ;
-        m_pointcloud->clear();
-        for (size_t i = 0 ; i < diststruct._height ; ++i) {
-            for (size_t j = 0 ; j < diststruct._width ; ++j) {
-                if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
-                    depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1]
-                ) {
-                    // deprojection
-                    float dist = diststruct.frame[i*diststruct._width+j] ;
-                    int index = i*diststruct._width+j ;
-                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
-                }
-            }
-        }
-//        std::cout << outpoints.size() << std::endl ;
-        d_output.endEdit();
+        // export whole frame
+        std::ofstream fstream (snap_rsframe_filename, std::ofstream::binary) ;
+        fstream << d_rsframe ;
+        fstream.close() ;
     }
 
     /*!
@@ -171,18 +111,18 @@ private :
      * \param depth_im
      * \param downSample
      */
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, const cv::Mat & depth_im, int downSample) override {
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear() ;
-        for (size_t i = 0 ; i < diststruct._height; ++i) {
-            for (size_t j = 0 ; j < diststruct._width ; ++j) {
+        int max_i = (int)(depth_im.cols/downSample),
+            max_j = (int)(depth_im.rows/downSample) ;
+        for (size_t i = 0 ; i < max_i; ++i) {
+            for (size_t j = 0 ; j < max_j ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
                     depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1]
                 ) {
                     // deprojection
-                    float dist = depth.get_distance(downSample*j, downSample*i) ;
-                    int index = i*diststruct._width+j ;
-                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
+                    push_to_pointcloud(outpoints, depth, downSample*i, downSample*j);
                 }
             }
         }

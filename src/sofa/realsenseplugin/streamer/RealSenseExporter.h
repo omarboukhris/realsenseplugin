@@ -24,25 +24,20 @@
 ******************************************************************************/
 #pragma once
 
-#include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
-#include <sofa/realsenseplugin/projector/RealSenseDistFrame.h>
-#include <sofa/opencvplugin/OpenCVWidget.h>
+//#include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
+
+#include <sofa/core/objectmodel/BaseObject.h>
+#include <sofa/core/objectmodel/DataCallback.h>
+#include <sofa/core/objectmodel/Data.h>
+#include <sofa/realsenseplugin/RSData.h>
+
+#include <fstream>
 
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
-
-using namespace cimg_library;
-using defaulttype::Vec;
-using defaulttype::Vector3;
-
-
-using namespace std;
-using namespace cv;
-using namespace boost;
-using namespace rs2;
 
 /*!
  * \brief The RealSenseExporter class
@@ -54,104 +49,48 @@ public:
 	SOFA_CLASS( RealSenseExporter , core::objectmodel::BaseObject );
 	typedef core::objectmodel::BaseObject Inherited;
 
-    sofa::core::objectmodel::DataFileName d_path_c ;
-    sofa::core::objectmodel::DataFileName d_path_d ;
-    sofa::core::objectmodel::DataFileName d_path_dist ;
+    sofa::core::objectmodel::DataFileName d_path ;
 
-    Data<opencvplugin::ImageData> d_color ;
-	Data<opencvplugin::ImageData> d_depth ;
-    Data<RealSenseDistFrame> d_dist ;
+    Data<RealSenseDataFrame> d_rsdataframe ;
 
     Data<double> d_fps ;
 
-    DataCallback c_color, c_depth, c_dist ;
-
-    RealSenseDistFrameExporter distout ;
-    cv::VideoWriter writer_rgb, writer_d ;
+    core::objectmodel::DataCallback c_dataframe, c_path ;
 
 	RealSenseExporter()
         : Inherited()
-        , d_path_c(initData(&d_path_c, "pathc", "path to 3D video to read"))
-        , d_path_d(initData(&d_path_d, "pathd", "path to 3D video to read"))
-        , d_path_dist(initData(&d_path_dist, "pathdist", "path to 3D video to read"))
+        , d_path(initData(&d_path, "path", "path to 3D video to write"))
 
-        , d_color(initData(&d_color, "color", "color frame"))
-        , d_depth(initData(&d_depth, "depth", "depth frame"))
-        , d_dist(initData(&d_dist, "dist", "dist frame"))
+        , d_rsdataframe(initData(&d_rsdataframe, "rsframe", "input rgbd data frame"))
 
-        , d_fps(initData(&d_fps, 15.0, "fps", "frame rate"))
+        , d_fps(initData(&d_fps, 25.0, "fps", "frame rate"))
     {
-        c_color.addInputs({&d_color});
-        c_color.addCallback(std::bind(&RealSenseExporter::write_color, this));
-
-        c_depth.addInputs({&d_depth});
-        c_depth.addCallback(std::bind(&RealSenseExporter::write_depth, this));
-
-        c_dist.addInputs({&d_dist});
-        c_dist.addCallback(std::bind(&RealSenseExporter::write_dist, this));
+        c_dataframe.addInputs({&d_rsdataframe});
+        c_dataframe.addCallback(std::bind(&RealSenseExporter::write_dataframe, this));
+        c_path.addInputs({&d_path});
+        c_path.addCallback(std::bind(&RealSenseExporter::changed_path, this));
     }
 
-    void write_color () {
-        if (!writer_rgb.isOpened()) opencolor();
-        const cv::Mat & color = d_color.getValue().getImage() ;
-        if (color.empty()) return ;
-        writer_rgb.write(color);
-//        writer_rgb << color ;
+    void write_dataframe () {
+        if (m_filestream.is_open()) {
+        // write dataframe to output stream
+            m_filestream << d_rsdataframe.getValue() ;
+        }
     }
-    void write_depth () {
-        if (!writer_d.isOpened()) opendepth();
-        const cv::Mat & depth = d_depth.getValue().getImage() ;
-        if (depth.empty()) return ;
-        writer_d.write(depth);
-//        writer_d << d_depth.getValue().getImage() ;
-    }
-    void write_dist () {
-        distout.d_distframe.setValue(d_dist.getValue());
-    }
-
-    void opendist()
-    {
-        distout.d_filename.setValue(d_path_dist.getValue());
-    }
-
-    void opencolor()
-    {
-        int codec = cv::VideoWriter::fourcc('M', 'J', 'P', 'G') ;
-        cv::Mat color = d_color.getValue().getImage() ;
-        cv::Size size = cv::Size(color.cols, color.rows) ;
-        writer_rgb.open(
-            d_path_c.getValue(),
-            codec,
-            d_fps.getValue(),
-            size,
-            (color.channels() != 1)
-        ) ;
-    }
-
-    void opendepth()
-    {
-        cv::Mat depth = d_depth.getValue().getImage() ;
-        int codec = cv::VideoWriter::fourcc('M', 'J', 'P', 'G') ;
-        cv::Size size = cv::Size(depth.cols, depth.rows) ;
-        writer_d.open(
-            d_path_d.getValue(),
-            codec,
-            d_fps.getValue(),
-            size,
-            (depth.channels() != 1)
-        ) ;
+    void changed_path () {
+        if (m_filestream.is_open()) m_filestream.close();
+        m_filestream.open(d_path.getFullPath(), std::ofstream::binary);
     }
 
     void init () {
-        opendist();
-        opencolor();
-        opendepth();
+        m_filestream.open(d_path.getFullPath(), std::ofstream::binary);
     }
 
 	~RealSenseExporter () {
-        if (writer_rgb.isOpened()) writer_rgb.release();
-        if (writer_d.isOpened()) writer_d.release();
+        if (m_filestream.is_open()) m_filestream.close();
     }
+protected :
+    std::ofstream m_filestream ;
 
 };
 

@@ -40,7 +40,7 @@
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
 
 
@@ -79,19 +79,19 @@ public:
         pipe.start(cfg) ;
     }
 
-    void decodeImage(cv::Mat & img) {
+    void decodeImage() {
         rs2::frameset frameset = wait_for_frame(pipe) ;
 
-        if (color) delete color ;
-        if (depth) delete depth ;
-        color = new rs2::video_frame (frameset.get_color_frame()) ;
-        depth = new rs2::depth_frame (frameset.get_depth_frame()) ;
-        this->applyfilters(*depth);
+        RealSenseDataFrame::RealSenseFrame _frame ;
+        _frame.color = new rs2::video_frame(frameset.get_color_frame()) ;
+        _frame.depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
+        this->applyfilters(*(_frame.depth));
+        d_rsframe.setValue(RealSenseDataFrame(_frame));
 
-        frame_to_cvmat(*color, *depth, img, *d_depth.beginEdit());
-//        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
-//        d_color.endEdit();
-        d_depth.endEdit();
+//        frame_to_cvmat(*color, *depth, img, *d_depth.beginEdit());
+////        frame_to_cvmat(*color, *depth, *d_color.beginEdit(), *d_depth.beginEdit());
+////        d_color.endEdit();
+//        d_depth.endEdit();
     }
 
 } ;

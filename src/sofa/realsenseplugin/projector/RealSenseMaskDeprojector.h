@@ -28,7 +28,7 @@
 
 namespace sofa {
 
-namespace rgbdtracking {
+namespace realsenseplugin {
 
 /*!
  * \brief The RealSenseMaskDeprojector class
@@ -41,7 +41,7 @@ public:
     SOFA_CLASS( RealSenseMaskDeprojector , Inherited);
 
     /// \brief input binary mask for filtering reprojections
-    Data<opencvplugin::ImageData> d_input ;
+    Data<RealSenseDataFrame> d_input ;
     DataCallback c_image ;
 
     RealSenseMaskDeprojector()
@@ -56,47 +56,23 @@ public:
     }
 
 private :
-    virtual void writeOfflineToOutput (RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
-        // setup output
-        // const cv::Mat & input =  d_input.getValue().getImage() ;
-        cv::Mat input ;
-        d_input.getValue().getImage().copyTo(input);
-        cv::cvtColor(d_input.getValue().getImage(), input, cv::COLOR_BGR2GRAY); ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
-        for (size_t i = 0 ; i < diststruct._height; ++i) {
-            for (size_t j = 0 ; j < diststruct._width ; ++j) {
-                if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
-                    depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1] &&
-                    input.at<const uchar>(downSample*i,downSample*j, 0) > 1
-                ) {
-                // deprojection
-                    float dist = diststruct.frame[i*diststruct._width+j] ;
-                    int index = i*diststruct._width+j ;
-                    push_to_pointcloud(output, downSample*i, downSample*j, index, diststruct, dist);
-                }
-            }
-        }
-        // the end
-        d_output.endEdit();
-    }
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, RealSenseDistFrame::RealSenseDistStruct & diststruct, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeOnlineToOutput (rs2::depth_frame & depth, const cv::Mat & depth_im, int downSample) override {
         // setup output
-        const cv::Mat & input = d_input.getValue().getImage() ; //.copyTo(input);
+        const cv::Mat & input = d_input.getValue().getcvColor() ; //.copyTo(input);
         //cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear () ;
-        for (size_t i = 0 ; i < diststruct._height; ++i) {
-            for (size_t j = 0 ; j < diststruct._width ; ++j) {
+        int max_i = (int)(depth_im.cols/downSample),
+            max_j = (int)(depth_im.rows/downSample) ;
+        for (size_t i = 0 ; i < max_i; ++i) {
+            for (size_t j = 0 ; j < max_j ; ++j) {
                 if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
                     depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1] &&
                     input.at<const uchar>(downSample*i,downSample*j, 0) > 1
                 ) {
                     // deprojection
-                    float dist = depth.get_distance(downSample*j, downSample*i) ;
-                    int index = i*diststruct._width+j ;
-                    push_to_pointcloud(outpoints, downSample*i, downSample*j, index, diststruct, dist);
+                    push_to_pointcloud(outpoints, depth, downSample*i, downSample*j);
                 }
             }
         }

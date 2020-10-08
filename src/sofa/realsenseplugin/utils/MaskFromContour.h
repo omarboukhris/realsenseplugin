@@ -9,9 +9,7 @@
 
 namespace sofa {
 
-namespace opencvplugin {
-
-namespace tracker {
+namespace realsenseplugin {
 
 /*!
  * \class MaskFromContour
@@ -24,8 +22,8 @@ public:
     SOFA_CLASS(MaskFromContour, sofa::core::objectmodel::BaseObject) ;
 	
     Data<helper::vector<defaulttype::Vector2> > d_contour;
-    Data<ImageData> d_image;
-    Data<ImageData> d_out_image;
+    Data<opencvplugin::ImageData> d_image;
+    Data<opencvplugin::ImageData> d_out_image;
 
     DataCallback c_callback;
 
@@ -67,8 +65,6 @@ public:
 
 };
 
-
-}
 
 }
 

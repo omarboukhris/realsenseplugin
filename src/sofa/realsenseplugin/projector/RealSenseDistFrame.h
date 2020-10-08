@@ -40,7 +40,7 @@
 
 namespace sofa {
 
-namespace rgbdtracking {
+namespace realsenseplugin {
 
 using DataCallback = core::objectmodel::DataCallback ;
 

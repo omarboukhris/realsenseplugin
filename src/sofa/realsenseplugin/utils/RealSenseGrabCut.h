@@ -55,7 +55,7 @@
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
 /// /!\ See https://github.com/IntelRealSense/librealsense/blob/master/wrappers/opencv/grabcuts/rs-grabcuts.cpp
 /// for implementation details
@@ -70,15 +70,11 @@ public :
     SOFA_CLASS( RealSenseGrabCut, core::objectmodel::BaseObject);
     typedef core::objectmodel::BaseObject Inherited;
 
-    /// \brief input color image
-    Data<opencvplugin::ImageData> d_image_in ;
-    /// \brief output color image
-    Data<opencvplugin::ImageData> d_image_out ;
+    /// \brief input rgbd image
+    Data <RealSenseDataFrame> d_rs_in ;
 
-    /// \brief input depth image
-    Data<opencvplugin::ImageData> d_depth_in ;
-    /// \brief output depth image
-    Data<opencvplugin::ImageData> d_depth_out ;
+    /// \brief output rgbd image
+    Data <RealSenseDataFrame> d_rs_out ;
 
     /// \brief near threshold
     Data<int> d_near_thr ;
@@ -96,16 +92,14 @@ public :
     std::vector<cv::Point2f> m_contour ;
 
     RealSenseGrabCut()
-        : d_image_in(initData(&d_image_in, "in", "input data image"))
-        , d_image_out(initData(&d_image_out, "out", "output data image"))
-        , d_depth_in(initData(&d_depth_in, "din", "input data image"))
-        , d_depth_out(initData(&d_depth_out, "dout", "output data image"))
+        : d_rs_in(initData(&d_rs_in, "in", "input data image"))
+        , d_rs_out(initData(&d_rs_out, "out", "output data image"))
         , d_near_thr(initData(&d_near_thr, 200, "nearthr", "threshold value for near mask"))
         , d_far_thr(initData(&d_far_thr, 80, "farthr", "threshold value for far mask"))
         , d_contour( initData(&d_contour, "contour", "contour to compute ROI rectangle"))
         , m_contour()
     {
-        c_image_in.addInputs({&d_image_in, &d_far_thr, &d_near_thr});
+        c_image_in.addInputs({&d_rs_in, &d_far_thr, &d_near_thr});
         c_image_in.addCallback(std::bind(&RealSenseGrabCut::realsense_grabcut, this));
         c_contour.addInputs({&d_contour});
         c_contour.addCallback(std::bind(&RealSenseGrabCut::updateContour, this));
@@ -128,7 +122,7 @@ public :
      * applies grabcut then applies mask to input color and depth frames
      */
     void realsense_grabcut () {
-        if (d_depth_in.getValue().getImage().empty()) {
+        if (d_rs_in.getValue().getcvDepth().empty()) {
             std::cerr << "(RSGrabCut) depth frame is not setup" << std::endl ;
             return ;
         }
@@ -136,12 +130,12 @@ public :
             std::cerr << "(RSGrabCut) check contour size" << std::endl ;
             return ;
         }
-        cv::Mat near = d_depth_in.getValue().getImage() ;
+        cv::Mat near = d_rs_in.getValue().getcvDepth() ;
         cv::cvtColor(near, near, cv::COLOR_BGR2GRAY);
         create_mask_from_depth(near, d_near_thr.getValue(), cv::THRESH_BINARY);
 
         // get far image mask
-        cv::Mat far = d_depth_in.getValue().getImage() ;
+        cv::Mat far = d_rs_in.getValue().getcvDepth() ;
         cv::cvtColor(far, far, cv::COLOR_BGR2GRAY) ;
         far.setTo(255, far==0) ;
         create_mask_from_depth(far, d_far_thr.getValue(), cv::THRESH_BINARY_INV);
@@ -155,8 +149,8 @@ public :
 
         // Run Grab-Cut algorithm:
         cv::Mat bgModel, fgModel,
-            color_mat = d_image_in.getValue(),
-            depth_mat = d_depth_in.getValue() ;
+            color_mat = d_rs_in.getValue().getcvColor(),
+            depth_mat = d_rs_in.getValue().getcvDepth() ;
 
         // get ROI
         rect = cv::boundingRect(m_contour) ;
@@ -171,9 +165,14 @@ public :
             cv::GC_INIT_WITH_MASK
         );
 
-
         // Extract foreground pixels based on refined mask from the algorithm
-        cv::Mat maskimg , & imageDest = *d_image_out.beginEdit(), imgtmp, imgtmp2, & depthDest = *d_depth_out.beginEdit() ;
+        cv::Mat maskimg ,
+                imgtmp,
+                imgtmp2,
+
+                imageDest, // = *d_image_out.beginEdit(),
+                depthDest ; //= *d_depth_out.beginEdit() ;
+
         cv::compare(mask,cv::GC_PR_FGD,maskimg,cv::CMP_EQ);
 
         if (depth_mat.size() == maskimg.size()) {
@@ -184,9 +183,9 @@ public :
         color_mat.copyTo(imgtmp, maskimg); // imageDest is the output
         imageDest = imgtmp.clone() ;
 //        cv::rectangle(imageDest, rect, cv::Scalar(255,0,0,1)) ;
-
-        d_image_out.endEdit();
-        d_depth_out.endEdit();
+        RealSenseDataFrame & ref = *d_rs_out.beginEdit() ;
+        ref = RealSenseDataFrame(imageDest, depthDest) ;
+        d_rs_out.endEdit();
     }
 
 protected :
