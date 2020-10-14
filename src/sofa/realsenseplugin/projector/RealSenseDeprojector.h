@@ -51,6 +51,8 @@ public:
         , d_snap_path(initData(&d_snap_path, std::string("."), "snap_path", "path to snap shots folder"))
     {
         f_listening.setValue(true);
+        c_image.addInputs({&d_rsframe});
+        c_image.addCallback(std::bind(&RealSenseDeprojector::deproject_image, this));
     }
 
     virtual ~RealSenseDeprojector () {
@@ -83,10 +85,7 @@ private :
                 "/rgb_snap_" + std::to_string(i) + ".png",
             snapshot_depth_filename =
                 d_snap_path.getValue() +
-                "/depth_snap_" + std::to_string(i) + ".png",
-            snap_rsframe_filename =
-                d_snap_path.getValue() +
-                "/rs_frame_" + std::to_string(i) + ".png" ;
+                "/depth_snap_" + std::to_string(i) + ".png";
         i++ ;
 
         // get images to export
@@ -97,11 +96,6 @@ private :
         std::cout << "(RealSenseCam) exported " << snapshot_color_filename << std::endl ;
         cv::imwrite(snapshot_depth_filename.c_str(), depthmat) ;
         std::cout << "(RealSenseCam) exported " << snapshot_depth_filename << std::endl ;
-
-        // export whole frame
-        std::ofstream fstream (snap_rsframe_filename, std::ofstream::binary) ;
-        fstream << d_rsframe ;
-        fstream.close() ;
     }
 
     /*!
@@ -111,19 +105,18 @@ private :
      * \param depth_im
      * \param downSample
      */
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeToOutput (const cv::Mat & depth_im, int downSample) override {
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear() ;
-        int max_i = (int)(depth_im.cols/downSample),
-            max_j = (int)(depth_im.rows/downSample) ;
-        for (size_t i = 0 ; i < max_i; ++i) {
-            for (size_t j = 0 ; j < max_j ; ++j) {
-                if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
-                    depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1]
-                ) {
+        for (size_t i = 0 ; i < depth_im.rows/downSample; ++i) {
+            for (size_t j = 0 ; j < depth_im.cols/downSample ; ++j) {
+//                if ( depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
+//                     depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[0]
+//                ) {
                     // deprojection
-                    push_to_pointcloud(outpoints, depth, downSample*i, downSample*j);
-                }
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j,
+                                       l_rs_cam->depth->get_distance(downSample*j,downSample*i));
+//                }
             }
         }
         d_output.endEdit();
@@ -134,4 +127,3 @@ private :
 }
 
 }
-

@@ -57,22 +57,22 @@ public:
 
 private :
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeToOutput (const cv::Mat & depth_im, int downSample) override {
         // setup output
         const cv::Mat & input = d_input.getValue().getcvColor() ; //.copyTo(input);
         //cv::cvtColor(d_input.getValue().getImage(), input, CV_BGR2GRAY); ;
         helper::vector<defaulttype::Vector3> & outpoints = *d_output.beginEdit() ;
         outpoints.clear () ;
-        int max_i = (int)(depth_im.cols/downSample),
-            max_j = (int)(depth_im.rows/downSample) ;
-        for (size_t i = 0 ; i < max_i; ++i) {
-            for (size_t j = 0 ; j < max_j ; ++j) {
-                if (depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
-                    depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[1] &&
+        for (size_t i = 0 ; i < depth_im.rows/downSample ; ++i) {
+            for (size_t j = 0 ; j < depth_im.cols/downSample ; ++j) {
+                auto depth_ij = depth_im.at<const uchar>(downSample*i,downSample*j) ;
+                if (depth_ij > d_minmax.getValue()[0] &&
+                    depth_ij < d_minmax.getValue()[1] &&
                     input.at<const uchar>(downSample*i,downSample*j, 0) > 1
                 ) {
                     // deprojection
-                    push_to_pointcloud(outpoints, depth, downSample*i, downSample*j);
+                    push_to_pointcloud(outpoints, downSample*i, downSample*j,
+                                       l_rs_cam->depth->get_distance(downSample*j,downSample*i));
                 }
             }
         }
@@ -84,4 +84,3 @@ private :
 }
 
 }
-

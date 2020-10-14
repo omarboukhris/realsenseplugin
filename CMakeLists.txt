@@ -21,14 +21,31 @@ find_package(PCLPlugin REQUIRED)
 
 #set(ALL_LIBRARIES ${OpenCV_LIBS})
 
-file(GLOB_RECURSE HEADER_FILES
-	"src/*.h"
-	"src/*.inl"
+file(GLOB_RECURSE HEADER_FILES_RS
+	"src/sofa/realsenseplugin/calib/*.h"
+	"src/sofa/realsenseplugin/projector/*.h"
+	"src/sofa/realsenseplugin/streamer/*.h"
+	"src/sofa/realsenseplugin/utils/*.h"
+	"src/sofa/realsenseplugin/RSData.h"
+	"src/sofa/realsenseplugin/cv-helpers.hpp"
 )
 
-file(GLOB_RECURSE SOURCE_FILES
-	"src/*.cpp"
+file(GLOB_RECURSE SOURCE_FILES_RS
+	"src/sofa/realsenseplugin/calib/*.cpp"
+	"src/sofa/realsenseplugin/projector/*.cpp"
+	"src/sofa/realsenseplugin/streamer/*.cpp"
+	"src/sofa/realsenseplugin/utils/*.cpp"
+	"src/sofa/realsenseplugin/RSData.cpp"
+	"src/sofa/realsenseplugin/initPlugin.cpp"
 )
+
+list(APPEND "" ${HEADER_FILES_OCV})
+list(APPEND "" ${SOURCE_FILES_OCV})
+if(OpenCVPlugin_FOUND)
+	file(GLOB_RECURSE HEADER_FILES_OCV "src/sofa/realsenseplugin/ImageData2RealSenseDataFrame.h")
+	file(GLOB_RECURSE SOURCE_FILES_OCV "src/sofa/realsenseplugin/ImageData2RealSenseDataFrame.cpp")
+endif()
+
 
 file(GLOB_RECURSE SCENES_FILES
 	"scenes/*.scn"
@@ -42,7 +59,6 @@ file(GLOB_RECURSE IGNORED_FILES
 )
 
 file(GLOB_RECURSE DEPRECATED_FILES
-	"src/sofa/realsenseplugin/streamer/RealSenseFakeCam.*"
 	"deprecated/*.h"
 	"deprecated/*.inl"
 	"deprecated/*.cpp"
@@ -68,7 +84,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(REALSENSEPLUGIN_COMPILER_FLAGS "-DSOFA_BUILD_REALSENSEPLUGIN")
 
 #add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES})
-add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${HEADER_FILES} ${SCENES_FILES} ${IGNORED_FILES} ${DEPRECATED_FILES} ${README_FILES} )
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES_RS} ${HEADER_FILES_RS} ${SOURCE_FILES_OCV} ${HEADER_FILES_OCV} ${SCENES_FILES} ${IGNORED_FILES} ${DEPRECATED_FILES} ${README_FILES} )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${REALSENSEPLUGIN_VERSION})
 #set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-DSOFA_BUILD_REALSENSEPLUGIN")
@@ -79,7 +95,7 @@ target_link_libraries(
 	${PCL_LIBRARIES}
 #	${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY}
 	${realsense2_LIBRARY}
-	CImgPlugin OpenCVPlugin PCLPlugin
+	CImgPlugin ${OpenCV_LIBS} PCLPlugin
 	SofaGuiQt
 	SofaMeshCollision SofaMiscCollision SofaBaseCollision
 	SofaGuiCommon SofaBaseVisual
@@ -87,6 +103,9 @@ target_link_libraries(
 	SofaMiscForceField
 	SofaGeneralEngine
 )
+if (OpenCVPlugin_FOUND)
+	target_link_libraries( ${PROJECT_NAME} OpenCVPlugin )
+endif()
 
 ## Install rules for the library; CMake package configurations files
 ## Install rules for the library and headers; CMake package configurations files
@@ -94,9 +113,9 @@ set(${PROJECT_NAME}_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_include_directories(${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${${PROJECT_NAME}_INCLUDE_DIRS}>")
 target_include_directories(${PROJECT_NAME} PUBLIC "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 #sofa_create_package(realsenseplugin ${REALSENSEPLUGIN_VERSION} realsenseplugin realsenseplugin)
-sofa_generate_package(
-	NAME ${PROJECT_NAME}
-	VERSION ${REALSENSEPLUGIN_VERSION}
+sofa_create_package_with_targets(
+	PACKAGE_NAME ${PROJECT_NAME}
+	PACKAGE_VERSION ${REALSENSEPLUGIN_VERSION}
 	TARGETS ${PROJECT_NAME}
 	INCLUDE_INSTALL_DIR ${${PROJECT_NAME}_INCLUDE_DIRS}
 )

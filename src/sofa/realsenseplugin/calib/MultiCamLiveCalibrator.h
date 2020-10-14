@@ -26,12 +26,12 @@
 
 #include <sofa/realsenseplugin/calib/MultiCamCalibrator.h>
 
-#include <sofa/opencvplugin/BaseOpenCVData.h>
+#include <sofa/realsenseplugin/RSData.h>
 
 namespace sofa
 {
 
-namespace rgbdtracking
+namespace realsenseplugin
 {
 
 /*!
@@ -46,14 +46,14 @@ public :
     SOFA_CLASS( MultiCamLiveCalibrator, Inherited);
 
     /// \brief image from camera 1
-    Data<opencvplugin::ImageData> d_img1 ;
+    Data<RealSenseDataFrame> d_img1 ;
     /// \brief image from camera 2
-    Data<opencvplugin::ImageData> d_img2 ;
-    DataCallback callback_img ;
+    Data<RealSenseDataFrame> d_img2 ;
+    core::objectmodel::DataCallback callback_img ;
     /// \brief image from camera 1 with corners
-    Data<opencvplugin::ImageData> d_img1out ;
+    Data<RealSenseDataFrame> d_img1out ;
     /// \brief image from camera 2 with corners
-    Data<opencvplugin::ImageData> d_img2out ;
+    Data<RealSenseDataFrame> d_img2out ;
 
     MultiCamLiveCalibrator()
         : Inherited()
@@ -85,8 +85,8 @@ public :
         cv::Size boardsize = cv::Size(bsize[0],bsize[1]) ;
 
         std::vector<cv::Point2f> corners1, corners2 ;
-        cv::Mat img1 = d_img1.getValue().getImage(),
-                img2 = d_img2.getValue().getImage(),
+        cv::Mat img1 = d_img1.getValue().getcvColor(),
+                img2 = d_img2.getValue().getcvColor(),
                 grey1, grey2 ;
         if (img1.rows*img1.cols == 0 || img2.rows*img2.cols == 0 ) {
             return ;
@@ -99,8 +99,8 @@ public :
             calibimage2.push_back(grey2);
             cv::drawChessboardCorners(grey1,boardsize,corners1,true) ;
             cv::drawChessboardCorners(grey2,boardsize,corners2,true) ;
-            d_img1out.setValue(grey1);
-            d_img2out.setValue(grey2);
+            d_img1out.setValue(RealSenseDataFrame(grey1, grey1));
+            d_img2out.setValue(RealSenseDataFrame(grey2, grey2));
         }
     }
 

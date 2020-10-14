@@ -57,7 +57,7 @@ public:
 
 private :
 
-    virtual void writeOnlineToOutput (rs2::depth_frame & depth, const cv::Mat & depth_im, int downSample) override {
+    virtual void writeToOutput (const cv::Mat & depth_im, int /*downSample*/) override {
         // setup output
         const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
         helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
@@ -65,11 +65,12 @@ private :
         for (defaulttype::Vector2 vec : input) {
             // works for point selector
             size_t i = vec[1], j = vec[0] ;
-            if (depth_im.at<const uchar>(i, j) > d_minmax.getValue()[0] &&
-                depth_im.at<const uchar>(i, j) < d_minmax.getValue()[1]) {
+            auto depth_ij = depth_im.at<const uchar>(i, j) ;
+            if (depth_ij > d_minmax.getValue()[0] &&
+                depth_ij < d_minmax.getValue()[1]) {
                 // deprojection
-                push_to_pointcloud (output, depth, i, j) ;
-            }
+                push_to_pointcloud (output, i, j,
+                                    l_rs_cam->depth->get_distance(j,i));            }
         }
         // the end
         d_output.endEdit();
@@ -80,4 +81,3 @@ private :
 }
 
 }
-

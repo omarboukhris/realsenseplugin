@@ -1,15 +1,16 @@
 #pragma once
 
-#include <sofa/opencvplugin/BaseOpenCVData.h>
-
-#include <opencv2/highgui.hpp>
-
-#include <opencv2/opencv.hpp>
 #include <sofa/core/ObjectFactory.h>
+#include <sofa/core/objectmodel/Data.h>
+#include <sofa/core/objectmodel/DataCallback.h>
+
+#include <sofa/realsenseplugin/RSData.h>
 
 namespace sofa {
 
 namespace realsenseplugin {
+
+using namespace core::objectmodel ;
 
 /*!
  * \class MaskFromContour
@@ -22,8 +23,8 @@ public:
     SOFA_CLASS(MaskFromContour, sofa::core::objectmodel::BaseObject) ;
 	
     Data<helper::vector<defaulttype::Vector2> > d_contour;
-    Data<opencvplugin::ImageData> d_image;
-    Data<opencvplugin::ImageData> d_out_image;
+    Data<RealSenseDataFrame> d_image;
+    Data<RealSenseDataFrame> d_out_image;
 
     DataCallback c_callback;
 
@@ -45,7 +46,7 @@ public:
      */
     void update() {
         cv::Mat image ;
-        d_image.getValue().getImage().copyTo(image); ;
+        d_image.getValue().getcvColor().copyTo(image); ;
         if (image.empty()) return;
 
         image = cv::Mat::zeros(image.rows, image.cols, CV_8UC3) ;
@@ -60,7 +61,7 @@ public:
         }
 
         cv::fillPoly(image, cvpts, cv::Scalar(255, 255, 255)) ;
-        d_out_image.setValue(image);
+        d_out_image.setValue(RealSenseDataFrame (image, image));
     }
 
 };

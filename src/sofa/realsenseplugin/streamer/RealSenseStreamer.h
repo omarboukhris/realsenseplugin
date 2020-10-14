@@ -31,6 +31,7 @@
 #include <sofa/core/objectmodel/DataFileName.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/defaulttype/BoundingBox.h>
+#include <sofa/core/objectmodel/DataCallback.h>
 #include <sofa/core/objectmodel/Event.h>
 #include <sofa/core/objectmodel/KeypressedEvent.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
@@ -39,8 +40,6 @@
 #include <sofa/defaulttype/Quat.h>
 #include <sofa/helper/rmath.h>
 #include <sofa/helper/OptionsGroup.h>
-
-#include <sofa/opencvplugin/OpenCVWidget.h>
 
 #include <librealsense2/rs.hpp>
 
@@ -63,7 +62,8 @@ namespace realsenseplugin
 
 /*!
  * \brief The RealSenseStreamer class
- * Abstract streamer used as a superclass for realsensecam and realsense virtual cam (used with multicam)
+ * Abstract streamer used as a superclass for realsensecam
+ * (and potentially other implementations)
  */
 class RealSenseStreamer : public core::objectmodel::BaseObject
 {
@@ -73,6 +73,7 @@ public :
 
     /// \brief realsense camera resolution
     Data<defaulttype::Vector2> d_resolution_rs ;
+
     /// \brief RGBD Data Frame
     Data<RealSenseDataFrame> d_rsframe ;
 
@@ -102,6 +103,8 @@ public :
 
     /// \brief depth scale for converting depth to meters
     Data<int> depthScale;
+    /// \brief for colorizing depth frame
+    Data<bool> d_colorize;
 
     /// \brief color frame pointer
     rs2::video_frame *color ;
@@ -110,13 +113,17 @@ public :
 
     /// \brief sensor's intrinsics
     rs2_intrinsics cam_intrinsics ;
+    /// \brief colorizer used for colorizing depth frame
+    rs2::colorizer rizer ;
+
+    /// \brief RealSense pipeline, encapsulating the actual device and sensors
+    rs2::pipeline pipe;
 
     RealSenseStreamer ()
         : Inherited()
         // frame attributes
         , d_resolution_rs(initData(&d_resolution_rs, defaulttype::Vector2(640, 480), "resolution", "realsense camera resolution"))
         , d_rsframe(initData(&d_rsframe, "rsframe", "realsense data frame"))
-
         // sensor's attributes
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsics", "path to file to write realsense intrinsics into"))
         , d_serialnum(initData(&d_serialnum, 0, "serialid", "camera's serial number id (between 0 and number of connected cams-1)"))
@@ -127,13 +134,15 @@ public :
         , d_tmp_delta(initData(&d_tmp_delta, 20, "delta", "temporal filter delta [1, 100]"))
         // path to store calib images
         , d_calibpath(initData(&d_calibpath, std::string("./"), "calibpath", "path to folder with calibration images"))
-        // depth scale
+        // depth scale and colorizer
         , depthScale(initData(&depthScale,10,"depthScale","scale for the depth values, 1 for SR300, 10 for 435"))
+        , d_colorize(initData(&d_colorize,false,"colorize","colorize depth frame"))
         // class members init
         , color(nullptr), depth(nullptr)
         , calib_imagelist()
     {
         checkFiltersParams();
+        rizer.set_option(RS2_OPTION_COLOR_SCHEME, 2);
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseStreamer::writeIntrinsicsToFile, this));
         c_filters.addInputs({&d_decimation, &d_tmp_alpha, &d_tmp_delta});
@@ -164,7 +173,17 @@ public :
         this->temporal.set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, d_tmp_delta.getValue());
      }
 
-    virtual void decodeImage() = 0 ;
+    virtual void decodeImage(RealSenseDataFrame & img) = 0 ;
+
+    inline void export_calibration_images()
+    {
+        const std::string path = d_calibpath.getValue() ;
+        int i = 0 ;
+        for (const auto & image : calib_imagelist) {
+            std::string imagepath = path + "/" + std::to_string(i++) + ".png" ;
+            cv::imwrite(imagepath, image) ;
+        }
+    }
 
     /*!
      * \brief handleEvent : Press i to push image to calibration image list, z to cancel, s to save
@@ -172,7 +191,8 @@ public :
      */
     void handleEvent(sofa::core::objectmodel::Event* event) override {
         if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
-            decodeImage();
+            decodeImage(*d_rsframe.beginEdit());
+            d_rsframe.endEdit();
         }
         if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
             if (ev->getKey() == 'I' || ev->getKey() == 'i') {
@@ -183,12 +203,7 @@ public :
             }
             else if (ev->getKey() == 's' || ev->getKey() == 'S') {
                 // save
-                const std::string path = d_calibpath.getValue() ;
-                int i = 0 ;
-                for (const auto & image : calib_imagelist) {
-                    std::string imagepath = path + "/" + std::to_string(i++) + ".png" ;
-                    cv::imwrite(imagepath, image) ;
-                }
+                export_calibration_images();
             }
         }
     }
@@ -269,7 +284,7 @@ protected :
      * \return realsense current frameset
      */
     rs2::frameset wait_for_frame(rs2::pipeline & pipe) {
-//        rs2::align align(RS2_STREAM_COLOR);
+        rs2::align align(RS2_STREAM_COLOR);
         rs2::frameset frameset;
         while (
             (!frameset.first_or_default(RS2_STREAM_DEPTH) ||
@@ -277,11 +292,28 @@ protected :
         ) {
             frameset = pipe.wait_for_frames();
         }
-//        rs2::frameset processed = align.process(frameset);
-//        return processed;
-        return frameset ;
+        rs2::frameset processed = align.process(frameset);
+
+        return processed;
     }
 
+    /*!
+     * @brief convert RGB & D rs2::frames to cv::Mat and stores them in data container
+     */
+    void frame_to_cvmat(rs2::video_frame color, rs2::depth_frame depth,
+                        cv::Mat& bgr_image, cv::Mat& depth8) {
+        bgr_image = frame_to_mat(color) ;
+        if (d_colorize.getValue()) {
+            rs2::frame bw_depth = depth.apply_filter(rizer) ;
+            depth8 = frame_to_mat(bw_depth) ;
+        } else {
+            int widthd = depth.get_width();
+            int heightd = depth.get_height();
+            cv::Mat depth16 = cv::Mat(heightd, widthd, CV_16U, (void*)depth.get_data()) ;
+            depth16.convertTo(depth8, CV_8U, 1./64*depthScale.getValue());
+//            depth8 = depth_frame_to_meters(pipe, depth) ;
+        }
+    }
 } ;
 
 }

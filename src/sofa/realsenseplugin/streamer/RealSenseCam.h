@@ -25,7 +25,6 @@
 #pragma once
 
 #include <sofa/realsenseplugin/streamer/RealSenseStreamer.h>
-#include <sofa/opencvplugin/OpenCVWidget.h>
 
 namespace sofa
 {
@@ -33,7 +32,6 @@ namespace sofa
 namespace realsenseplugin
 {
 
-using namespace cimg_library;
 using defaulttype::Vec;
 using defaulttype::Vector3;
 
@@ -55,8 +53,8 @@ public:
 
     Data<int> depthMode;
 
-    Data<opencvplugin::TrackBar1> d_exposure;
-    DataCallback c_exposure ;
+    Data<size_t> d_exposure;
+//    DataCallback c_exposure ;
 
     rs2_intrinsics cam_intrinsics ;
     rs2::pipeline_profile selection ;
@@ -65,27 +63,25 @@ public:
     rs2::pointcloud pc ;
     rs2::points points ;
 
-    /// \brief RealSense pipeline, encapsulating the actual device and sensors
-    rs2::pipeline pipe;
-
     bool pause ;
 
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-        , d_exposure(initData(&d_exposure, opencvplugin::TrackBar1(100,2000), "exposure", "exposure"))
+        , d_exposure(initData(&d_exposure, "exposure", "exposure"))
         , pause (false)
     {
-        c_exposure.addInputs({&d_exposure});
-        c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
+        d_exposure.setValue(100) ;
+//        c_exposure.addInputs({&d_exposure});
+//        c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
     }
 
     ~RealSenseCam () {
     }
 
-    void decodeImage() {
+    void decodeImage(RealSenseDataFrame & rs_frame) {
         if (pause) return ;
-        acquireAligned();
+        acquireAligned(rs_frame);
     }
 
     void handleEvent(sofa::core::objectmodel::Event* event) {
@@ -100,15 +96,12 @@ public:
 protected:
 
     ///\brief set exposure of camera from "exposure" data in sofa
-    void setExposure()
+    inline void setExposure()
     {
-        rs2::device selected_device = selection.get_device();
-        std::vector<rs2::sensor> sensors = selected_device.query_sensors();
-        for (auto && sensor : sensors) {
-            if (sensor.get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR) {
-                sensor.set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());
-            }
-        }
+        pipe.get_active_profile()
+                .get_device()
+                .first<color_sensor>()
+                .set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());
     }
 
     ///\brief setup realsense data acquisition pipeline
@@ -135,7 +128,7 @@ protected:
             RS2_FORMAT_Z16, 30);
         selection = pipe.start(cfg);
         if (d_exposure.getValue() > 0) {
-            setExposure();
+//            setExposure();
         }
     }
 
@@ -148,23 +141,27 @@ protected:
     void init() {
         configPipe();
         stabilizeAutoExp();
-        acquireAligned();
+        acquireAligned(*d_rsframe.beginEdit());
+        d_rsframe.endEdit();
         writeIntrinsicsToFile();
     }
 
-    void acquireAligned() {
+    void acquireAligned(RealSenseDataFrame & rs) {
         rs2::frameset frameset = wait_for_frame(pipe) ;
 
         // Trying to get both color and aligned depth frames
-        RealSenseDataFrame::RealSenseFrame _frame ;
-        _frame.color = new rs2::video_frame(frameset.get_color_frame()) ;
-        _frame.depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
-        this->applyfilters(*(_frame.depth));
-        d_rsframe.setValue(RealSenseDataFrame(_frame));
+        if (color) delete color ;
+        if (depth) delete depth ;
+        color = new rs2::video_frame(frameset.get_color_frame()) ;
+        depth = new rs2::depth_frame(frameset.get_depth_frame()) ;
+//        this->applyfilters(*depth);
 
         // extract pointcloud
         //getpointcloud(*color, *depth) ;
 
+        // Create depth and color image
+        rgbd_frame & frame = rs.getRGBD() ;
+        frame_to_cvmat(*color, *depth, frame.color, frame.depth);
      }
 
 protected :
