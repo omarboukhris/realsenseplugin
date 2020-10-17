@@ -1,5 +1,5 @@
 
-#include <sofa/realsenseplugin/RSData.h>
+#include "RSData.h"
 #include <sofa/gui/qt/GenericWidget.h>
 #include <opencv2/highgui.hpp>
 
