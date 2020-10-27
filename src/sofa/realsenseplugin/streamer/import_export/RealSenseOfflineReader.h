@@ -28,6 +28,7 @@
 
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/core/objectmodel/Event.h>
+#include <sofa/core/objectmodel/KeypressedEvent.h>
 #include <sofa/simulation/AnimateBeginEvent.h>
 #include <sofa/simulation/AnimateEndEvent.h>
 
@@ -56,7 +57,13 @@ public:
 
     /// \brief output data frame
     Data<RealSenseDataFrame> d_rsframe ;
+    /// \brief output pointcloud
+    Data<rgbd_frame::sofaPointCloud> d_output ;
+    /// \brief synthetic volume pointcloud
+    Data<rgbd_frame::sofaPointCloud> d_synthvolume ;
 
+    /// \brief true to add synthetic volume
+    Data<int> d_densify ;
     /// \brief true to render pointcloud in viewer
     Data<bool> d_drawpcl ;
 
@@ -64,6 +71,8 @@ public:
     cv::VideoCapture _reader_color, _reader_depth ;
     /// \brief file stream for saving pointcloud frames
     std::ifstream ptcloud_fstream ;
+    /// \brief pause
+    bool paused ;
 
     RealSenseOfflineReader()
         : Inherited()
@@ -71,7 +80,11 @@ public:
         , d_path_depth(initData(&d_path_depth, "pathdepth", "depth path to 3D video to write"))
         , d_path_pcl(initData(&d_path_pcl, "pathpcl", "path to pointcloud video to write"))
         , d_rsframe(initData(&d_rsframe, "rsframe", "input rgbd data frame"))
+        , d_output(initData(&d_output, "output", "output pointcloud"))
+        , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
+        , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
         , d_drawpcl(initData(&d_drawpcl, true, "drawpcl", "true if you want to draw the point cloud"))
+        , paused (false)
     {
         this->f_listening.setValue(true);
     }
@@ -130,13 +143,45 @@ public:
     }
     void handleEvent(sofa::core::objectmodel::Event* event) {
         if(sofa::simulation::AnimateBeginEvent::checkEventType(event)) {
+            if (paused) {
+            // don't read frame
+                return ;
+            }
             d_rsframe.setValue(
                 RealSenseDataFrame(
                     readcolor (),
                     readdepth (),
                     readpcl()
             )) ;
+            makeSyntheticVolume();
         }
+        if (sofa::core::objectmodel::KeypressedEvent * ev = dynamic_cast<sofa::core::objectmodel::KeypressedEvent*>(event)){
+            if (ev->getKey() == ' ') {
+                paused = ! paused ;
+            }
+        }
+    }
+
+    /*!
+     * \brief makeSyntheticVolume
+     * creates synthetic volume from surface (used for rigid registration)
+     */
+    void makeSyntheticVolume () {
+        int dense = d_densify.getValue() ;
+        if (dense <= 0) {
+        // do not densify
+            return ;
+        }
+        rgbd_frame::sofaPointCloud & synth = *d_synthvolume.beginEdit();
+        rgbd_frame::sofaPointCloud surface = d_output.getValue() ;
+        synth.clear() ;
+        for (const auto & pt : surface) {
+            for (int i = 1 ; i<dense ; i++) {
+                defaulttype::Vector3 point = defaulttype::Vector3(pt[0], pt[1], pt[2] - i*1e-2) ;
+                synth.push_back(point) ;
+            }
+        }
+        d_synthvolume.endEdit();
     }
 
     /*!
@@ -175,7 +220,8 @@ public:
         //first read frame size
         int size = 0 ;
         ptcloud_fstream.read(reinterpret_cast<char*>(&size), sizeof(size));
-        rgbd_frame::sofaPointCloud out (size);
+        rgbd_frame::sofaPointCloud & out = *d_output.beginEdit() ;
+        out = rgbd_frame::sofaPointCloud(size);
         // then read positions
         for (int i = 0 ; i < size ; i++) {
             defaulttype::Vector3 pt (0,0,0) ;
@@ -184,6 +230,7 @@ public:
             ptcloud_fstream.read(reinterpret_cast<char*>(&pt[2]), sizeof(pt[2])) ;
             out[i] = pt ;
         }
+        d_output.endEdit();
         return out ;
     }
 

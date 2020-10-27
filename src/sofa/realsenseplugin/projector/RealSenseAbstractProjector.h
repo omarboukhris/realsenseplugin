@@ -118,8 +118,8 @@ public :
 
     RealSenseAbstractDeprojector()
         : Inherited()
-        , d_rsframe(initData(&d_rsframe, "rsframe", "RGBD data image"))
-        , d_rsframe_out(initData(&d_rsframe_out, "rsframe_out", "RGBD data image"))
+        , d_rsframe(initData(&d_rsframe, "rsframe", "RGBD data image input"))
+        , d_rsframe_out(initData(&d_rsframe_out, "rsframe_out", "RGBD data image output"))
         , d_tr_offset(initData(&d_tr_offset, defaulttype::Vector3(0,0,0), "offset", "translation offset"))
         , d_rotation(
             initData(
@@ -303,8 +303,8 @@ public :
             std::abs(point3d[1]) < 1e-4 ||
             std::abs(point3d[2]) < 1e-4 ||
             std::abs(point3d[0]) > 5 ||
-            std::abs(point3d[1]) > 5 ||
-            std::abs(point3d[2]) > 0.45) {
+            std::abs(point3d[1]) > 5 /*||
+            std::abs(point3d[2]) > 0.45*/) {
         //invalid point
             return ;
         }

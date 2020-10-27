@@ -53,8 +53,8 @@ public:
 
     Data<int> depthMode;
 
-    Data<size_t> d_exposure;
-//    DataCallback c_exposure ;
+    Data<int> d_exposure;
+    DataCallback c_exposure ;
 
     rs2_intrinsics cam_intrinsics ;
     rs2::pipeline_profile selection ;
@@ -68,12 +68,11 @@ public:
     RealSenseCam()
         : Inherited()
         , depthMode ( initData ( &depthMode,1,"depthMode","depth mode" ))
-        , d_exposure(initData(&d_exposure, "exposure", "exposure"))
+        , d_exposure(initData(&d_exposure, 650, "exposure", "exposure"))
         , pause (false)
     {
-        d_exposure.setValue(100) ;
-//        c_exposure.addInputs({&d_exposure});
-//        c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
+        c_exposure.addInput({&d_exposure});
+        c_exposure.addCallback(std::bind(&RealSenseCam::setExposure, this));
     }
 
     ~RealSenseCam () {
@@ -96,12 +95,13 @@ public:
 protected:
 
     ///\brief set exposure of camera from "exposure" data in sofa
-    inline void setExposure()
+    void setExposure()
     {
+        if (d_exposure.getValue() <= 0) return ;
         pipe.get_active_profile()
-                .get_device()
-                .first<color_sensor>()
-                .set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());
+            .get_device()
+            .first<color_sensor>()
+            .set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());
     }
 
     ///\brief setup realsense data acquisition pipeline
@@ -127,9 +127,7 @@ protected:
             resolution.at(0), resolution.at(1),
             RS2_FORMAT_Z16, 30);
         selection = pipe.start(cfg);
-        if (d_exposure.getValue() > 0) {
-//            setExposure();
-        }
+//        setExposure();
     }
 
     ///\brief wait for a second in order for auto exposure to settle in at initialization
@@ -141,6 +139,7 @@ protected:
     void init() {
         configPipe();
         stabilizeAutoExp();
+//        d_exposure.setValue(420);
         acquireAligned(*d_rsframe.beginEdit());
         d_rsframe.endEdit();
         writeIntrinsicsToFile();

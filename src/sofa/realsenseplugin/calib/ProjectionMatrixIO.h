@@ -107,7 +107,6 @@ public:
         load() ;
     }
 
-
     void load () {
         std::ifstream wFile;
         wFile.open(f_filename.getValue());

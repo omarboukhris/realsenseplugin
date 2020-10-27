@@ -22,63 +22,30 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#pragma once
 
-#include <sofa/realsenseplugin/projector/RealSenseAbstractProjector.h>
 
-namespace sofa {
+#include "MonoCalibratorLive.h"
+#include <sofa/core/ObjectFactory.h>
 
-namespace realsenseplugin {
-
-/*!
- * \brief The RealSensePointDeprojector class
- * deprojects only a defined  set of 2D points defined in d_input (label input in sofa) from depth frame
- */
-class RealSensePointDeprojector : public RealSenseAbstractDeprojector
+namespace sofa
 {
-public:
-    typedef RealSenseAbstractDeprojector Inherited;
-    SOFA_CLASS( RealSensePointDeprojector , Inherited);
 
-    /// \brief input list of 2d points to project in 3d
-    Data<helper::vector<defaulttype::Vector2> > d_input ;
-    DataCallback c_image ;
+namespace realsenseplugin
+{
 
-    RealSensePointDeprojector()
-        : Inherited()
-        , d_input(initData(&d_input, "input", "input 2D position to de-project"))
-    {
-        c_image.addInputs({&d_input});
-        c_image.addCallback(std::bind(&RealSensePointDeprojector::deproject_image, this));
-    }
+using namespace defaulttype;
+using namespace std;
+using namespace cv;
+using namespace boost;
 
-    virtual ~RealSensePointDeprojector () {
-    }
+SOFA_DECL_CLASS (MonoCamLiveCalibrator)
+// Register in the Factory
 
-private :
+int MonoLiveCalibratorClass = core::RegisterObject ( "MonoLiveCalibrator calibrates one cameras" )
+        .add<MonoCamLiveCalibrator>(true)
+        ;
+	
 
-    virtual void writeToOutput (const cv::Mat & depth_im, int /*downSample*/) override {
-        // setup output
-        const helper::vector<defaulttype::Vector2> input = d_input.getValue() ;
-        helper::vector<defaulttype::Vector3> & output = *d_output.beginEdit() ;
-        output.clear () ;
-        for (defaulttype::Vector2 vec : input) {
-            // works for point selector
-            size_t i = vec[1], j = vec[0] ;
-            auto depth_ij = depth_im.at<const uchar>(i, j) ;
-            if (depth_ij > d_minmax.getValue()[0] &&
-                depth_ij < d_minmax.getValue()[1]) {
-                // deprojection
-                push_to_pointcloud (output, i, j,
-                                    l_rs_cam->depth->get_distance(j,i));
-            }
-        }
-        // the end
-        d_output.endEdit();
-    }
+} // namespace rgbdtracking
 
-};
-
-}
-
-}
+} // namespace sofa

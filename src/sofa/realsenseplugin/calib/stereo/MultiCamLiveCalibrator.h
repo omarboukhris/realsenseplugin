@@ -24,7 +24,7 @@
 ******************************************************************************/
 #pragma once
 
-#include <sofa/realsenseplugin/calib/MultiCamCalibrator.h>
+#include <sofa/realsenseplugin/calib/stereo/MultiCamCalibrator.h>
 
 #include <sofa/realsenseplugin/RSData.h>
 
