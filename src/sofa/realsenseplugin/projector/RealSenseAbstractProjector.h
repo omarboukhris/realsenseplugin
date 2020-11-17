@@ -55,9 +55,6 @@
 #include <string>
 #include <map>
 
-// external plugins
-#include <sofa/PCLPlugin/PointCloudData.h>
-
 #include <sofa/realsenseplugin/streamer/RealSenseCam.h>
 
 namespace sofa {
@@ -82,8 +79,6 @@ public :
     Data<helper::vector<defaulttype::Vector3> > d_output ;
     /// \brief synthetic volume pointcloud
     Data<helper::vector<defaulttype::Vector3> > d_synthvolume ;
-    /// \brief output pointcloud pcl
-    Data <pointcloud::PointCloudData> d_outpcl ;
 
     Data<int> d_scale ;
     DataCallback c_scale ;
@@ -91,6 +86,9 @@ public :
     /// \brief path to intrinsics file
     Data<std::string> d_intrinsics ;
     DataCallback c_intrinsics ;
+    /// \brief intput camera's inrinsic parameters
+    Data<defaulttype::Vector4 > d_intrinsicParameters ;
+    DataCallback c_intrinsicsParam ;
 
     Data<defaulttype::Vector2> d_minmax ;
     ///\brief true to flip pointcloud over z-axis
@@ -110,11 +108,13 @@ public :
     > l_rs_cam ; //for intrinsics
 
     /// \brief pcl pointcloud as internal data
-    pcl::PointCloud<pcl::PointXYZ>::Ptr m_pointcloud ;
+    rgbd_frame::sofaPointCloud m_pointcloud ;
     /// \brief camera intrinsics read from file or realsensecam component
     rs2_intrinsics cam_intrinsics ;
     /// \brief for rotating the pointcloud
     helper::Quater<double> q ;
+
+    double inv_fx, inv_fy, ppx, ppy ;
 
     RealSenseAbstractDeprojector()
         : Inherited()
@@ -133,10 +133,10 @@ public :
             )
         ), d_output(initData(&d_output, "output", "output 3D position"))
         , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
-        , d_outpcl(initData(&d_outpcl, "outpcl", "output pcl PointCloud"))
         , d_scale(initData(&d_scale, 100, "scale", "point cloud scaling factor"))
         // offline reco
         , d_intrinsics(initData(&d_intrinsics, std::string("intrinsics.log"), "intrinsicsPath", "path to realsense intrinsics file to read from"))
+        , d_intrinsicParameters(initData(&d_intrinsicParameters, "intrinsicParameters", "vector output with camera intrinsic parameters"))
         // visualization
         , d_minmax (initData(&d_minmax, defaulttype::Vector2(0, 255),"minmax", "depth value filter"))
         , d_flip(initData(&d_flip, false, "flip", "flip z axis"))
@@ -145,14 +145,23 @@ public :
         , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
         // link to realsense for online reco
         , l_rs_cam(initLink("rscam", "link to realsense camera component - used for getting camera intrinsics"))
-        , m_pointcloud(new pcl::PointCloud<pcl::PointXYZ>)
+        , m_pointcloud(rgbd_frame::sofaPointCloud())
     {
         c_intrinsics.addInput({&d_intrinsics});
         c_intrinsics.addCallback(std::bind(&RealSenseAbstractDeprojector::readIntrinsics, this));
+        c_intrinsicsParam.addInput({&d_intrinsicParameters});
+        c_intrinsicsParam.addCallback(std::bind(&RealSenseAbstractDeprojector::updateIntrinsics, this));
         c_scale.addInputs({&d_scale, &d_tr_offset}) ;
         c_scale.addCallback(std::bind(&RealSenseAbstractDeprojector::deproject_image, this));
         c_projmat.addInputs({&d_rotation}) ;
         c_projmat.addCallback(std::bind(&RealSenseAbstractDeprojector::updateRotation, this)) ;
+    }
+
+    void updateIntrinsics () {
+        inv_fx = 1./(d_intrinsicParameters.getValue()[0]) ;
+        inv_fy = 1./(d_intrinsicParameters.getValue()[1]) ;
+        ppx = d_intrinsicParameters.getValue()[2] ;
+        ppy = d_intrinsicParameters.getValue()[3] ;
     }
 
     void init () {
@@ -203,6 +212,9 @@ public :
         std::fclose(filestream) ;
         std::cout << "(RealSenseProjectors) successfully read intrinsics from file " <<
                      d_intrinsics.getValue() << std::endl ;
+        d_intrinsicParameters.setValue(
+            defaulttype::Vector4(cam_intrinsics.fx, cam_intrinsics.fy, cam_intrinsics.ppx, cam_intrinsics.ppy)
+        );
 
 //      // for printing intrinsics
 //        std::cout <<
@@ -238,7 +250,7 @@ public :
         // depth image is empty
             return ;
         }
-        m_pointcloud->clear();
+        m_pointcloud.clear();
         writeToOutput(depth_im, downSample);
         RealSenseDataFrame current_frame = d_rsframe.getValue() ;
         RealSenseDataFrame frame_out (
@@ -250,7 +262,6 @@ public :
         //make synthetic volume
         this->makeSyntheticVolume();
         // set pointcloud to output
-        d_outpcl.setValue(m_pointcloud);
         helper::AdvancedTimer::stepEnd("RS Deprojection") ;
     }
 
@@ -309,16 +320,53 @@ public :
             return ;
         }
 
-        pcl::PointXYZ pt = scalePoint(point3d) ;
-        m_pointcloud->push_back(pt);
+        defaulttype::Vector3 point = scalePoint(point3d) ;
+        //m_pointcloud.push_back(pt);
 
-        defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z) ;
         if (d_flip.getValue()) {
-            point = defaulttype::Vector3(pt.y, pt.x, - pt.z) ;
+            point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
         }
         applyRotationTranslation(point);
         outpoints.push_back(point) ;
     }
+
+    /*!
+     * \brief push_to_pointcloud_2
+     * push a single point to pointcloud set
+     * \param outpoints : output points set
+     * \param depth_im : depth image
+     * \param i : pixel coordinate to deproject in x-axis
+     * \param j : pixel coordinate to deproject in y-axis
+     */
+    void push_to_pointcloud(helper::vector<defaulttype::Vector3> & outpoints, const cv::Mat & depth_im, size_t i, size_t j)
+    {
+        float depthvalue = depth_im.at<float>(i,j)  ;
+        float point3d[3] = {
+            (j - ppx) * depthvalue * inv_fx * .1,
+            (i - ppy) * depthvalue * inv_fy * .1,
+            depthvalue
+        } ;
+//        // check for outliers
+//        if (std::abs(point3d[0]) < 1e-3 ||
+//            std::abs(point3d[1]) < 1e-3 ||
+//            std::abs(point3d[2]) < 1e-3 ||
+//            std::abs(point3d[0]) > 5 ||
+//            std::abs(point3d[1]) > 5 /*||
+//            std::abs(point3d[2]) > 0.45*/) {
+//        //invalid point
+//            return ;
+//        }
+
+        defaulttype::Vector3 point = scalePoint(point3d) ;
+        //m_pointcloud->push_back(pt);
+
+        if (d_flip.getValue()) {
+            point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
+        }
+        applyRotationTranslation(point);
+        outpoints.push_back(point) ;
+    }
+
 
     /*!
      * \brief makeSyntheticVolume
@@ -332,12 +380,11 @@ public :
         }
         helper::vector<defaulttype::Vector3> & synth = *d_synthvolume.beginEdit();
         synth.clear() ;
-        for (const auto & ptmp : *m_pointcloud) {
+        for (const auto & ptmp : m_pointcloud) {
             for (int i = 1 ; i<dense ; i++) {
-                pcl::PointXYZ pt = ptmp ;
-                defaulttype::Vector3 point = defaulttype::Vector3(pt.x, pt.y, pt.z - i*1e-2) ;
+                defaulttype::Vector3 point = defaulttype::Vector3(ptmp[0], ptmp[1], ptmp[2] - i*1e-2) ;
                 if (d_flip.getValue()) {
-                    point = defaulttype::Vector3(pt.y, pt.x, - pt.z + i*1e-2) ;
+                    point = defaulttype::Vector3(ptmp[1], ptmp[0], - ptmp[2] + i*1e-2) ;
                 }
                 applyRotationTranslation(point);
                 synth.push_back(point) ;
@@ -351,9 +398,9 @@ public :
      * \param point3d
      * \return scaled point as pcl::PointXYZ
      */
-    inline pcl::PointXYZ scalePoint (float * point3d) {
+    inline defaulttype::Vector3 scalePoint (float * point3d) {
         float scale = (float)d_scale.getValue()/100.f ;
-        return pcl::PointXYZ(
+        return defaulttype::Vector3 (
             scale*point3d[0],
             scale*point3d[1],
             -scale*point3d[2]

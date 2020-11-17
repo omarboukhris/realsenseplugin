@@ -25,6 +25,7 @@
 #pragma once
 
 #include <sofa/realsenseplugin/calib/stereo/MultiCamCalibrator.h>
+#include <sofa/realsenseplugin/RSData.h>
 
 namespace sofa
 {
@@ -45,8 +46,8 @@ public :
 
     /// \brief path for calibration images from camera 1
     Data<std::string> d_calibcam1 ;
-    /// \brief path for calibration images from camera 2
-    Data<std::string> d_calibcam2 ;
+    /// \brief calibration output (color : cameramatrix | depth : distortion)
+    Data<RealSenseDataFrame> d_outcalib ;
     /// \brief chessboard size, usual chessboard is 7x7
     Data<defaulttype::Vector2> d_chessboardsize ;
     core::objectmodel::DataCallback callback ;
@@ -62,7 +63,7 @@ public :
     MonoCalibrator()
         : Inherited()
         , d_calibcam1(initData(&d_calibcam1, std::string("./"), "calibcam1", "path to folder with calibration images from camera 1"))
-        , d_calibcam2(initData(&d_calibcam2, std::string("./"), "calibcam2", "path to folder with calibration images from camera 2"))
+        , d_outcalib(initData(&d_outcalib, "calib", "calibration output (color : cameramatrix | depth : distortion)"))
         , d_chessboardsize(initData(&d_chessboardsize, defaulttype::Vector2(6,9), "size", "dimensions of the chessboard"))
     {
         callback.addInputs({&d_calibcam1}) ;
@@ -215,6 +216,7 @@ public :
         cv::Mat cm1, d1 ;
         cv::Size imgsize = calibimage1[0].size() ;
         calibratemono(cm1, d1, img_points1, imgsize);
+        d_outcalib.setValue(RealSenseDataFrame(cm1, d1));
         std::cout << "(MonoCalibrator) Intrinsic calibration done" << cm1 << d1 << std::endl ;
     }
 

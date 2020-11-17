@@ -87,7 +87,7 @@ public :
     DataCallback c_image_in ;
     DataCallback c_contour ;
 
-    // bounding box rectangle
+    /// \brief bounding box rectangle
     cv::Rect rect ;
     std::vector<cv::Point2f> m_contour ;
 

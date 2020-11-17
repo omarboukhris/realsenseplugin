@@ -26,8 +26,6 @@
 
 #include <sofa/realsenseplugin/calib/mono/MonoCalibrator.h>
 
-#include <sofa/realsenseplugin/RSData.h>
-
 namespace sofa
 {
 

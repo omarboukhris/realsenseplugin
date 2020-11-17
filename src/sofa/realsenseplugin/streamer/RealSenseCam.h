@@ -101,7 +101,7 @@ protected:
         pipe.get_active_profile()
             .get_device()
             .first<color_sensor>()
-            .set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());
+            .set_option(RS2_OPTION_EXPOSURE, d_exposure.getValue());        
     }
 
     ///\brief setup realsense data acquisition pipeline
@@ -127,6 +127,10 @@ protected:
             resolution.at(0), resolution.at(1),
             RS2_FORMAT_Z16, 30);
         selection = pipe.start(cfg);
+        pipe.get_active_profile()
+            .get_device()
+            .first<depth_sensor>()
+            .set_option(RS2_OPTION_DEPTH_UNITS, .001f);
 //        setExposure();
     }
 

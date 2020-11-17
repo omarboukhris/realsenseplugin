@@ -110,13 +110,9 @@ private :
         outpoints.clear() ;
         for (size_t i = 0 ; i < depth_im.rows/downSample; ++i) {
             for (size_t j = 0 ; j < depth_im.cols/downSample ; ++j) {
-//                if ( depth_im.at<const uchar>(downSample*i,downSample*j) > d_minmax.getValue()[0] &&
-//                     depth_im.at<const uchar>(downSample*i,downSample*j) < d_minmax.getValue()[0]
-//                ) {
-                    // deprojection
-                    push_to_pointcloud(outpoints, downSample*i, downSample*j,
-                                       l_rs_cam->depth->get_distance(downSample*j,downSample*i));
-//                }
+                push_to_pointcloud(outpoints, downSample*i, downSample*j,
+                                   l_rs_cam->depth->get_distance(downSample*j,downSample*i));
+//                push_to_pointcloud(outpoints, depth_im, downSample*i, downSample*j);
             }
         }
         d_output.endEdit();

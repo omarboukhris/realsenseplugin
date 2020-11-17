@@ -6,18 +6,18 @@ set(REALSENSEPLUGIN_MINOR_VERSION 1)
 set(REALSENSEPLUGIN_VERSION ${REALSENSEPLUGIN_MAJOR_VERSION}.${REALSENSEPLUGIN_MINOR_VERSION})
 
 find_package(realsense2 REQUIRED)
-find_package(CImgPlugin QUIET)
+#find_package(CImgPlugin QUIET)
 #find_package(image QUIET)
 
-find_package(PCL 1.8 REQUIRED)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+#find_package(PCL 1.8 REQUIRED)
+#include_directories(${PCL_INCLUDE_DIRS})
+#link_directories(${PCL_LIBRARY_DIRS})
+#add_definitions(${PCL_DEFINITIONS})
 
 #find_package(Boost 1.59 COMPONENTS system filesystem REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(OpenCVPlugin REQUIRED)
-find_package(PCLPlugin REQUIRED)
+find_package(OpenCVPlugin QUIET)
+#find_package(PCLPlugin REQUIRED)
 
 #set(ALL_LIBRARIES ${OpenCV_LIBS})
 
@@ -95,7 +95,7 @@ target_link_libraries(
 	${PCL_LIBRARIES}
 #	${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY}
 	${realsense2_LIBRARY}
-	CImgPlugin ${OpenCV_LIBS} PCLPlugin
+	CImgPlugin ${OpenCV_LIBS}
 	SofaGuiQt
 	SofaMeshCollision SofaMiscCollision SofaBaseCollision
 	SofaGuiCommon SofaBaseVisual

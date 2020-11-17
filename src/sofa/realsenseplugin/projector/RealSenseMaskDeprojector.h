@@ -71,6 +71,7 @@ private :
                     input.at<const uchar>(downSample*i,downSample*j, 0) > 1
                 ) {
                     // deprojection
+//                    push_to_pointcloud(outpoints, depth_im, downSample*i, downSample*j);
                     push_to_pointcloud(outpoints, downSample*i, downSample*j,
                                        l_rs_cam->depth->get_distance(downSample*j,downSample*i));
                 }
