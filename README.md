@@ -15,12 +15,7 @@ Intrinsics data is the path to which save the camera's intrinsic parameters.
 Depth and color frames are stored in a `cv::Mat` and can be accessed as data in Sofa with `@rs.color` and `@rs.depth`.
 
 If multiple cameras are being used, you may use RealSenseMultiCam component.
-It instantiates a RealSenseVirtualCam for each depth camera connected. this is useful in a master/slave situation where a second realsense is feeding information about the observed scene to complement the first observation. Multicam Calibration is still not implemented yet.  
-```xml
-<Node name="streamers">
- <RealSenseMultiCam name="rs" />
-</Node>
-```
+It instantiates a RealSenseVirtualCam for each depth camera connected. this is useful in a master/slave situation where a second realsense is feeding information about the observed scene to complement the first observation. 
 
 Another methode for instantiating multiple cameras is to use `serialid` with an index starting at 0.
 ```xml
@@ -46,7 +41,7 @@ Another methode for instantiating multiple cameras is to use `serialid` with an 
 Deprojector are a class of components that uses the RGB-D data retrieved to recreate a pointcloud of the scene.
 There are 3 of them.
 
-The pointcloud can be accessed in Sofa as a `vector<defaulttype::Vector3>` and `PointCloudData` from PCLPlugin respectively labeled `@deprojector.output` and `@deprojector.outpcl`.
+The pointcloud can be accessed in Sofa as a `vector<defaulttype::Vector3>` labeled `@deprojector.output`.
 The attribute `flip` can be used to flip the whole pointcloud over the z-axis.
 
 You can add a translation offset to any pointcloud using the `@deprojector.offset` attribute which is a `defaulttype::Vector3`.
@@ -55,37 +50,36 @@ You can add a translation offset to any pointcloud using the `@deprojector.offse
 `@deprojector.downsample` attribute is for downsampling the resulting point cloud.
 `@deprojector.drawpcl` is set to 1 if you want to render the pointcloud otherwise is set to 0
 
-`@deprojector.densify` if larger than 1, generates a synthetic volume, stored in `@deprojector.synthvol` as `vector<defaulttype::Vector3>`.
+`@deprojector.densify` if larger than 1, generates a synthetic volume by duplicating the pointcloud surface, stored in `@deprojector.synthvol` as `vector<defaulttype::Vector3>`.
 
 ### Whole scene deprojector 
 This one is used if you want to create a point cloud for the whole observed frame.
 ```xml
 <RealSenseDeprojector
- name="deproj"
- color="@realsense.color"
- depth="@realsense.depth"
- rscam="@realsense"
- downsample="5"
- drawpcl="1"
+  name="deproj"
+  rsframe="@../rs.rsframe"
+  rscam="@realsense"
+  downsample="5"
+  drawpcl="1"
 />
 ```
 
 ### Mask deprojector 
 This component, if provided with an image binary mask in a `cv::Mat` with the same resolution as realsense RGB-D frames.
 ```xml
-<GetMaskFromContour
- name="mfc"
- image="@rs.color"
- contour="@some/contour.data" 
+<MaskFromContour
+  name="mfc"
+  image="@rs.rsframe"
+  contour="@some/contour.data" 
 />
 <RealSenseMaskDeprojector
- name="deproj"
- depth="@rs.depth"
- rscam="@rs"
- input="@mfc.mask"
- downsample="11"
- densify="8"
- drawpcl="0" 
+  name="deproj"
+  rsframe="@rs.rsframe"
+  rscam="@rs"
+  input="@mfc.mask"
+  downsample="11"
+  densify="8"
+  drawpcl="0" 
 />
 ```
 
@@ -93,25 +87,22 @@ This component, if provided with an image binary mask in a `cv::Mat` with the sa
 The difference with this one is it only reprojects a set of points specified in a `vector<defaulttype::Vector2>`.
 ```xml
 <OpticalFlowOrSomeTracker
- name="tracker"
- in="@interest.markers"
- frame="@rs.color"
+  name="tracker"
+  in="@interest.markers"
+  frame="@rs.color"
 />
 <RealSensePointDeprojector
- name="deproj"
- input="@tracker.out"
- depth="@rs.depth"
- rscam="@rs"
- drawpcl="1" />
+  name="deproj"
+  input="@tracker.out"
+  rsframe="@rs.rsframe"
+  rscam="@rs"
+  drawpcl="1" />
 ```
 
 ## Multicam Calibration 
 There two components for calibrating a stereo data acquisition system; `MultiCamCalibrator` and `MultiCamLiveCalibrator`.
 Both wrap the same method for calibrating using OpenCV.
 ```xml
-<Node name="streamers">
-  <RealSenseMultiCam name="rs" calibpath="/path/to/folder/" />
-</Node>
 <MultiCamCalibrator
   name="calib"
   calibcam1="/path/to/folder/1/"
@@ -138,8 +129,8 @@ The following snippet instantiates two realsense sensors and setups calibration 
 
 <MultiCamLiveCalibrator
   name="calib"
-  imgmaster="@rs.color"
-  imgslave="@rs2.color"
+  imgmaster="@rs.rsframe"
+  imgslave="@rs2.rsframe"
   size="6 9"
 />
 
