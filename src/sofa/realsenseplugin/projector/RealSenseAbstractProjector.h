@@ -321,7 +321,7 @@ public :
         }
 
         defaulttype::Vector3 point = scalePoint(point3d) ;
-        //m_pointcloud.push_back(pt);
+        m_pointcloud.push_back(point);
 
         if (d_flip.getValue()) {
             point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
@@ -359,6 +359,7 @@ public :
 
         defaulttype::Vector3 point = scalePoint(point3d) ;
         //m_pointcloud->push_back(pt);
+        m_pointcloud.push_back(point) ;
 
         if (d_flip.getValue()) {
             point = defaulttype::Vector3(point[1], point[0], - point[2]) ;
