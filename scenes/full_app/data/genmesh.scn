@@ -1,0 +1,269 @@
+<Node gravity="0 0 0" dt="0.02" >
+	<!-- <RequiredPlugin pluginName="hadrienPlugin" /> -->
+	<RequiredPlugin pluginName="CGALPlugin"/>
+	<RequiredPlugin pluginName="image"/>
+	<RequiredPlugin pluginName="OpenCVPlugin" />
+	
+	<VisualStyle displayFlags="showCollisionModels hideMappings showForceFields hideWireframe" />
+
+	<Node name="FEM">
+		<!-- <MeshVTKLoader name="meshLoader" filename="deformedLiver.vtk" scale3d="0.001 0.001 0.001" /> -->
+		<!-- <MeshVTKLoader name="meshLoader" filename="Test_RX_17_10_26_1_0003Foam.vtk" scale3d="0.001 0.001 0.001" /> -->
+		<!-- <MeshVTKLoader name="meshLoader" filename="SimuFoam.vtu" /> -->
+		<MeshSTLLoader name="meshLoader" filename="parenchyma_80000.stl" />
+		
+				
+		<TriangleSetTopologyContainer name="Container" src="@meshLoader" />   
+		<TriangleSetTopologyModifier src="@meshLoader" />   			
+		<MechanicalObject name="dofs"  />		
+		<TriangleSetTopologyAlgorithms name="TopoAlgo" />
+	</Node> 
+	
+	
+	<Node name="1500" activated="true" >
+		<MeshGenerationFromPolyhedron name="generator" template="Vec3d"
+					      inputPoints="@../FEM/meshLoader.position" 
+					      inputTriangles="@../FEM/meshLoader.triangles" 					      
+					      facetAngle="20" 
+					      facetSize="0.002"
+					      facetApproximation="0.001"
+					      cellRatio="2" 
+					      cellSize="0.01"
+					      odt="false"
+					      odt_max_it="5"
+					      perturb="false" 
+					      perturb_max_time="20.0"/>  
+
+		<!--<MeshGenerationFromPolyhedron template="Vec3d" inputPoints="@../FEM/dofs.position" inputTriangles="@../FEM/Container.triangles"  name="generator" 
+		facetAngle="15" 
+		facetSize="0.25" 
+		facetApproximation="0.005"  
+		cellRatio="4" 
+		cellSize="0.008" 		
+		sharpEdgeAngle="120" 
+		sharpEdgeSize="0" 
+		odt="false" 
+		lloyd="false"
+		perturb="false" 
+		ordering="0" 
+		exude="true" />-->
+		
+		<TetrahedronSetTopologyContainer name="Container"  points="@generator.outputPoints" tetras="@generator.outputTetras"/>
+		<TetrahedronSetTopologyModifier   name="Modifier" />
+		<TetrahedronSetTopologyAlgorithms name="TopoAlgo" />
+		<!-- <TetrahedronSetGeometryAlgorithms name="GeomAlgo" /> -->
+		
+		<VTKExporter filename="GenParenchyma_80000.vtu" edges="0" tetras="1" listening="true"  exportAtEnd="true" overwrite="true" />	
+		<!-- <VTKExporter filename="deformedLiver.vtu" edges="0" tetras="1" listening="true"  exportAtEnd="true" overwrite="true" /> -->
+
+	</Node>	
+</Node>	
+	
+
+
+<Node gravity="0 0 0" dt="0.02" >
+	<!-- <RequiredPlugin pluginName="hadrienPlugin" /> -->
+	<RequiredPlugin pluginName="CGALPlugin"/>
+	<RequiredPlugin pluginName="image"/>
+	<RequiredPlugin pluginName="OpenCVPlugin" />
+	
+	<VisualStyle displayFlags="hideVisualModels hideBehaviorModels showCollisionModels hideMappings showForceFields hideWireframe" />
+
+	<Node name="FEM">
+		<!-- <MeshObjLoader name="meshLoader" filename="../PHANTOM_LIVER/OBJs_VTUs/phantom.obj" scale3d="0.001  0.001  0.001" /> -->
+		<VTKExporter name="meshLoader" filename="003/Test_RX_17_10_26_1_0003Foam.vtk" />
+		<TriangleSetTopologyContainer name="Container" src="@meshLoader" />   
+		<TriangleSetTopologyModifier src="@meshLoader" />   
+		
+		<MechanicalObject name="dofs"  />
+		
+		<!-- <Triangle name="surface" />		 -->
+	</Node> 
+</Node>
+	<Node name="2000" activated="true" >	
+		<MeshGenerationFromPolyhedron template="Vec3d" inputPoints="@../FEM/dofs.position" inputTriangles="@../FEM/Container.triangles"  name="generator" 
+		facetAngle="25" 
+		facetSize="0.15" 
+		facetApproximation="0.0026" 
+		cellRatio="4" 
+		cellSize="0.00765" 
+		sharpEdgeAngle="120" 
+		sharpEdgeSize="0" 
+		odt="false" 
+		lloyd="false"
+		perturb="false" 
+		ordering="0" 
+		exude="true" />
+		
+		<TetrahedronSetTopologyContainer name="Container"  points="@generator.outputPoints" tetras="@generator.outputTetras"/>
+		<TetrahedronSetTopologyModifier   name="Modifier" />
+		<TetrahedronSetTopologyAlgorithms name="TopoAlgo" />
+		<TetrahedronSetGeometryAlgorithms name="GeomAlgo" />
+		
+		<MechanicalObject name="mstate" />
+		
+		<TetrahedronFEMForceField />
+		
+		<Node name="Triangles">
+			<TriangleSetTopologyContainer name="Container" />
+			<TriangleSetTopologyModifier name="Modifier"/>
+			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true" />
+						
+			<OglModel name="VisualModel" src="@loader" color="1.0 0.0 0.0 1.0"/>		
+<!-- 			<Triangle/> -->
+		</Node>
+		
+		
+
+		
+
+	</Node>
+	
+	<Node name="1500" activated="true" >	
+		<MeshGenerationFromPolyhedron template="Vec3d" inputPoints="@../FEM/dofs.position" inputTriangles="@../FEM/Container.triangles"  name="generator" 
+		facetAngle="25" 
+		facetSize="0.15" 
+		facetApproximation="0.0025" 
+		cellRatio="4" 
+		cellSize="0.0085" 
+		sharpEdgeAngle="120" 
+		sharpEdgeSize="0" 
+		odt="false" 
+		lloyd="false"
+		perturb="false" 
+		ordering="0" 
+		exude="true" />
+		
+		<TetrahedronSetTopologyContainer name="Container"  points="@generator.outputPoints" tetras="@generator.outputTetras"/>
+		<TetrahedronSetTopologyModifier   name="Modifier" />
+		<TetrahedronSetTopologyAlgorithms name="TopoAlgo" />
+		<TetrahedronSetGeometryAlgorithms name="GeomAlgo" />
+		
+		<MechanicalObject name="mstate" />
+		
+		<TetrahedronFEMForceField />
+		
+		<Node name="Triangles">
+			<TriangleSetTopologyContainer name="Container" />
+			<TriangleSetTopologyModifier name="Modifier"/>
+			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true" />
+						
+			<OglModel name="VisualModel" src="@loader" color="1.0 0.0 0.0 1.0"/>		
+<!-- 			<Triangle/> -->
+		</Node>
+		
+		<VTKExporter filename="liver1500.vtu" edges="0" tetras="1" listening="true"  exportAtEnd="true" overwrite="true" />
+
+	</Node>
+	
+	<Node name="1000" activated="true" >	
+		<MeshGenerationFromPolyhedron template="Vec3d" inputPoints="@../FEM/dofs.position" inputTriangles="@../FEM/Container.triangles"  name="generator" 
+		facetAngle="25" 
+		facetSize="0.15" 
+		facetApproximation="0.003" 
+		cellRatio="4" 
+		cellSize="0.01" 
+		sharpEdgeAngle="120" 
+		sharpEdgeSize="0" 
+		odt="false" 
+		lloyd="false"
+		perturb="false" 
+		ordering="0" 
+		exude="true" />
+		
+		<TetrahedronSetTopologyContainer name="Container"  points="@generator.outputPoints" tetras="@generator.outputTetras"/>
+		<TetrahedronSetTopologyModifier   name="Modifier" />
+		<TetrahedronSetTopologyAlgorithms name="TopoAlgo" />
+		<TetrahedronSetGeometryAlgorithms name="GeomAlgo" />
+		
+		<MechanicalObject name="mstate" />
+		
+		<TetrahedronFEMForceField />
+		
+		<Node name="Triangles">
+			<TriangleSetTopologyContainer name="Container" />
+			<TriangleSetTopologyModifier name="Modifier"/>
+			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true" />
+						
+			<OglModel name="VisualModel" src="@loader" color="1.0 0.0 0.0 1.0"/>		
+<!-- 			<Triangle/> -->
+		</Node>
+		
+		<VTKExporter filename="liver1000.vtu" edges="0" tetras="1" listening="true"  exportAtEnd="true" overwrite="true" />
+
+	</Node>
+	
+	<Node name="500" activated="true" >	
+		<MeshGenerationFromPolyhedron template="Vec3d" inputPoints="@../FEM/dofs.position" inputTriangles="@../FEM/Container.triangles"  name="generator" 
+		facetAngle="25" 
+		facetSize="0.15" 
+		facetApproximation="0.007" 
+		cellRatio="4" 
+		cellSize="0.013" 
+		sharpEdgeAngle="120" 
+		sharpEdgeSize="0" 
+		odt="false" 
+		lloyd="false"
+		perturb="false" 
+		ordering="0" 
+		exude="true" />
+		
+		<TetrahedronSetTopologyContainer name="Container"  points="@generator.outputPoints" tetras="@generator.outputTetras"/>
+		<TetrahedronSetTopologyModifier   name="Modifier" />
+		<TetrahedronSetTopologyAlgorithms name="TopoAlgo" />
+		<TetrahedronSetGeometryAlgorithms name="GeomAlgo" />
+		
+		<MechanicalObject name="mstate" />
+		
+		<TetrahedronFEMForceField />
+		
+		<Node name="Triangles">
+			<TriangleSetTopologyContainer name="Container" />
+			<TriangleSetTopologyModifier name="Modifier"/>
+			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true" />
+						
+			<OglModel name="VisualModel" src="@loader" color="1.0 0.0 0.0 1.0"/>		
+<!-- 			<Triangle/> -->
+		</Node>
+		
+		<VTKExporter filename="liver500.vtu" edges="0" tetras="1" listening="true"  exportAtEnd="true" overwrite="true" />
+
+	</Node>
+	
+	<Node name="250" activated="true" >	
+		<MeshGenerationFromPolyhedron template="Vec3d" inputPoints="@../FEM/dofs.position" inputTriangles="@../FEM/Container.triangles"  name="generator" 
+		facetAngle="25" 
+		facetSize="0.15" 
+		facetApproximation="0.007" 
+		cellRatio="4" 
+		cellSize="0.016" 
+		sharpEdgeAngle="120" 
+		sharpEdgeSize="0" 
+		odt="false" 
+		lloyd="false"
+		perturb="false" 
+		ordering="0" 
+		exude="true" />
+		
+		<TetrahedronSetTopologyContainer name="Container"  points="@generator.outputPoints" tetras="@generator.outputTetras"/>
+		<TetrahedronSetTopologyModifier   name="Modifier" />
+		<TetrahedronSetTopologyAlgorithms name="TopoAlgo" />
+		<TetrahedronSetGeometryAlgorithms name="GeomAlgo" />
+		
+		<MechanicalObject name="mstate" />
+		
+		<TetrahedronFEMForceField />
+		
+		<Node name="Triangles">
+			<TriangleSetTopologyContainer name="Container" />
+			<TriangleSetTopologyModifier name="Modifier"/>
+			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true" />
+						
+			<OglModel name="VisualModel" src="@loader" color="1.0 0.0 0.0 1.0"/>		
+<!-- 			<Triangle/> -->
+		</Node>
+		
+		<VTKExporter filename="liver250.vtu" edges="0" tetras="1" listening="true"  exportAtEnd="true" overwrite="true" />
+
+	</Node>
+</Node>	

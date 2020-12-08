@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<Node name="root" dt="0.01" gravity="0 0 0">
+	<RequiredPlugin pluginName="OpenCVPlugin" />
+	<RequiredPlugin pluginName="sofascheduler" />
+	<RequiredPlugin pluginName="realsenseplugin" />
+	<RequiredPlugin pluginName="OptiTrackPlugin" />
+	<RequiredPlugin name="PCLPlugin" pluginName="PCLPlugin" />
+
+	<FreeMotionAnimationLoop />
+	<GenericConstraintSolver maxIt="300" tolerance="0.001"/>
+
+<!--     <ConnectToOptiTrack name="motiveData"  listening="1"  drawScale="0" /> -->
+
+	<RealSenseCam 
+		name="rs" 
+		depthMode="1" 
+		depthScale="6" 
+		intrinsics="/home/omar/projects/sofa-build/bin/intrinsics.log"
+	/>
+	<RealSenseDataFrame2ImageData
+	    name="rs2color"
+		rsframe="@rs.rsframe"
+	/>
+	<OpenCVProjectiveViewer
+		name='viewer'
+		drawCamera='true'
+		image='@rs2color.image'
+		drawscreenPosition='10 10'
+		drawscreenSize='200 200'
+		drawcolor="1 1 1 1"
+		depth="1"
+		drawzNear="0.001" 
+		drawzFar="100"
+		drawViewPort="false" 
+		drawswapMainView="true"
+	/>
+
+    <OpenCVProjectionToCorners
+	    name="mv2c"
+		resolution="@rs.resolution"
+		projectionMatrix="@viewer.modelView"
+	/>
+
+	<OpenCVProjectivePointSelector
+		name="ptselector"
+		corners="@mv2c.corners"
+		image="@rs2color.image"
+	/>
+
+	<RealSensePointDeprojector
+		name="ptdeproj"
+		input="@ptselector.all"
+
+        rsframe="@rs.rsframe"
+		rscam="@rs"
+
+		downsample="5"
+		drawpcl="1"
+	/>
+	<Node name="calibration">
+		
+		<OpenCVProjectiveCalibrator
+			name="calib"
+			streamer="@../rs2color.image"
+		/>
+<!--		intrinsicParameters="@../rs.intrinsicParameters"-->
+
+		<OpenCVDynamicCalibrator
+			name="dyncal"
+			calibrator="@calib"
+			viewer="@../viewer"
+			markers2D="@../ptselector.all"
+			markers3D="@../ptdeproj.output"
+		/>
+
+        <ProjectionMatrixExport
+			name="export"
+			modelView="@calib.projectionMatrix"
+			filename="/home/omar/projects/sofa-build/bin/modelview.txt"
+		/>
+
+	</Node>
+<!--
+    <Node name="optitrack_mo">
+	    <Vec2Pcl name="markers" input="@../motiveData.trackedMarkers" />
+		<Vec2Pcl name="ptdeproj" input="@../ptdeproj.output" />
+		<MechanicalObject name="markersmo" position="@../motiveData.trackedMarkers" />
+		<PCLIterativeClosestPoint
+		    name="pclicp"
+			source="@markers.outpcl"
+			target="@ptdeproj.outpcl"
+			mo="@markersmo"
+		/>
+		<Sphere />
+	</Node>
+-->
+</Node>

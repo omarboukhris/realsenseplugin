@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<Node name="root" gravity="0 0 0" dt="1"  >
+<RequiredPlugin name="realsenseplugin" pluginName="realsenseplugin" />
+<RequiredPlugin name="opencvplugin" pluginName="opencvplugin" />
+
+    <RealSenseCam
+	    name="rs"
+		depthMode="1"
+		depthScale="6"
+		serialid="0"
+		intrinsics="/home/omar/projects/sofa-build/bin/intrinsics1.log"
+	/>
+
+    <RealSenseCam
+	    name="rs2"
+		depthMode="1"
+		depthScale="6"
+		serialid="1"
+		intrinsics="/home/omar/projects/sofa-build/bin/intrinsics2.log"
+	/>
+
+    <MultiCamLiveCalibrator
+	    name="calib"
+		imgmaster="@rs.color"
+		imgslave="@rs2.color"
+		size="6 9"
+	/>
+    <RealSenseDeprojector
+	    name="deproj"
+		color="@rs.color"
+		depth="@rs.depth"
+		rscam="@rs"
+		downsample="10"
+		drawpcl="1"
+	/>
+
+    <RealSenseDeprojector
+	    name="deproj2"
+		offset="@calib.translation"
+		projectionMatrix="@calib.projectionMatrix"
+		color="@rs2.color"
+		depth="@rs2.depth"
+		rscam="@rs2"
+		downsample="15"
+		drawpcl="1"
+	/>
+</Node>
