@@ -66,6 +66,8 @@ public:
     Data<int> d_densify ;
     /// \brief true to render pointcloud in viewer
     Data<bool> d_drawpcl ;
+    /// \brief true to render synthetic pointcloud
+    Data<bool> d_drawsynth ;
 
     /// \brief resp. opencv color and depth streams
     cv::VideoCapture _reader_color, _reader_depth ;
@@ -84,6 +86,7 @@ public:
         , d_synthvolume(initData(&d_synthvolume, "synthvol", "synthetic volume for ICP optimization"))
         , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
         , d_drawpcl(initData(&d_drawpcl, true, "drawpcl", "true if you want to draw the point cloud"))
+        , d_drawsynth(initData(&d_drawsynth, false, "drawsynth", "true if you want to draw the synthetic point cloud"))
         , paused (false)
     {
         this->f_listening.setValue(true);
@@ -118,6 +121,15 @@ public:
         for (unsigned int i=0; i< output.size(); i++) {
             vparams->drawTool()->drawSphere(output[i], 0.002);
         }
+        if (!d_drawsynth.getValue()) {
+        // don't draw point cloud
+            return ;
+        }
+        output = d_synthvolume.getValue() ;
+        for (unsigned int i=0; i< output.size(); i++) {
+            vparams->drawTool()->drawSphere(output[i], 0.0015);
+        }
+
     }
 
     /*!
