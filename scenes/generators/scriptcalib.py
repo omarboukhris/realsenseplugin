@@ -97,7 +97,7 @@ if __name__ == "__main__" :
 		print ("unhandled number of arguments")
 		exit()
 	#	 path to exp / exp number
-	outdir = sys.argv[1] + "/" sys.argv[2]
+	outdir = sys.argv[1] + "/" + sys.argv[2]
 
 	try : os.mkdir(sys.argv[1])
 	except : pass
@@ -110,4 +110,5 @@ if __name__ == "__main__" :
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/omar/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+

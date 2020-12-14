@@ -281,4 +281,5 @@ if __name__ == "__main__" :
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/omar/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	

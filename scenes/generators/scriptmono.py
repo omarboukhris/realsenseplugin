@@ -28,7 +28,7 @@ script="""
 		alpha="0.8"
 		delta="60"
 		depthScale="6"
-		intrinsics="/home/omar/projects/sofa-build/bin/intrinsics.log"
+		intrinsics="/home/sperry/projects/sofa-build/bin/intrinsics.log"
 	/>
 
     <RealSenseDataFrame2ImageData
@@ -44,7 +44,7 @@ script="""
 
     <ProjectionMatrixImport
 	    name="mvimp"
-		filename="/home/omar/projects/sofa-build/bin/modelview.txt"
+		filename="/home/sperry/projects/sofa-build/bin/modelview.txt"
 	/>
 	<OpenCVProjectiveViewer
 	    name='viewer'
@@ -353,4 +353,4 @@ if __name__ == "__main__" :
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/omar/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))

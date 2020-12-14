@@ -15,7 +15,7 @@
 		name="rs" 
 		depthMode="1" 
 		depthScale="6" 
-		intrinsics="/home/omar/projects/sofa-build/bin/intrinsics.log"
+                intrinsics="/home/sperry/projects/sofa-build/bin/intrinsics.log"
 	/>
 	<RealSenseDataFrame2ImageData
 	    name="rs2color"
@@ -76,7 +76,7 @@
         <ProjectionMatrixExport
 			name="export"
 			modelView="@calib.projectionMatrix"
-			filename="/home/omar/projects/sofa-build/bin/modelview.txt"
+                        filename="/home/sperry/projects/sofa-build/bin/modelview.txt"
 		/>
 
 	</Node>

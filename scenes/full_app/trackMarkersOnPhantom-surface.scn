@@ -27,7 +27,7 @@
 		alpha="0.8"
 		delta="60"
 		depthScale="6"
-		intrinsics="/home/omar/projects/sofa-build/bin/intrinsics.log"
+                intrinsics="/home/sperry/projects/sofa-build/bin/intrinsics.log"
 	/>
 
     <RealSenseDataFrame2ImageData
@@ -43,7 +43,7 @@
 
     <ProjectionMatrixImport
 	    name="mvimp"
-		filename="/home/omar/projects/sofa-build/bin/modelview.txt"
+                filename="/home/sperry/projects/sofa-build/bin/modelview.txt"
 	/>
 	<OpenCVProjectiveViewer
 	    name='viewer'

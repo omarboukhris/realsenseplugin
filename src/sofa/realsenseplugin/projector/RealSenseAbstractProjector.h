@@ -99,6 +99,8 @@ public :
     Data<bool> d_drawpcl ;
     /// \brief true to add synthetic volume
     Data<int> d_densify ;
+    /// \brief true to render synthetic pointcloud
+    Data<bool> d_drawsynth ;
 
     /// \brief link for realsense camera
     core::objectmodel::SingleLink<
@@ -143,6 +145,7 @@ public :
         , d_downsampler(initData(&d_downsampler, 1, "downsample", "point cloud downsampling"))
         , d_drawpcl(initData(&d_drawpcl, false, "drawpcl", "true if you want to draw the point cloud"))
         , d_densify(initData(&d_densify, 0, "densify", "densify pointcloud to approximate volume (naive method)"))
+        , d_drawsynth(initData(&d_drawsynth, false, "drawsynth", "true if you want to draw the synthetic point cloud"))
         // link to realsense for online reco
         , l_rs_cam(initLink("rscam", "link to realsense camera component - used for getting camera intrinsics"))
         , m_pointcloud(rgbd_frame::sofaPointCloud())
@@ -275,6 +278,10 @@ public :
         for (unsigned int i=0; i< output.size(); i++) {
             vparams->drawTool()->drawSphere(output[i], 0.002);
 //            vparams->drawTool()->drawPoint(output[i], sofa::defaulttype::Vector4 (0, 0, 255, 0)) ;
+        }
+        if (!d_drawsynth.getValue()) {
+        // don't draw point cloud
+            return ;
         }
         output = d_synthvolume.getValue() ;
         for (unsigned int i=0; i< output.size(); i++) {

@@ -22,7 +22,7 @@
 <!--    <Node name="gelMarkers" activated="1">
 	    <RealSenseOfflineReader
 		    name="deproj"
-			pathpcl="/home/omar/Data/PBOct2020/10/pointcloudMarkers.pcl"
+                        pathpcl="/home/sperry/Data/PBOct2020/10/pointcloudMarkers.pcl"
 			drawpcl="1" />
 		<MechanicalObject template="Vec3d" name="MO" position="@deproj.output" />
 		<FixedGeometry name="markers" position="@deproj.output" drawRadius="0.005" color="0 1 0 1" />
@@ -59,7 +59,7 @@
 	<Node name="surface" >
 	    <RealSenseOfflineReader
 		    name="deproj"
-			pathpcl="/home/omar/Data/PBOct2020/9/pointcloudSurface1.pcl"
+                        pathpcl="/home/sperry/Data/PBOct2020/9/pointcloudSurface1.pcl"
 			densify="8"
 			drawpcl="1" />
 		<MechanicalObject template="Vec3d" name="MO" position="@deproj.output" />
@@ -68,117 +68,118 @@
 	</Node>
 
     <Node name="Liver" activated="1">
-	    <EulerImplicitSolver vdamping="0" rayleighMass="0.1" rayleighStiffness="0.1" />
+        <EulerImplicitSolver vdamping="0" rayleighMass="0.1" rayleighStiffness="0.1" />
 
         <PCGLinearSolver iterations="20" tolerance="1e-9" preconditioners="solver" use_precond="true" update_step="1" />
 
         <CudaSparseLDLSolver name="solver" template="AsyncCompressedRowSparseMatrix3f"/>
 
         <MeshVTKLoader
-		    name="vloader"
-			filename="/home/omar/Downloads/r_02_lt_1231_nodes.vtk"
-			scale3d="0.001 0.001 0.001" />
+            name="vloader"
+            filename="/home/omar/Downloads/r_02_lt_1231_nodes.vtk"
+            scale3d="0.001 0.001 0.001" />
 
         <TetrahedronSetTopologyContainer name="Container" position="@vloader.position" tetrahedra="@vloader.tetrahedra" />
-		<TetrahedronSetTopologyModifier name="Modifier"/>
+        <TetrahedronSetTopologyModifier name="Modifier"/>
 
         <MechanicalObject name="mstate" template="Vec3d" position="@vloader.position" />
 
         <UniformMass name="uniformMass" totalMass="1" />
-		<TetrahedronFEMForceField name="FEM" youngModulus="2000" poissonRatio="0.35" method="svd" />
+        <TetrahedronFEMForceField name="FEM" youngModulus="2000" poissonRatio="0.35" method="svd" />
 
         <Node name="Surface">
-		    <TriangleSetTopologyContainer name="Container" position="@../vloader.position"  />
-			<TetrahedronSetTopologyModifier name="Modifier"/>
+        <TriangleSetTopologyContainer name="Container" position="@../vloader.position"  />
+        <TetrahedronSetTopologyModifier name="Modifier"/>
 
-            <Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true"/>
-			<MechanicalObject name="dofs" />
+        <Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true"/>
+        <MechanicalObject name="dofs" />
 
-            <TriangleGeometry name="triangles" topology="@Container" />
-			<PhongTriangleNormalHandler geometry="@triangles" />
+        <TriangleGeometry name="triangles" topology="@Container" />
+        <PhongTriangleNormalHandler geometry="@triangles" />
 
-            <AABBBroadPhase
-			    name="AABBBroadPhase"
-				geometry="@triangles"
-				nbox="8 8 8"
-				color="1 0 0 0.3" />
+        <AABBBroadPhase
+            name="AABBBroadPhase"
+            geometry="@triangles"
+            nbox="8 8 8"
+            color="1 0 0 0.3" />
 
-            <BarycentricMapping />
-		</Node>
-
-        <Node name="markersPosOnGel" >
-		    <VisualStyle displayFlags="showCollisionModels" />
-			<PointSetTopologyContainer name="Container" />
-			<PointSetTopologyModifier name="ModifierPoint"  />
-			<MechanicalObject name="dofs" position="" />
-			<PointGeometry name="markersOngel" radius="0.005" />
-			<BarycentricMapping />
-		</Node >
-
-        <UpdateStateAfterRegistration
-		    name="saved"
-			pointTopo="Modifier"
-			pathToOptkTopo="markersPosOnGel/ModifierPoint"
-			pathToMstate="markersPosOnGel/dofs"
-			markersPose="@../gelMarkers/deproj.output"
-			useTime="0" />
-
-        <Node name="Visual">
-		    <TriangleSetTopologyContainer name="Container" position="@../mstate.position"  />
-			<TetrahedronSetTopologyModifier name="Modifier"/>
-			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true"/>
-			<OglModel name="VisualModel" color="1.0 0.0 0.0 0.5" position="@../Container.position" triangles="@Container.triangles" />
-			<BarycentricMapping />
-		</Node>
-		<LinearSolverConstraintCorrection solverName="solver" />
-	</Node>
-
-    <Node name="rigidregistration" activated="1" >
-	    <Vec2Pcl name="vecConv" input="@../Liver/mstate.position" />
-		<Vec2Pcl name="vecConvSurf" input="@../surface/deproj.synthvol" />
-		<MouseRotationHandler
-		    name="mouse"
-			input="@vecConv.outpcl"
-			mo="@../Liver/mstate" />
-		<PCLIterativeClosestPoint
-		    name="pclicp"
-			source="@vecConv.outpcl"
-			target="@vecConvSurf.outpcl"
-			mo="@../Liver/mstate" />
-	</Node>
-	<Node activated="0" name="sliding">
-	    <FindClosestProximityAlgorithm
-		    name="algoslide"
-			from="@../gelMarkers/markers"
-			dest="@../Liver/Surface/triangles"
-			drawcollision="1" />
-		<DistanceFilter name="distance" algo="@algoslide" distance="0.6" />
-		<NormalFilter name="normal" algo="@algoslide" angle="-1 0.5" />
-
-        <BindDirection name="normals" />
-		<ConstraintBilateral
-		    name="sliding"
-			input="@algoslide.output"
-			directions="@normals"
-			maxForce=".1 .1 .1"
-			draw_scale="0.05" />
-
-        <FindClosestProximityAlgorithm
-		    name="algosurface"
-			from="@../surface/surface"
-			dest="@../Liver/Surface/triangles"
-			drawcollision="1" />
-		<DistanceFilter name="distancesurf" algo="@algosurface" distance="0.6" />
-		<NormalFilter name="normalsurf" algo="@algosurface" angle="-1 0.5" />
-
-        <BindDirection name="normalssurf" />
-		<ConstraintBilateral
-		    name="surfaceCst"
-			input="@algosurface.output"
-			directions="@normalssurf"
-			maxForce=".1 .1 .1"
-			draw_scale="0.05" />
-
+        <BarycentricMapping />
     </Node>
+
+    <Node name="markersPosOnGel" >
+        <VisualStyle displayFlags="showCollisionModels" />
+        <PointSetTopologyContainer name="Container" />
+        <PointSetTopologyModifier name="ModifierPoint"  />
+        <MechanicalObject name="dofs" position="" />
+        <PointGeometry name="markersOngel" radius="0.005" />
+        <BarycentricMapping />
+    </Node >
+
+    <UpdateStateAfterRegistration
+        name="saved"
+        pointTopo="Modifier"
+        pathToOptkTopo="markersPosOnGel/ModifierPoint"
+        pathToMstate="markersPosOnGel/dofs"
+        markersPose="@../gelMarkers/deproj.output"
+        useTime="0" />
+
+    <Node name="Visual">
+        <TriangleSetTopologyContainer name="Container" position="@../mstate.position"  />
+        <TetrahedronSetTopologyModifier name="Modifier"/>
+        <Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true"/>
+        <OglModel name="VisualModel" color="1.0 0.0 0.0 0.5" position="@../Container.position" triangles="@Container.triangles" />
+        <BarycentricMapping />
+    </Node>
+    <LinearSolverConstraintCorrection solverName="solver" />
+</Node>
+
+<Node name="rigidregistration" activated="1" >
+    <Vec2Pcl name="vecConv" input="@../Liver/mstate.position" />
+    <Vec2Pcl name="vecConvSurf" input="@../surface/deproj.synthvol" />
+    <MouseRotationHandler
+        name="mouse"
+        input="@vecConv.outpcl"
+        mo="@../Liver/mstate" />
+    <PCLIterativeClosestPoint
+        name="pclicp"
+        source="@vecConv.outpcl"
+        target="@vecConvSurf.outpcl"
+        mo="@../Liver/mstate" />
+</Node>
+
+<Node activated="0" name="sliding">
+    <FindClosestProximityAlgorithm
+        name="algoslide"
+        from="@../gelMarkers/markers"
+        dest="@../Liver/Surface/triangles"
+        drawcollision="1" />
+    <DistanceFilter name="distance" algo="@algoslide" distance="0.6" />
+    <NormalFilter name="normal" algo="@algoslide" angle="-1 0.5" />
+
+    <BindDirection name="normals" />
+    <ConstraintBilateral
+        name="sliding"
+        input="@algoslide.output"
+        directions="@normals"
+        maxForce=".1 .1 .1"
+        draw_scale="0.05" />
+
+    <FindClosestProximityAlgorithm
+        name="algosurface"
+        from="@../surface/surface"
+        dest="@../Liver/Surface/triangles"
+        drawcollision="1" />
+    <DistanceFilter name="distancesurf" algo="@algosurface" distance="0.6" />
+    <NormalFilter name="normalsurf" algo="@algosurface" angle="-1 0.5" />
+
+    <BindDirection name="normalssurf" />
+    <ConstraintBilateral
+        name="surfaceCst"
+        input="@algosurface.output"
+        directions="@normalssurf"
+        maxForce=".1 .1 .1"
+        draw_scale="0.05" />
+
+</Node>
 
 </Node>

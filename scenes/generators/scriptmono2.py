@@ -8,14 +8,7 @@ script="""
 	<RequiredPlugin name="ConstraintGeometry" pluginName="ConstraintGeometry" />
 	<RequiredPlugin name="registrationconstraint" pluginName="registrationconstraint" />
 
-    <RequiredPlugin pluginName="SofaCUDA" />
-	<RequiredPlugin pluginName="SofaCUDADev" />
-	<RequiredPlugin pluginName="SofaAsyncSolvers" />
-	<RequiredPlugin pluginName="SofaCUDASolvers" />
-
-    <RequiredPlugin pluginName="ConectPlugin" />
-
-    <RequiredPlugin name="realsenseplugin" pluginName="realsenseplugin" />
+	<RequiredPlugin name="realsenseplugin" pluginName="realsenseplugin" />
 	<RequiredPlugin name="PCLPlugin" pluginName="PCLPlugin" />
 
 <!-- 	<RequiredPlugin name="Optimus" pluginName="Optimus" /> -->
@@ -199,4 +192,4 @@ if __name__ == "__main__" :
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/omar/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
