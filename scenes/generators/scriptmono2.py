@@ -179,7 +179,7 @@ if __name__ == "__main__" :
 		print ("unhandled number of arguments")
 		exit()
 	#	 path to exp / exp number
-	outdir = sys.argv[1] + "/" sys.argv[2]
+	outdir = sys.argv[1] + "/" + sys.argv[2]
 
 	try : os.mkdir(sys.argv[1])
 	except : pass

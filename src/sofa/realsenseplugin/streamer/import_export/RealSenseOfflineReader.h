@@ -137,6 +137,7 @@ public:
      */
     inline void opencolor () {
         if (_reader_color.isOpened()) _reader_color.release();
+        if (d_path_color.getFullPath().empty()) return ;
         _reader_color = cv::VideoCapture(d_path_color.getFullPath()) ;
     }
     /*!
@@ -144,6 +145,7 @@ public:
      */
     inline void opendepth () {
         if (_reader_depth.isOpened()) _reader_depth.release();
+        if (d_path_depth.getFullPath().empty()) return ;
         _reader_depth = cv::VideoCapture(d_path_depth.getFullPath()) ;
     }
     /*!

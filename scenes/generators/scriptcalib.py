@@ -106,9 +106,9 @@ if __name__ == "__main__" :
 
 	scriptgen = script.format (outdir=outdir)
 
-	fs = open(outdir + "/exp.scn", "w")
+	fs = open(outdir + "/calib.scn", "w")
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/calib.scn".format(outdir=outdir))
 
