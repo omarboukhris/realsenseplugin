@@ -149,7 +149,7 @@ public:
      */
     void changed_path_depth () {
         if (m_depthstream.isOpened()) m_depthstream.release();
-	if (m_depthstream.getFullPath().empty()) return ;
+	if (d_path_depth.getFullPath().empty()) return ;
         openVideoStream(
             m_depthstream,
             d_path_depth.getFullPath(),
