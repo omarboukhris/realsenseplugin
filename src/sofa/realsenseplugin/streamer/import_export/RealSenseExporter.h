@@ -136,6 +136,7 @@ public:
      */
     void changed_path () {
         if (m_colorstream.isOpened()) m_colorstream.release();
+	if (d_path_color.getFullPath().empty()) return ;
         openVideoStream(
             m_colorstream,
             d_path_color.getFullPath(),
@@ -148,6 +149,7 @@ public:
      */
     void changed_path_depth () {
         if (m_depthstream.isOpened()) m_depthstream.release();
+	if (m_depthstream.getFullPath().empty()) return ;
         openVideoStream(
             m_depthstream,
             d_path_depth.getFullPath(),
