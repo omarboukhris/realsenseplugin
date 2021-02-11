@@ -11,55 +11,14 @@
 	<RequiredPlugin name="OpenCVPlugin" pluginName="OpenCVPlugin" />
 	<RequiredPlugin name="PCLPlugin" pluginName="PCLPlugin" />
 
-    <RequiredPlugin pluginName="SofaCUDA" />
-	<RequiredPlugin pluginName="SofaCUDADev" />
-	<RequiredPlugin pluginName="SofaAsyncSolvers" />
-	<RequiredPlugin pluginName="SofaCUDASolvers" />
-
     <FreeMotionAnimationLoop />
 	<GenericConstraintSolver maxIt="300" tolerance="0.001"/>
-
-<!--    <Node name="gelMarkers" activated="1">
-	    <RealSenseOfflineReader
-		    name="deproj"
-			pathpcl="/home/omar/Data/PBOct2020/10/pointcloudMarkers.pcl"
-			drawpcl="1" />
-		<MechanicalObject template="Vec3d" name="MO" position="@deproj.output" />
-		<FixedGeometry name="markers" position="@deproj.output" drawRadius="0.005" color="0 1 0 1" />
-		<EngineToTopology name="pointsTopo" position="@deproj.output" />
-	</Node>-->
-
-<!--    <RealSenseOfflineReader
-        name="deproj"
-		pathcolor="/home/omar/Data/PBOct2020/9/color1.mov" />
-	<RealSenseDataFrame2ImageData
-	    name="rs2color"
-		rsframe="@deproj.rsframe"
-	/>
-	<ProjectionMatrixImport
-	    name="mvimp"
-		filename="/home/omar/projects/sofa-build/bin/modelview.txt"
-	/>
-	<OpenCVProjectiveViewer
-	    name='viewer'
-		drawCamera='true'
-		image='@rs2color.image'
-		projectionMatrix="@mvimp.modelView"
-		drawscreenPosition='10 10'
-		drawscreenSize='200 200'
-		drawcolor="1 1 1 1"
-		depth="1"
-		drawzNear="0.001"
-		drawzFar="100"
-		drawViewPort="false"
-		drawswapMainView="true"
-	/>-->
 
     <!-- 		whole surface -->
 	<Node name="surface" >
 	    <RealSenseOfflineReader
 		    name="deproj"
-			pathpcl="/home/omar/Data/PBOct2020/9/pointcloudSurface1.pcl"
+			pathpcl="/home/andrea/data/PBOct2020/9/pointcloudSurface1.pcl"
 			densify="8"
 			drawpcl="1" />
 		<MechanicalObject template="Vec3d" name="MO" position="@deproj.output" />
@@ -72,11 +31,11 @@
 
         <PCGLinearSolver iterations="20" tolerance="1e-9" preconditioners="solver" use_precond="true" update_step="1" />
 
-        <CudaSparseLDLSolver name="solver" template="AsyncCompressedRowSparseMatrix3f"/>
+        <SparseLDLSolver name="solver"/>
 
         <MeshVTKLoader
 		    name="vloader"
-			filename="/home/omar/Downloads/r_02_lt_1231_nodes.vtk"
+			filename="/home/andrea/data/PBOct2020/r_02_lt_1231_nodes.vtk"
 			scale3d="0.001 0.001 0.001" />
 
         <TetrahedronSetTopologyContainer name="Container" position="@vloader.position" tetrahedra="@vloader.tetrahedra" />

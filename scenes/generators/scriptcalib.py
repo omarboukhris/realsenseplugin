@@ -110,5 +110,5 @@ if __name__ == "__main__" :
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/calib.scn".format(outdir=outdir))
+	os.system("/home/andrea/projects/sofa/build/bin/runSofa {outdir}/calib.scn".format(outdir=outdir))
 
