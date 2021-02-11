@@ -123,7 +123,7 @@ public:
     {
         stream.open(
             path,
-            cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+            cv::VideoWriter::fourcc('j', 'p', 'e', 'g'),
             d_fps.getValue(),
             cv::Size(img.cols, img.rows),
             (img.channels() != 1)
