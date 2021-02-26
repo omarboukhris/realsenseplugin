@@ -7,7 +7,7 @@ script="""
 	<RequiredPlugin name="CollisionAlgorithm" pluginName="CollisionAlgorithm" />
 	<RequiredPlugin name="ConstraintGeometry" pluginName="ConstraintGeometry" />
 	<RequiredPlugin name="registrationconstraint" pluginName="registrationconstraint" />
-
+	<RequiredPlugin pluginName='SofaConstraint'/> 
 	<RequiredPlugin name="realsenseplugin" pluginName="realsenseplugin" />
 	<RequiredPlugin name="PCLPlugin" pluginName="PCLPlugin" />
 
