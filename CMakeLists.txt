@@ -28,6 +28,8 @@ file(GLOB_RECURSE HEADER_FILES_RS
 	"src/sofa/realsenseplugin/utils/*.h"
 	"src/sofa/realsenseplugin/RSData.h"
 	"src/sofa/realsenseplugin/cv-helpers.hpp"
+	"src/sofa/realsenseplugin/conect/*.h"
+	"src/sofa/realsenseplugin/conect/*.inl"
 )
 
 file(GLOB_RECURSE SOURCE_FILES_RS
@@ -37,6 +39,7 @@ file(GLOB_RECURSE SOURCE_FILES_RS
 	"src/sofa/realsenseplugin/utils/*.cpp"
 	"src/sofa/realsenseplugin/RSData.cpp"
 	"src/sofa/realsenseplugin/initPlugin.cpp"
+	"src/sofa/realsenseplugin/conect/*.cpp"
 )
 
 list(APPEND "" ${HEADER_FILES_OCV})
@@ -102,6 +105,7 @@ target_link_libraries(
 	SofaExporter SofaLoader
 	SofaMiscForceField
 	SofaGeneralEngine
+	SofaOpenglVisual
 )
 if (OpenCVPlugin_FOUND)
 	target_link_libraries( ${PROJECT_NAME} OpenCVPlugin )
