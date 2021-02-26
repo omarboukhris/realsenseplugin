@@ -7,20 +7,17 @@ script="""
 	<RequiredPlugin name="CollisionAlgorithm" pluginName="CollisionAlgorithm" />
 	<RequiredPlugin name="ConstraintGeometry" pluginName="ConstraintGeometry" />
 	<RequiredPlugin name="registrationconstraint" pluginName="registrationconstraint" />
-
-    <RequiredPlugin pluginName="SofaCUDA" />
-	<RequiredPlugin pluginName="SofaCUDADev" />
-	<RequiredPlugin pluginName="SofaAsyncSolvers" />
-	<RequiredPlugin pluginName="SofaCUDASolvers" />
-
-    <RequiredPlugin pluginName="ConectPlugin" />
-
+	<RequiredPlugin pluginName='SofaConstraint'/> 
+    <RequiredPlugin pluginName='SofaImplicitOdeSolver'/> 
+    <RequiredPlugin pluginName='SofaLoader'/> 
+    <RequiredPlugin pluginName='SofaSimpleFem'/> 
+    <RequiredPlugin pluginName='SofaSparseSolver'/>
+    <RequiredPlugin pluginName='SofaTopologyMapping'/>
+    
     <RequiredPlugin name="realsenseplugin" pluginName="realsenseplugin" />
 	<RequiredPlugin name="PCLPlugin" pluginName="PCLPlugin" />
 
-<!-- 	<RequiredPlugin name="Optimus" pluginName="Optimus" /> -->
-
-    <FreeMotionAnimationLoop />
+	<FreeMotionAnimationLoop />
 	<GenericConstraintSolver maxIt="300" tolerance="0.001"/>
 
     <RealSenseCam
@@ -28,7 +25,7 @@ script="""
 		alpha="0.8"
 		delta="60"
 		depthScale="6"
-		intrinsics="/home/sperry/projects/sofa-build/bin/intrinsics.log"
+		intrinsics="{outdir}/../calib/intrinsics.log"
 	/>
 
     <RealSenseDataFrame2ImageData
@@ -44,7 +41,7 @@ script="""
 
     <ProjectionMatrixImport
 	    name="mvimp"
-		filename="{outdir}/modelview.txt"
+		filename="{outdir}/../calib/modelview.txt"
 	/>
 	<OpenCVProjectiveViewer
 	    name='viewer'
@@ -71,6 +68,7 @@ script="""
 	    name="ptselector"
 		corners="@mv2c.corners"
 		image="@gauss0.out"
+		draw="true"
 	/>
 
     <Node name="gelMarkers" activated="1">
@@ -79,7 +77,7 @@ script="""
 			in="@../ptselector.markers"
 			imageCurr="@../gauss0.out"
 			corners="@../mv2c.corners"
-			draw_pts="1"
+			draw_pts="0"
 			winsize="16 16"
 			iter="2"
 			level="10" />
@@ -118,7 +116,7 @@ script="""
 				input="@mfc.mask"
 				downsample="8"
 				densify="8"
-				drawpcl="0" />
+				drawpcl="1" />
 			<Vec2Pcl name="vecsurf" input="@deproj.output" />
 			<PCLAlphaFilter
 			    name="alpha"
@@ -149,26 +147,23 @@ script="""
 	</Node>
 
     <Node name="Liver" activated="1">
+    	<MeshObjLoader name="surface_mesh2" filename="/home/andrea/data/liver_phantom_BOPA/ROI_02_03.obj" scale3d="0.0009 0.0009 0.0009"/>
+    	<MeshObjLoader name="surface_mesh3" filename="/home/andrea/data/liver_phantom_BOPA/ROI_02_05.obj" scale3d="0.0009 0.0009 0.0009"/>
+    	<MeshObjLoader name="surface_mesh4" filename="/home/andrea/data/liver_phantom_BOPA/ROI_02_07.obj" scale3d="0.0009 0.0009 0.0009"/>
+    	<MeshObjLoader name="surface_mesh5" filename="/home/andrea/data/liver_phantom_BOPA/ROI_00_02.obj" scale3d="0.0009 0.0009 0.0009"/>
+		<MeshObjLoader name="surface_mesh6" filename="/home/andrea/data/liver_phantom_BOPA/ROI_01_04.obj" scale3d="0.0009 0.0009 0.0009"/>
+
 	    <EulerImplicitSolver vdamping="0" rayleighMass="0.1" rayleighStiffness="0.1" />
 
         <PCGLinearSolver iterations="20" tolerance="1e-9" preconditioners="solver" use_precond="true" update_step="1" />
 
-        <CudaSparseLDLSolver name="solver" template="AsyncCompressedRowSparseMatrix3f"/>
+        <SparseLDLSolver name="solver"/>
 
         <MeshVTKLoader
 		    name="vloader"
-			filename="{outdir}/mesh.vtk"
-			scale3d="0.001 0.001 0.001"
+			filename="/home/andrea/data/liver_phantom_BOPA/liver.vtk"
+			scale3d="0.0009 0.0009 0.0009"
 		/>
-
-<!--
-			filename="/home/omar/Downloads/r_02_lt_1231_nodes.vtk"
-        <MeshVTKLoader
-		    name="vloader"
-			filename="/home/omar/Downloads/r03.vtk"
-			scale3d="0.0015 0.0015 0.0015"
-		/>
--->
 
         <TetrahedronSetTopologyContainer name="Container" position="@vloader.position" tetrahedra="@vloader.tetrahedra" />
 		<TetrahedronSetTopologyModifier name="Modifier"/>
@@ -202,7 +197,7 @@ script="""
 			<PointSetTopologyContainer name="Container" />
 			<PointSetTopologyModifier name="ModifierPoint"  />
 			<MechanicalObject name="dofs" position="" />
-			<PointGeometry name="markersOngel" drawRadius="0.005" />
+			<PointGeometry name="markersOngel" drawRadius="0.000" />
 			<BarycentricMapping />
 		</Node >
 
@@ -214,21 +209,31 @@ script="""
 			markersPose="@../gelMarkers/deproj.output"
 			useTime="0" />
 
-        <Node name="vein2" >
-		    <Mesh filename="/home/omar/Data/OBJgreffe20oct/OBJgreffe20oct/20201019-131819/ROI_00_01.obj" name="loader" />
-			<MechanicalObject name="mo" />
-			<Node >
-			    <OglModel color="1.000 0.000 0.000 1" name="visualModel" position="@../mo.position" triangles="@../loader.triangles" />
-				<IdentityMapping />
-			</Node>
-			<BarycentricMapping />
-		</Node >
-
         <Node name="Visual">
 		    <TriangleSetTopologyContainer name="Container" position="@../mstate.position"  />
 			<TetrahedronSetTopologyModifier name="Modifier"/>
 			<Tetra2TriangleTopologicalMapping input="@../Container" output="@Container" flipNormals="true"/>
-			<OglModel name="VisualModel" color="1.0 0.0 0.0 0.5" position="@../Container.position" triangles="@Container.triangles" />
+			<OglModel name="VisualModel" color="1.0 0.5 0.5 0.5" position="@../Container.position" triangles="@Container.triangles" />
+			<BarycentricMapping />
+		</Node>
+		<Node name="VisualVeineCave">
+			<OglModel name="VisualModel" color="0.0 0.0 1.0 1.0" src="@../surface_mesh2" />
+			<BarycentricMapping />
+		</Node>
+		<Node name="VisualMetastases">
+			<OglModel name="VisualModel" color="1.0 0.5 0.5 1.0" src="@../surface_mesh3" />
+			<BarycentricMapping />
+		</Node>
+		<Node name="VisualMetastase2">
+			<OglModel name="VisualModel" color="1.0 0.5 0.0 1.0" src="@../surface_mesh4" />
+			<BarycentricMapping />
+		</Node>
+		<Node name="VisualArtere">
+			<OglModel name="VisualModel" color="1.0 0.0 0.0 1.0" src="@../surface_mesh5" />
+			<BarycentricMapping />
+		</Node>
+		<Node name="VisualVeinePorte">
+			<OglModel name="VisualModel" color="0.5 0.0 0.5 1.0" src="@../surface_mesh6" />
 			<BarycentricMapping />
 		</Node>
 		<LinearSolverConstraintCorrection solverName="solver" />
@@ -353,4 +358,4 @@ if __name__ == "__main__" :
 	fs.write(scriptgen)
 	fs.close()
 	
-	os.system("/home/sperry/projects/sofa-build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))
+	os.system("/home/andrea/projects/sofa/build/bin/runSofa {outdir}/exp.scn".format(outdir=outdir))

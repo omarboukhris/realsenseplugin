@@ -6,6 +6,7 @@ script="""
 	<RequiredPlugin pluginName="realsenseplugin" />
 	<RequiredPlugin pluginName="OptiTrackPlugin" />
 	<RequiredPlugin name="PCLPlugin" pluginName="PCLPlugin" />
+	<RequiredPlugin pluginName="SofaConstraint" />
 
     <FreeMotionAnimationLoop />
 	<GenericConstraintSolver maxIt="300" tolerance="0.001"/>
