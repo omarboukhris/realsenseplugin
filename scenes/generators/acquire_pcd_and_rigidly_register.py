@@ -4,6 +4,8 @@ import Sofa
 import Sofa.Gui
 import SofaRuntime
 
+meshfile = '/home/omar/Data/phantom_model/meshes/liverP8.obj'
+
 
 class Liver (Sofa.Core.Controller):
     def __init__(self, node, *args, **kwargs):
@@ -11,6 +13,8 @@ class Liver (Sofa.Core.Controller):
         self.createGraph(node)
 
     def createGraph(self, root):
+        root.addObject('MeshObjLoader', name='surface_mesh', filename=meshfile, scale3d="0.001 0.001 0.001")
+
         root.addObject(
             'RealSenseCam',
             name="rs",
@@ -154,28 +158,22 @@ class Liver (Sofa.Core.Controller):
             update_step="1",
         )
         Liver.addObject('SparseLDLSolver', name="solver")
+
         Liver.addObject(
-            'MeshVTKLoader',
-            name="vloader",
-            filename="/home/omar/Data/phantom_model/meshes/liverP8.vtu",
-            scale3d="0.001 0.001 0.001",
+            'SparseGridTopology',
+            name='sparsegrid',
+            n=[15, 15, 15],
+            src='@../surface_mesh',
         )
-        Liver.addObject(
-            'TetrahedronSetTopologyContainer',
-            name="Container",
-            position="@vloader.position",
-            tetrahedra="@vloader.tetrahedra",
-        )
-        Liver.addObject('TetrahedronSetTopologyModifier', name="Modifier")
         Liver.addObject(
             'MechanicalObject',
             name="mstate",
             template="Vec3d",
-            position="@vloader.position",
+            src="@sparsegrid",
         )
         Liver.addObject('UniformMass', name="uniformMass", totalMass="1")
         Liver.addObject(
-            'TetrahedronFEMForceField',
+            'HexahedronFEMForceField',
             name="FEM",
             youngModulus="50",
             poissonRatio="0.45",
@@ -184,35 +182,16 @@ class Liver (Sofa.Core.Controller):
 
 #  /root/Liver/Surface
         Surface = Liver.addChild('Surface')
-        Surface.addObject('TriangleSetTopologyContainer', name="Container", position="@../vloader.position")
-        Surface.addObject('TetrahedronSetTopologyModifier', name="Modifier")
-        Surface.addObject(
-            'Tetra2TriangleTopologicalMapping',
-            input="@../Container",
-            output="@Container",
-            flipNormals="true",
-        )
-        Surface.addObject('MechanicalObject', name="surface_mo")
-        Surface.addObject('TriangleGeometry', name="triangles", topology="@Container")
+        Surface.addObject('MechanicalObject', name="surface_mo", src="@../../surface_mesh")
         Surface.addObject('BarycentricMapping')
-
 
 #  /root/Liver/Visual
         Visual = Liver.addChild('Visual')
-        Visual.addObject('TriangleSetTopologyContainer', name="Container", position="@../mstate.position")
-        Visual.addObject('TetrahedronSetTopologyModifier', name="Modifier")
-        Visual.addObject(
-            'Tetra2TriangleTopologicalMapping',
-            input="@../Container",
-            output="@Container",
-            flipNormals="true",
-        )
         Visual.addObject(
             'OglModel',
             name="VisualModel",
             color="1.0 0.0 0.0 0.5",
-            position="@../Container.position",
-            triangles="@Container.triangles",
+            src="@../../surface_mesh",
         )
         Visual.addObject('BarycentricMapping')
 
