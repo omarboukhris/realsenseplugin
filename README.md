@@ -145,3 +145,35 @@ The following snippet instantiates two realsense sensors and setups calibration 
 The resulting rotation/translation are stored in the appropriate sofa data, which are `@calib.rotation` and `@calib.translation`.
 These data can be fed to any Realsense Reprojector, respectively through `rotation` and `offset` labels.
 The result is exported to a file for usage in another scene.
+
+## Shortcuts and usage for elastic registration
+In order to acquire RGB-D data and perform a registration these are the steps to follow:
+1. **Camera calibration** with ```python scenes/generators/scriptcalib.py "path_to_save" "calib"```
+2. **Data acquisition and live registration** with  ```python scenes/generators/scriptmono.py "path_to_save" "experiment_id"```
+
+In order to reproject already recorded RGB-D data and perform a registration you need to launch ```runSofa scenes/full_app/reprojector.scn```. Remember to modify the hardcoded paths to your data.
+
+In order to acquire data without registering these are the steps to follow:
+1. **Camera calibration** with ```python scenes/generators/scriptcalib.py "path_to_save" "calib"```
+2. **Data acquisition** with  ```python scenes/generators/scriptmono2.py "path_to_save" "experiment_id"```
+
+**Steps and shortcuts for the calibration:**
+```Ctrl + left click``` to select points on the region of interest
+
+**Steps and shortcuts for the data acquisition:**
+```Ctrl + left click``` to select surface markers
+```Ctrl + right click``` to select the contour of the region of interest
+```Ctrl + B``` to validate contour selection
+```Spacebar``` (e.g. Animate) to start recording (or load already stored point cloud)
+
+**Steps and shortcuts for the registration:**
+```Ctrl + 1``` to rigidly register
+(optional) ```Ctrl + left/right/center click``` to rotate the model in x/y/z axis
+(optional) ```Ctrl + T``` to activate translation mode and ```Ctrl + left/right/center click``` to translate the model with repect to x/y/z axis
+Activate *sliding node* for non-rigid registration over entire surface (this process can be extremely slow)
+```Ctrl + P``` to display the number of markers
+```Ctrl + M``` to switch between *sliding node* and *point cloud node*, in other words to register over surface markers only (this will considerably accelerate the registration and make it usable for real time augmented reality)
+
+
+
+
