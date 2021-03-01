@@ -179,8 +179,6 @@ In order to acquire data without registering these are the steps to follow:
 [opencvplugin][opencvplugin_link],
 [sofascheduler][sofascheduler_link],
 [pclplugin][pclplugin_link],
-
-**For the registration**
 [CollisionAlgorithm][CollisionAlgorithm_link],
 [ConstraintGeometry][ConstraintGeometry_link],
 [registrationcst][registrationcst_link],
