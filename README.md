@@ -161,18 +161,18 @@ In order to acquire data without registering these are the steps to follow:
 1. ```Ctrl + left click``` to select points on the region of interest
 
 **Steps and shortcuts for the data acquisition:**
-2. ```Ctrl + left click``` to select surface markers
-3. ```Ctrl + right click``` to select the contour of the region of interest
-4. ```Ctrl + B``` to validate contour selection
-5. ```Spacebar``` (e.g. Animate) to start recording (or load already stored point cloud)
+1. ```Ctrl + left click``` to select surface markers
+2. ```Ctrl + right click``` to select the contour of the region of interest
+3. ```Ctrl + B``` to validate contour selection
+4. ```Spacebar``` (e.g. Animate) to start recording (or load already stored point cloud)
 
 **Steps and shortcuts for the registration:**
-6. ```Ctrl + 1``` to rigidly register
-7.(optional) ```Ctrl + left/right/center click``` to rotate the model in x/y/z axis
-8.(optional) ```Ctrl + T``` to activate translation mode and ```Ctrl + left/right/center click``` to translate the model with repect to x/y/z axis
-9. Activate *sliding node* for non-rigid registration over entire surface (this process can be extremely slow)
-10. ```Ctrl + P``` to display the number of markers
-11. ```Ctrl + M``` to switch between *sliding node* and *point cloud node*, in other words to register over surface markers only (this will considerably accelerate the registration and make it usable for real time augmented reality)
+1. ```Ctrl + 1``` to rigidly register
+2.(optional) ```Ctrl + left/right/center click``` to rotate the model in x/y/z axis
+3.(optional) ```Ctrl + T``` to activate translation mode and ```Ctrl + left/right/center click``` to translate the model with repect to x/y/z axis
+4. Activate *sliding node* for non-rigid registration over entire surface (this process can be extremely slow)
+5. ```Ctrl + P``` to display the number of markers
+6. ```Ctrl + M``` to switch between *sliding node* and *point cloud node*, in other words to register over surface markers only (this will considerably accelerate the registration and make it usable for real time augmented reality)
 
 
 
