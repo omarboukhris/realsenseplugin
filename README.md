@@ -175,16 +175,16 @@ In order to acquire data without registering these are the steps to follow:
 6. ```Ctrl + M``` to switch between *sliding node* and *point cloud node*, in other words to register over surface markers only (this will considerably accelerate the registration and make it usable for real time augmented reality)
 
 ### Required dependencies
-[Sofa][sofa_link]
-[opencvplugin][opencvplugin_link]
-[sofascheduler][sofascheduler_link]
-[pclplugin][pclplugin_link]
+[Sofa][sofa_link] (release v20.12),
+[opencvplugin][opencvplugin_link],
+[sofascheduler][sofascheduler_link],
+[pclplugin][pclplugin_link],
 
 **For the registration**
-[CollisionAlgorithm][CollisionAlgorithm_link]
-[ConstraintGeometry][ConstraintGeometry_link]
-[registrationcst][registrationcst_link]
-[optitrackplugin][optitrackplugin_link]
+[CollisionAlgorithm][CollisionAlgorithm_link],
+[ConstraintGeometry][ConstraintGeometry_link],
+[registrationcst][registrationcst_link],
+[optitrackplugin][optitrackplugin_link],
 
 [sofa_link]: https://github.com/sofa-framework/sofa
 [opencvplugin_link]: https://gitlab.inria.fr/mimesis/opencvplugin
