@@ -182,7 +182,10 @@ In order to acquire data without registering these are the steps to follow:
 [CollisionAlgorithm][CollisionAlgorithm_link],
 [ConstraintGeometry][ConstraintGeometry_link],
 [registrationcst][registrationcst_link],
-[optitrackplugin][optitrackplugin_link],
+[optitrackplugin][optitrackplugin_link]
+
+## Coming soon ...
+Registration perfomed with the U-Mesh from [Kromagnon][kro_link]
 
 [sofa_link]: https://github.com/sofa-framework/sofa
 [opencvplugin_link]: https://gitlab.inria.fr/mimesis/opencvplugin
@@ -192,3 +195,4 @@ In order to acquire data without registering these are the steps to follow:
 [ConstraintGeometry_link]: https://gitlab.inria.fr/mimesis/ConstraintGeometry
 [registrationcst_link]: https://gitlab.inria.fr/mimesis/registrationcst
 [optitrackplugin_link]: https://gitlab.inria.fr/mimesis/optitrackplugin
+[kro_link]: https://gitlab.inria.fr/mimesis/kromagnon
