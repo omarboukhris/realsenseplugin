@@ -185,7 +185,7 @@ In order to acquire data without registering these are the steps to follow:
 [optitrackplugin][optitrackplugin_link]
 
 ## Coming soon ...
-Registration perfomed with the U-Mesh from [Kromagnon][kro_link]
+Registration perfomed with the U-Mesh from [Kromagnon][kro_link] base on the [SofaPython3][SP3_link] scene ```python scenes/generators/acquire_pcd_and_rigidly_register.py```.
 
 [sofa_link]: https://github.com/sofa-framework/sofa
 [opencvplugin_link]: https://gitlab.inria.fr/mimesis/opencvplugin
@@ -196,3 +196,4 @@ Registration perfomed with the U-Mesh from [Kromagnon][kro_link]
 [registrationcst_link]: https://gitlab.inria.fr/mimesis/registrationcst
 [optitrackplugin_link]: https://gitlab.inria.fr/mimesis/optitrackplugin
 [kro_link]: https://gitlab.inria.fr/mimesis/kromagnon
+[SP3_link]: https://github.com/sofa-framework/SofaPython3
