@@ -174,6 +174,23 @@ In order to acquire data without registering these are the steps to follow:
 5. ```Ctrl + P``` to display the number of markers
 6. ```Ctrl + M``` to switch between *sliding node* and *point cloud node*, in other words to register over surface markers only (this will considerably accelerate the registration and make it usable for real time augmented reality)
 
+### Required dependencies
+[Sofa][sofa_link]
+[opencvplugin][opencvplugin_link]
+[sofascheduler][sofascheduler_link]
+[pclplugin][pclplugin_link]
 
+**For the registration**
+[CollisionAlgorithm][CollisionAlgorithm_link]
+[ConstraintGeometry][ConstraintGeometry_link]
+[registrationcst][registrationcst_link]
+[optitrackplugin][optitrackplugin_link]
 
-
+[sofa_link]: https://github.com/sofa-framework/sofa
+[opencvplugin_link]: https://gitlab.inria.fr/mimesis/opencvplugin
+[sofascheduler_link]: https://gitlab.inria.fr/mimesis/sofascheduler
+[pclplugin_link]: https://gitlab.inria.fr/mimesis/pclplugin
+[CollisionAlgorithm_link]: https://gitlab.inria.fr/mimesis/CollisionAlgorithm
+[ConstraintGeometry_link]: https://gitlab.inria.fr/mimesis/ConstraintGeometry
+[registrationcst_link]: https://gitlab.inria.fr/mimesis/registrationcst
+[optitrackplugin_link]: https://gitlab.inria.fr/mimesis/optitrackplugin
